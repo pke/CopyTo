@@ -27,6 +27,7 @@ import org.eclipse.ui.menus.CommandContributionItemParameter;
 import org.eclipse.ui.menus.ExtensionContributionFactory;
 import org.eclipse.ui.menus.IContributionRoot;
 import org.eclipse.ui.menus.IMenuService;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.eclipse.ui.services.IServiceLocator;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
@@ -54,6 +55,9 @@ public class MenuFactory extends ExtensionContributionFactory {
 				"$nl$/icons/e16/copyto.png"), null); //$NON-NLS-1$
 		ImageDescriptor icon = (iconEntry != null) ? ImageDescriptor
 				.createFromURL(iconEntry) : null;
+		// Make sure the preferences are initialized
+		new ScopedPreferenceStore(new InstanceScope(), FrameworkUtil.getBundle(
+				getClass()).getSymbolicName());
 
 		final Preferences node = new InstanceScope().getNode(FrameworkUtil
 				.getBundle(getClass()).getSymbolicName()
