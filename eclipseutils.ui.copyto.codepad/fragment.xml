@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<fragment>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:eclipseutils.ui.copyto.menu">
+            <command
+               commandId="eclipseutils.ui.copyto"
+               label="codepad.org"
+               id="eclipseutils.ui.copyto.codepad.org"
+               style="push">
+            <parameter
+                  name="url"
+                  value="http://codepad.org/">
+            </parameter>
+            <parameter
+                  name="params"
+                  value="submit=Submit&amp;code=${copyto.text}&amp;lang=${codepad.lang:${copyto.mime-type}}">
+            </parameter>
+            <parameter
+                  name="id"
+                  value="eclipseutils.ui.copyto.codepad.org">
+            </parameter>
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         id="eclipseutils.ui.copyto.codepad.org"
+         point="eclipseutils.ui.copyto.targets">
+      <paramInfos
+            hidden="code,submit">
+         <paramInfo
+               default="false"
+               label="Run"
+               description="Should the code be run after pasting?"
+               name="run"
+               type="java.lang.Boolean">
+         </paramInfo>
+      </paramInfos>
+   </extension>
+   <extension
+         point="org.eclipse.core.variables.dynamicVariables">
+      <variable
+            description="codepad Language"
+            name="codepad.lang"
+            resolver="eclipseutils.ui.copyto.codepad.internal.CodepadLanguageResolver"
+            supportsArgument="true"/>
+   </extension>
+</fragment>

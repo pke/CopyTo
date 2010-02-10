@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="eclipseutils.ui.copyto.feature"
+      label="CopyTo Feature"
+      version="0.1.0.qualifier"
+      provider-name="Philipp Kursawe"
+      plugin="eclipseutils.ui.copyto">
+
+   <description url="http://github.com/pke/eclipse_helpers">
+      CopyTo Extension for Eclipse Workbench
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
+
+   <includes
+         id="eclipseutils.ui.copyto.codepad.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="eclipseutils.ui.copyto.from.jdt.feature"
+         version="0.0.0"
+         optional="true"/>
+
+   <includes
+         id="eclipseutils.ui.copyto.to.pastebin.ca.feature"
+         version="0.0.0"
+         optional="true"/>
+
+   <includes
+         id="eclipseutils.ui.copyto.to.pastebin.com.feature"
+         version="0.0.0"
+         optional="true"/>
+
+   <requires>
+      <import plugin="org.apache.commons.httpclient"/>
+      <import plugin="org.eclipse.core.commands"/>
+      <import plugin="org.eclipse.core.databinding"/>
+      <import plugin="org.eclipse.core.databinding.observable"/>
+      <import plugin="org.eclipse.core.databinding.property"/>
+      <import plugin="org.eclipse.core.expressions"/>
+      <import plugin="org.eclipse.core.filebuffers"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.equinox.preferences"/>
+      <import plugin="org.eclipse.core.variables"/>
+      <import plugin="org.eclipse.jdt.core"/>
+      <import plugin="org.eclipse.jdt.ui"/>
+      <import plugin="org.eclipse.jface"/>
+      <import plugin="org.eclipse.jface.databinding"/>
+      <import plugin="org.eclipse.jface.text"/>
+      <import plugin="org.eclipse.osgi"/>
+      <import plugin="org.eclipse.swt"/>
+      <import plugin="org.eclipse.ui.workbench"/>
+      <import plugin="org.eclipse.ui.editors"/>
+      <import plugin="org.mortbay.jetty.util"/>
+   </requires>
+
+   <plugin
+         id="eclipseutils.ui.copyto"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="eclipseutils.ui.copyto.from.resource"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

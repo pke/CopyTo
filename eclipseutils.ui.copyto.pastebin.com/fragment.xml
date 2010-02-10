@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<fragment>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:eclipseutils.ui.copyto.menu">
+         <command
+               commandId="eclipseutils.ui.copyto"
+               icon="icons/favicon.ico"
+               id="eclipseutils.ui.copyto.pastebin.com"
+               label="pastebin.com"
+               style="push">
+            <parameter
+                  name="url"
+                  value="http://pastebin.com/pastebin.php">
+            </parameter>
+            <parameter
+                  name="params"
+                  value="code2=${copyto.text}&amp;paste=Send&amp;format=${pastebin.format:${copyto.mime-type}}">
+            </parameter>
+            <parameter
+                  name="id"
+                  value="eclipseutils.ui.copyto.pastebin.com">
+            </parameter>
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         id="eclipseutils.ui.copyto.pastebin.com"
+         point="eclipseutils.ui.copyto.targets">
+      <paramInfos
+            hidden="code2,paste">
+         <paramInfo
+               label="Syntax highlighting"
+               name="format"
+               type="eclipseutils.ui.copyto.pastebin.com.internal.FormatValues">
+         </paramInfo>
+         <paramInfo
+               default="{user.name}"
+               description="Used to remember your post"
+               label="Your Name"
+               name="poster">
+         </paramInfo>
+      </paramInfos>
+   </extension>
+   <extension
+         point="org.eclipse.core.variables.dynamicVariables">
+      <variable
+            description="Pastebin Format"
+            name="pastebin.format"
+            resolver="eclipseutils.ui.copyto.pastebin.com.internal.FormatResolver"
+            supportsArgument="true"/>      
+   </extension>
+</fragment>

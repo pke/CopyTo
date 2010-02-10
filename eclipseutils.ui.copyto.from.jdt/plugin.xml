@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+  <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="org.eclipse.jdt.core.IMember"
+            class="eclipseutils.ui.copyto.from.jdt.internal.AdapterFactory">
+         <adapter
+               type="eclipseutils.ui.copyto.api.Copyable">
+         </adapter>
+      </factory>
+      <factory
+            adaptableType="org.eclipse.ui.texteditor.AbstractTextEditor"
+            class="eclipseutils.ui.copyto.from.jdt.internal.AdapterFactory">
+         <adapter
+               type="eclipseutils.ui.copyto.api.Copyable">
+         </adapter>
+      </factory>
+   </extension>
+</plugin>

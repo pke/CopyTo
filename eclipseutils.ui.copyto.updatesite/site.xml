@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <description name="CopyTo Extensions" url="http://pke.github.com/eclipse_helpers">
+      CopyTo Extensions for the Eclipse Workbench. Basically adds &quot;Pastebin&quot; support into Eclipse editors and views.
+   </description>
+   <feature url="features/eclipseutils.ui.copyto.feature_0.1.0.201002082315.jar" id="eclipseutils.ui.copyto.feature" version="0.1.0.201002082315">
+      <category name="copyto"/>
+   </feature>
+   <category-def name="copyto" label="CopyTo"/>
+</site>
