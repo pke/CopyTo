@@ -51,41 +51,39 @@ public class MenuFactory extends ExtensionContributionFactory {
 		final IMenuService menuService = (IMenuService) locator
 				.getService(IMenuService.class);
 
-		URL iconEntry = FileLocator.find(bundle, new Path(
+		final URL iconEntry = FileLocator.find(bundle, new Path(
 				"$nl$/icons/e16/copyto.png"), null); //$NON-NLS-1$
-		ImageDescriptor icon = (iconEntry != null) ? ImageDescriptor
+		final ImageDescriptor icon = (iconEntry != null) ? ImageDescriptor
 				.createFromURL(iconEntry) : null;
 		// Make sure the preferences are initialized
-		new ScopedPreferenceStore(new InstanceScope(), FrameworkUtil.getBundle(
-				getClass()).getSymbolicName());
+		final ScopedPreferenceStore preferenceStore = new ScopedPreferenceStore(
+				new InstanceScope(), "copyto");
 
-		final Preferences node = new InstanceScope().getNode(FrameworkUtil
-				.getBundle(getClass()).getSymbolicName()
-				+ "/targets");
+		final Preferences node = new InstanceScope().getNode("copyto/targets");
 		try {
-			List<Target> targets = new ArrayList<Target>();
-			for (String child : node.childrenNames()) {
-				Target target = new Target(node.node(child));
+			final List<Target> targets = new ArrayList<Target>();
+			for (final String child : node.childrenNames()) {
+				final Target target = new Target(node.node(child));
 				targets.add(target);
 			}
 			Collections.sort(targets, new Comparator<Target>() {
-				public int compare(Target o1, Target o2) {
-					return o1.getLabel().compareTo(o2.getLabel());
+				public int compare(final Target o1, final Target o2) {
+					return o1.getName().compareTo(o2.getName());
 				}
 			});
-			for (Target target : targets) {
+			for (final Target target : targets) {
 				final Map<String, String> parameters = new HashMap<String, String>();
-				CommandContributionItemParameter contributionParameters = new CommandContributionItemParameter(
+				final CommandContributionItemParameter contributionParameters = new CommandContributionItemParameter(
 						locator, target.getId(), CopyToHandler.COMMAND_ID,
 						CommandContributionItem.STYLE_PUSH);
-				contributionParameters.label = target.label;
+				contributionParameters.label = target.getName();
 				contributionParameters.parameters = parameters;
 				parameters.put("id", contributionParameters.id);
 				parameters.put("url", target.getUrl());
 				root.addContributionItem(new CommandContributionItem(
 						contributionParameters), null);
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 		}
 		/*
 				final MenuManager menuManager = new MenuManager("Copy To", icon, null) {

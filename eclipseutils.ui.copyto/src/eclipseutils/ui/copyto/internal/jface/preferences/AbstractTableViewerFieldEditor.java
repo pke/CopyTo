@@ -1,7 +1,8 @@
-package eclipseutils.ui.copyto.internal.preferences;
+package eclipseutils.ui.copyto.internal.jface.preferences;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
@@ -14,8 +15,6 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.core.runtime.preferences.DefaultScope;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
@@ -28,7 +27,9 @@ import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.EditingSupport;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
@@ -42,43 +43,44 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Sash;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
-import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
-
-import eclipseutils.ui.copyto.internal.Target;
 
 /**
  * An abstract field editor that manages a master/detail table of input values.
+ * 
+ * <p>
  * The editor displays a table containing the values, buttons for adding and
  * removing values.
- * <p>
- * Subclasses must implement the abstract framework methods.
- * </p>
  * 
  * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
  * 
  * @param <T>
  *            Type of the items the editor displays.
  */
-public abstract class TableViewerFieldEditor<T> extends FieldEditor {
+public abstract class AbstractTableViewerFieldEditor<T> extends FieldEditor {
+
+	/** Don't create add/remove buttons */
+	protected static final int READ_ONLY = 0x0001;
+	/** Don't create the edit button. Used for Master/Detail view. */
+	protected static final int NO_EDIT_BUTTON = 0x0002;
 
 	private TableViewer viewer;
 	private Composite buttonBox;
 	private IObservableList items;
 	private DataBindingContext ctx;
-	private IObservableValue viewerSelectionValue;
-	private Sash sash;
-	private Composite detailClient;
+	private final int flags;
+	private IObservableValue viewerSingleSelectionValue;
 
 	protected static interface Visitor<T> {
 		void visit(T item, IProgressMonitor monitor);
 	}
 
-	protected TableViewerFieldEditor(String preferencePath, String labelText,
-			Composite parent) {
+	protected AbstractTableViewerFieldEditor(final String preferencePath,
+			final String labelText, final Composite parent, final int flags) {
 		super(preferencePath, labelText, parent);
+		this.flags = flags;
 	}
 
 	@Override
@@ -92,15 +94,45 @@ public abstract class TableViewerFieldEditor<T> extends FieldEditor {
 
 	protected abstract String[] getColumnLabels();
 
-	protected abstract String getId(T item);
+	/**
+	 * Creates a new item. Is called when the user clicks the add button.
+	 * 
+	 * @param shell
+	 *            to create a dialog on.
+	 * @return a newly created item, or <code>null</code> if a new item could
+	 *         not be created.
+	 * @uithread This method is called from the UI-Thread.
+	 */
+	protected abstract T createItem(Shell shell);
 
 	protected abstract void store(T item, Preferences node);
 
-	public Table getTableControl(Composite parent) {
+	/**
+	 * <p>
+	 * Subclasses that do not use the Master/Details capabilities of this editor
+	 * must implement this and provide the user with the necessary means to edit
+	 * the given <i>item</i>.
+	 * 
+	 * <p>
+	 * This standard implementation does nothing.
+	 * 
+	 * @param shell
+	 *            to create the editing user interface dialog on.
+	 * @param item
+	 *            to edit
+	 */
+	protected void editItem(final Shell shell, final T item) {
+	}
+
+	/**
+	 * @param parent
+	 * @return the table
+	 */
+	public Table getTableControl(final Composite parent) {
 		if (viewer == null) {
-			Composite client = new Composite(parent, SWT.NULL);
+			final Composite client = new Composite(parent, SWT.NULL);
 			// client.setLayout(new FillLayout(SWT.VERTICAL));
-			TableColumnLayout tableLayout = new TableColumnLayout();
+			final TableColumnLayout tableLayout = new TableColumnLayout();
 			client.setLayout(tableLayout);
 			viewer = new TableViewer(client, SWT.BORDER | SWT.MULTI
 					| SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
@@ -116,16 +148,16 @@ public abstract class TableViewerFieldEditor<T> extends FieldEditor {
 			table.setFont(parent.getFont());
 			ctx = new DataBindingContext();
 			table.addDisposeListener(new DisposeListener() {
-				public void widgetDisposed(DisposeEvent e) {
+				public void widgetDisposed(final DisposeEvent e) {
 					ctx.dispose();
 				}
 			});
-			String[] columnNames = getColumnNames();
-			String[] columnLables = getColumnLabels();
+			final String[] columnNames = getColumnNames();
+			final String[] columnLables = getColumnLabels();
 
 			for (int i = 0; i < columnNames.length; ++i) {
-				TableViewerColumn viewerColumn = new TableViewerColumn(viewer,
-						SWT.LEFT);
+				final TableViewerColumn viewerColumn = new TableViewerColumn(
+						viewer, SWT.LEFT);
 				viewerColumn.getColumn().setText(columnLables[i]);
 				viewerColumn.setEditingSupport(createEditingSupport(
 						columnNames[i], viewer, ctx));
@@ -134,16 +166,20 @@ public abstract class TableViewerFieldEditor<T> extends FieldEditor {
 								: 30));
 			}
 			items = new WritableList();
-			ViewerSupport.bind(viewer, items, BeanProperties.values(
-					Target.class, columnNames));
-			// table.addSelectionListener(getSelectionListener());
+			ViewerSupport.bind(viewer, items, BeanProperties
+					.values(columnNames));
 			table.addDisposeListener(new DisposeListener() {
-				public void widgetDisposed(DisposeEvent event) {
+				public void widgetDisposed(final DisposeEvent event) {
 					viewer = null;
 				}
 			});
+			getViewer().addDoubleClickListener(new IDoubleClickListener() {
+				public void doubleClick(final DoubleClickEvent event) {
+					editSelection();
+				}
+			});
 		} else {
-			checkParent(viewer.getControl(), parent);
+			checkParent(viewer.getTable(), parent);
 		}
 		return viewer.getTable();
 	}
@@ -156,35 +192,36 @@ public abstract class TableViewerFieldEditor<T> extends FieldEditor {
 	 * @param name
 	 * @return <code>null</code> in the default implementation.
 	 */
-	protected EditingSupport createEditingSupport(String name,
-			TableViewer viewer, DataBindingContext context) {
+	protected EditingSupport createEditingSupport(final String name,
+			final TableViewer viewer, final DataBindingContext context) {
 		return null;
 	}
 
 	@Override
-	public void setEnabled(boolean enabled, Composite parent) {
+	public void setEnabled(final boolean enabled, final Composite parent) {
 		super.setEnabled(enabled, parent);
+
 		getTableControl(parent).setEnabled(enabled);
 
-		for (Control control : this.buttonBox.getChildren()) {
+		for (final Control control : this.buttonBox.getChildren()) {
 			control.setEnabled(enabled);
 		}
 	}
 
 	@Override
-	protected void adjustForNumColumns(int numColumns) {
-		Control control = getLabelControl();
+	protected void adjustForNumColumns(final int numColumns) {
+		final Control control = getLabelControl();
 		((GridData) control.getLayoutData()).horizontalSpan = numColumns;
 		((GridData) viewer.getControl().getLayoutData()).horizontalSpan = numColumns - 1;
 	}
 
 	@Override
-	protected void doFillIntoGrid(Composite parent, int numColumns) {
+	protected void doFillIntoGrid(final Composite parent, final int numColumns) {
 		GridDataFactory.fillDefaults().span(numColumns, 1).applyTo(
 				getLabelControl(parent));
 
-		Table table = getTableControl(parent);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		final Table table = getTableControl(parent);
+		final GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.verticalAlignment = GridData.FILL;
 		gd.horizontalSpan = numColumns - 1;
 		gd.heightHint = 300;
@@ -196,14 +233,12 @@ public abstract class TableViewerFieldEditor<T> extends FieldEditor {
 				buttonBox);
 	}
 
-	protected abstract T createItem(Preferences preferences);
-
-	protected Button createPushButton(Composite parent, String text) {
-		Button button = new Button(parent, SWT.PUSH);
+	protected Button createPushButton(final Composite parent, final String text) {
+		final Button button = new Button(parent, SWT.PUSH);
 		button.setText(text);
 		button.setFont(parent.getFont());
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		int widthHint = convertHorizontalDLUsToPixels(button,
+		final GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		final int widthHint = convertHorizontalDLUsToPixels(button,
 				IDialogConstants.BUTTON_WIDTH);
 		data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT,
 				SWT.DEFAULT, true).x);
@@ -212,51 +247,92 @@ public abstract class TableViewerFieldEditor<T> extends FieldEditor {
 	}
 
 	UpdateValueStrategy selectionToBooleanConverter() {
-		UpdateValueStrategy modelToTarget = new UpdateValueStrategy();
+		final UpdateValueStrategy modelToTarget = new UpdateValueStrategy();
 		modelToTarget.setConverter(new Converter(Object.class, boolean.class) {
-			public Object convert(Object fromObject) {
+			public Object convert(final Object fromObject) {
 				return fromObject != null;
 			}
 		});
 		return modelToTarget;
 	}
 
-	protected Button createAddButton(Composite parent) {
-		Button button = createPushButton(parent, JFaceResources
+	/**
+	 * Creates the add button.
+	 * 
+	 * <p>
+	 * This standard implementation calls {@link #createItem(Shell)} when the
+	 * button is clicked and adds the returned item to the list.
+	 * 
+	 * Subclasses may override to provide their own add button, or prevent the
+	 * creation of the button for read-only lists that can not have items added
+	 * or removed.
+	 * 
+	 * @param parent
+	 *            to create the button on
+	 */
+	protected void createAddButton(final Composite parent) {
+		if (isReadOnly()) {
+			return;
+		}
+		final Button button = createPushButton(parent, JFaceResources
 				.getString("ListEditor.add"));
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e) {
-				T item = createItem(null);
+			public void widgetSelected(final SelectionEvent e) {
+				final T item = createItem(getPage().getShell());
 				if (item != null) {
 					add(item);
 				}
 			}
 		});
-		return button;
 	}
 
-	protected Button createRemoveButton(Composite parent) {
-		Button button = createPushButton(parent, JFaceResources
+	protected void createRemoveButton(final Composite parent) {
+		if (isReadOnly()) {
+			return;
+		}
+		final Button button = createPushButton(parent, JFaceResources
 				.getString("ListEditor.remove"));
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(final SelectionEvent e) {
 				visitViewerSelection("Removing selected elements",
 						new Visitor<T>() {
 							public void visit(final T item,
-									IProgressMonitor monitor) {
+									final IProgressMonitor monitor) {
 								remove(item);
 							}
 						});
 			}
 		});
 		enableWithSelection(button, SWT.MULTI | SWT.SINGLE);
-		return button;
 	}
 
-	private void createButtons(Composite parent) {
+	protected void createEditButton(final Composite parent) {
+		final Button editButton = createPushButton(parent, "Edit...");
+		editButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				editSelection();
+			}
+		});
+		enableWithSelection(editButton, SWT.SINGLE);
+	}
+
+	@SuppressWarnings("unchecked")
+	private void editSelection() {
+		if ((flags & NO_EDIT_BUTTON) == NO_EDIT_BUTTON) {
+			return;
+		}
+		final T item = (T) getViewerSelectionValue().getValue();
+		if (item != null) {
+			editItem(getPage().getShell(), item);
+		}
+	}
+
+	private void createButtons(final Composite parent) {
 		createAddButton(parent);
+		createEditButton(parent);
 		createRemoveButton(parent);
 		createCustomButtons(parent);
 	}
@@ -266,12 +342,11 @@ public abstract class TableViewerFieldEditor<T> extends FieldEditor {
 	}
 
 	protected IObservableValue getViewerSelectionValue() {
-		if (viewerSelectionValue == null) {
-			viewerSelectionValue = ViewersObservables
-					.observeSingleSelection(viewer);
+		if (viewerSingleSelectionValue == null) {
+			viewerSingleSelectionValue = ViewersObservables
+					.observeSingleSelection(getViewer());
 		}
-
-		return viewerSelectionValue;
+		return viewerSingleSelectionValue;
 	}
 
 	protected void visitViewerSelection(final String operationName,
@@ -282,18 +357,18 @@ public abstract class TableViewerFieldEditor<T> extends FieldEditor {
 		final IRunnableWithProgress runnable = new IRunnableWithProgress() {
 
 			@SuppressWarnings("unchecked")
-			public void run(IProgressMonitor monitor)
+			public void run(final IProgressMonitor monitor)
 					throws InvocationTargetException, InterruptedException {
 				try {
 					monitor.beginTask(operationName, viewerSelection.size());
-					SubMonitor progress = SubMonitor.convert(monitor, 100);
-					Iterator<?> it = viewerSelection.iterator();
+					final SubMonitor progress = SubMonitor
+							.convert(monitor, 100);
+					final Iterator<?> it = viewerSelection.iterator();
 					while (it.hasNext()) {
 						if (progress.isCanceled()) {
 							throw new InterruptedException();
 						}
-						T item = (T) it.next();
-						visitor.visit(item, progress.newChild(1));
+						visitor.visit((T) it.next(), progress.newChild(1));
 					}
 				} finally {
 					monitor.done();
@@ -302,38 +377,48 @@ public abstract class TableViewerFieldEditor<T> extends FieldEditor {
 		};
 		SafeRunner.run(new SafeRunnable(operationName) {
 			public void run() throws Exception {
-				ProgressMonitorDialog dialog = new ProgressMonitorDialog(
+				final ProgressMonitorDialog dialog = new ProgressMonitorDialog(
 						getPage().getShell());
 				dialog.run(true, true, runnable);
 			}
 		});
 	}
 
-	protected void enableWithSelection(Control control, int type) {
+	protected void enableWithSelection(final Control control, final int type) {
 		bindToViewerSelection(SWTObservables.observeEnabled(control), type);
 	}
 
-	protected void bindToViewerSelection(IObservableValue target, int type) {
+	protected void bindToViewerSelection(final IObservableValue target,
+			final int type) {
 		Assert.isLegal((type & SWT.MULTI | SWT.SINGLE) != 0);
 		if (ctx != null) {
-			IObservableValue modelValue = getViewerSelectionValue();
 			ctx.bindValue(target, getViewerSelectionValue(), null,
 					selectionToBooleanConverter());
 		}
 	}
 
-	protected void createCustomButtons(Composite parent) {
+	/**
+	 * Allows subclasses to add custom buttons after the standard
+	 * add/edit/remove group of buttons.
+	 * 
+	 * <p>
+	 * The default implementation does nothing.
+	 * 
+	 * @param parent
+	 *            to create the buttons on
+	 */
+	protected void createCustomButtons(final Composite parent) {
 	}
 
-	public Composite getButtonBoxControl(Composite parent) {
+	protected Composite getButtonBoxControl(final Composite parent) {
 		if (buttonBox == null) {
 			buttonBox = new Composite(parent, SWT.NULL);
-			GridLayout layout = new GridLayout();
+			final GridLayout layout = new GridLayout();
 			layout.marginWidth = 0;
 			buttonBox.setLayout(layout);
 			createButtons(buttonBox);
 			buttonBox.addDisposeListener(new DisposeListener() {
-				public void widgetDisposed(DisposeEvent event) {
+				public void widgetDisposed(final DisposeEvent event) {
 					buttonBox = null;
 				}
 			});
@@ -348,44 +433,14 @@ public abstract class TableViewerFieldEditor<T> extends FieldEditor {
 
 	@Override
 	public void load() {
+		doLoad();
 		setPresentsDefaultValue(false);
-		final Preferences node = new InstanceScope()
-				.getNode(getPreferenceName());
-		try {
-			doLoad(node, node.childrenNames());
-		} catch (BackingStoreException e) {
-		}
 		refreshValidState();
 	}
 
-	/**
-	 * The default implementation calls {@link #createItem(Preferences)} with
-	 * each child node of the given <i>instanceNode</i>.
-	 * 
-	 * Sub-classes may overwrite to provide a different behavior.
-	 * 
-	 * @param instanceNode
-	 * @param childrenNames
-	 */
-	protected void doLoad(Preferences instanceNode, String... childrenNames) {
-		for (String key : childrenNames) {
-			T item = createItem(instanceNode.node(key));
-			if (item != null) {
-				add(item);
-			}
-		}
-	}
-
-	/**
-	 * The default implementation just calls
-	 * {@link #doLoad(Preferences, String...)}
-	 * 
-	 * @param defaultNode
-	 * @param childrenNames
-	 */
-	protected void doLoadDefault(Preferences defaultNode,
-			String... childrenNames) {
-		doLoad();
+	@SuppressWarnings("unchecked")
+	protected List<T> getItems() {
+		return items;
 	}
 
 	protected void add(final T item) {
@@ -409,33 +464,14 @@ public abstract class TableViewerFieldEditor<T> extends FieldEditor {
 	@Override
 	public void loadDefault() {
 		items.clear();
-		Preferences node = new DefaultScope().getNode(getPreferenceName());
-		try {
-			doLoad(node, node.childrenNames());
-		} catch (BackingStoreException e) {
-		}
+		doLoadDefault();
 		setPresentsDefaultValue(true);
 		refreshValidState();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void store() {
-		InstanceScope instanceScope = new InstanceScope();
-		Preferences node = instanceScope.getNode(getPreferenceName());
-		try {
-			node.removeNode();
-			if (!presentsDefaultValue()) {
-				node = instanceScope.getNode(getPreferenceName());
-				Iterator<T> it = items.iterator();
-				while (it.hasNext()) {
-					T item = it.next();
-					store(item, node.node(getId(item)));
-				}
-				node.flush();
-			}
-		} catch (BackingStoreException e) {
-		}
+		doStore();
 	}
 
 	@Override
@@ -443,27 +479,7 @@ public abstract class TableViewerFieldEditor<T> extends FieldEditor {
 		return 2;
 	}
 
-	/**
-	 * Not called, since we do not have a PreferenceStore set.
-	 */
-	@Override
-	protected void doLoad() {
-		throw new IllegalAccessError();
-	}
-
-	/**
-	 * Not called, since we do not have a PreferenceStore set.
-	 */
-	@Override
-	protected void doLoadDefault() {
-		throw new IllegalAccessError();
-	}
-
-	/**
-	 * Not called, since we do not have a PreferenceStore set.
-	 */
-	@Override
-	protected void doStore() {
-		throw new IllegalAccessError();
+	protected boolean isReadOnly() {
+		return ((flags & READ_ONLY) == READ_ONLY);
 	}
 }

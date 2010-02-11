@@ -40,7 +40,7 @@ public class CopyToPreferencePage extends FieldEditorPreferencePage implements
 
 		@Override
 		public String getLabel(Object object) {
-			return ((Target) object).getLabel();
+			return ((Target) object).getName();
 		}
 
 		static IWorkbenchAdapter instance;

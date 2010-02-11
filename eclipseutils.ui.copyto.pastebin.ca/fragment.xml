@@ -25,7 +25,8 @@
       </menuContribution>
    </extension>
    <extension
-         id="eclipseutils.ui.copyto.pastebin.ca"
+         id="copyto.pastebin.ca"
+         name="pastebin.ca"
          point="eclipseutils.ui.copyto.targets">
       <paramInfos
             hidden="apikey,content">

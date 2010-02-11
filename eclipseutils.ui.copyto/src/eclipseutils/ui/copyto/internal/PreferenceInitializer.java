@@ -12,7 +12,6 @@ package eclipseutils.ui.copyto.internal;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
@@ -31,8 +30,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	@SuppressWarnings("nls")
 	@Override
 	public void initializeDefaultPreferences() {
-		final Preferences node = new InstanceScope().getNode(FrameworkUtil
-				.getBundle(getClass()).getSymbolicName());
+		final Preferences node = new InstanceScope().getNode("copyto");
 		if (!node.getBoolean("initialized", false)) {
 			node.putBoolean("initialized", true);
 			Preferences preferences = node.node("targets/copyto.pastebin.com");

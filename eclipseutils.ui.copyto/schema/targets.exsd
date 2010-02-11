@@ -133,6 +133,81 @@ Can also be IParameterValues.
       </complexType>
    </element>
 
+   <element name="params" type="string">
+      <annotation>
+         <documentation>
+            Desribes the parameters that need to be sent to the service.
+         </documentation>
+      </annotation>
+   </element>
+
+   <element name="param">
+      <annotation>
+         <documentation>
+            Describes a single parameter.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Name of the parameter as required by the service. This is usally the name of the form-field on the service providers website submit form.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="default" type="string">
+            <annotation>
+               <documentation>
+                  The default value for this parameter. This must be compatible to the parameters type. For Boolean types it must be &lt;b&gt;true&lt;/b&gt; or &lt;b&gt;false&lt;/b&gt;. For Number types it must be convertible to an Integer value.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="type">
+            <annotation>
+               <documentation>
+                  A type, how the param will be presented to the user. String. This also can be
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="String">
+                  </enumeration>
+                  <enumeration value="Boolean">
+                  </enumeration>
+                  <enumeration value="Number">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="values" type="string">
+            <annotation>
+               <documentation>
+                  IParameterValues implementation that returns the restriction of possible values for this parameter
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.core.commands.IParameterValues"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="optional" type="boolean">
+            <annotation>
+               <documentation>
+                  Optional parameters are not shown to the user when he uses this service. Only when he holds down the CTRL key they are offered for editing/review in a dialog prio to sending the items to the server.
+Default: true
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="fixed" type="boolean">
+            <annotation>
+               <documentation>
+                  Fixed parameters cannot be changed by the user.
+Default: false
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
    <annotation>
       <appinfo>
          <meta.section type="since"/>

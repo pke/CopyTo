@@ -2,31 +2,7 @@
 <?eclipse version="3.4"?>
 <fragment>
    <extension
-         point="org.eclipse.ui.menus">
-      <menuContribution
-            locationURI="menu:eclipseutils.ui.copyto.menu">
-            <command
-               commandId="eclipseutils.ui.copyto"
-               label="codepad.org"
-               id="eclipseutils.ui.copyto.codepad.org"
-               style="push">
-            <parameter
-                  name="url"
-                  value="http://codepad.org/">
-            </parameter>
-            <parameter
-                  name="params"
-                  value="submit=Submit&amp;code=${copyto.text}&amp;lang=${codepad.lang:${copyto.mime-type}}">
-            </parameter>
-            <parameter
-                  name="id"
-                  value="eclipseutils.ui.copyto.codepad.org">
-            </parameter>
-         </command>
-      </menuContribution>
-   </extension>
-   <extension
-         id="eclipseutils.ui.copyto.codepad.org"
+         id="copyto.codepad.org"
          point="eclipseutils.ui.copyto.targets">
       <paramInfos
             hidden="code,submit">
@@ -46,5 +22,11 @@
             name="codepad.lang"
             resolver="eclipseutils.ui.copyto.codepad.internal.CodepadLanguageResolver"
             supportsArgument="true"/>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="eclipseutils.ui.copyto.codepad.internal.PreferenceInitializer">
+      </initializer>
    </extension>
 </fragment>

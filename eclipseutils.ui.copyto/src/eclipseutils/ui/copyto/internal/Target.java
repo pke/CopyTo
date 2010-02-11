@@ -28,84 +28,86 @@ public class Target extends PlatformObject implements Serializable {
 	private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(
 			this);
 
-	public void addPropertyChangeListener(PropertyChangeListener listener) {
+	public void addPropertyChangeListener(final PropertyChangeListener listener) {
 		propertyChangeSupport.addPropertyChangeListener(listener);
 	}
 
-	public void addPropertyChangeListener(String propertyName,
-			PropertyChangeListener listener) {
+	public void addPropertyChangeListener(final String propertyName,
+			final PropertyChangeListener listener) {
 		propertyChangeSupport.addPropertyChangeListener(propertyName, listener);
 	}
 
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
+	public void removePropertyChangeListener(
+			final PropertyChangeListener listener) {
 		propertyChangeSupport.removePropertyChangeListener(listener);
 	}
 
-	public void removePropertyChangeListener(String propertyName,
-			PropertyChangeListener listener) {
+	public void removePropertyChangeListener(final String propertyName,
+			final PropertyChangeListener listener) {
 		propertyChangeSupport.removePropertyChangeListener(propertyName,
 				listener);
 	}
 
-	protected void firePropertyChange(String propertyName, Object oldValue,
-			Object newValue) {
+	protected void firePropertyChange(final String propertyName,
+			final Object oldValue, final Object newValue) {
 		propertyChangeSupport.firePropertyChange(propertyName, oldValue,
 				newValue);
 	}
 
 	public Target() {
 		id = UUID.randomUUID().toString();
-		label = "unnamed";
+		name = "unnamed";
 		url = "http://";
 	}
 
-	public Target(Preferences node) {
+	public Target(final Preferences node) {
 		id = node.name();
-		label = node.get("label", null);
+		name = node.get("label", null);
 		url = node.get("url", null);
 		try {
 			if (node.nodeExists("params")) {
-				Preferences paramsNode = node.node("params");
-				for (String key : paramsNode.keys()) {
+				final Preferences paramsNode = node.node("params");
+				for (final String key : paramsNode.keys()) {
 					additionalParams.put(key, paramsNode.get(key, ""));
 				}
 			}
-		} catch (BackingStoreException e) {
+		} catch (final BackingStoreException e) {
 		}
 	}
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	public Object getAdapter(Class adapter) {
+	public Object getAdapter(final Class adapter) {
 		return super.getAdapter(adapter);
 	}
 
-	public void save(Preferences node) {
-		node.put("label", label);
+	public void save(final Preferences node) {
+		node.put("label", name);
 		node.put("url", url);
 		if (!additionalParams.isEmpty()) {
-			Preferences paramsNode = node.node("params");
-			for (Entry<String, String> entry : additionalParams.entrySet()) {
+			final Preferences paramsNode = node.node("params");
+			for (final Entry<String, String> entry : additionalParams
+					.entrySet()) {
 				paramsNode.put(entry.getKey(), entry.getValue());
 			}
 		}
 	}
 
 	public String toBase64() {
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		final ByteArrayOutputStream out = new ByteArrayOutputStream();
 		ObjectOutputStream outputStream;
 		try {
 			outputStream = new ObjectOutputStream(out);
 			outputStream.writeObject(this);
 			return new String(Base64.encodeBase64(out.toByteArray()));
-		} catch (IOException e) {
+		} catch (final IOException e) {
 		}
 		return null;
 	}
 
-	public static Target valueOf(String base64Encoding) throws Exception {
-		Object target = new ObjectInputStream(new ByteArrayInputStream(Base64
-				.decodeBase64(base64Encoding.getBytes()))).readObject();
+	public static Target valueOf(final String base64Encoding) throws Exception {
+		final Object target = new ObjectInputStream(new ByteArrayInputStream(
+				Base64.decodeBase64(base64Encoding.getBytes()))).readObject();
 		if (target instanceof Target) {
 			return (Target) target;
 		}
@@ -113,7 +115,7 @@ public class Target extends PlatformObject implements Serializable {
 	}
 
 	final String id;
-	String label;
+	private String name;
 	private String url;
 	private final Map<String, String> additionalParams = new HashMap<String, String>();
 	private transient IStatus connectionStatus = new Status(IStatus.OK, "test",
@@ -123,20 +125,20 @@ public class Target extends PlatformObject implements Serializable {
 		return id;
 	}
 
-	public String getLabel() {
-		return label;
+	public String getName() {
+		return name;
 	}
 
-	public void setLabel(String label) {
-		propertyChangeSupport.firePropertyChange("label", this.label,
-				this.label = label);
+	public void setName(final String name) {
+		propertyChangeSupport.firePropertyChange("name", this.name,
+				this.name = name);
 	}
 
 	public String getUrl() {
 		return url;
 	}
 
-	public void setUrl(String url) {
+	public void setUrl(final String url) {
 		propertyChangeSupport.firePropertyChange("url", this.url,
 				this.url = url);
 	}
@@ -147,16 +149,24 @@ public class Target extends PlatformObject implements Serializable {
 
 	public void testConnection() {
 		try {
-			URL url = new URL(getUrl());
-			URLConnection connection = url.openConnection();
+			final URL url = new URL(getUrl());
+			final URLConnection connection = url.openConnection();
 			connection.connect();
 			setConnectionStatus(Status.OK_STATUS);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			setConnectionStatus(new Status(IStatus.ERROR, "test", "Error", e));
 		}
 	}
 
-	public void setConnectionStatus(IStatus connectionStatus) {
+	public boolean isVisible() {
+		return true;
+	}
+
+	public void setVisible(final boolean visible) {
+
+	}
+
+	public void setConnectionStatus(final IStatus connectionStatus) {
 		this.connectionStatus = connectionStatus;
 	}
 
