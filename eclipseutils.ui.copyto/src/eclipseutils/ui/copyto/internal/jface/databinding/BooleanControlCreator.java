@@ -26,10 +26,10 @@ public class BooleanControlCreator extends AbstractControlCreator {
 	protected BooleanControlCreator() {
 	}
 
-	public IObservableValue createControl(final Composite parent,
-			final Object bean, final String property) {
-		final Button control = new Button(parent, SWT.CHECK);
-		control.setText(LocalizationHelper.getLabel(bean, property));
+	public IObservableValue create(final CreatorToolkit toolkit,
+			final Composite parent, final Object bean, final String property) {
+		final Button control = toolkit.createButton(parent, LocalizationHelper
+				.getLabel(bean, property), SWT.CHECK);
 		setToolTip(control, bean, property);
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 1).applyTo(
 				control);

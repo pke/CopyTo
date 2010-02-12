@@ -32,9 +32,9 @@ import org.osgi.framework.FrameworkUtil;
 
 import eclipseutils.ui.copyto.api.Result;
 import eclipseutils.ui.copyto.api.Results;
-import eclipseutils.ui.copyto.api.ResultsHandler;
+import eclipseutils.ui.copyto.api.ResultHandler;
 
-public class ClipboardResultsHandler implements ResultsHandler {
+public class ClipboardResultsHandler implements ResultHandler {
 
 	public static final String CLIPBOARD_ALWAYS_OVERWRITE = "clipboard.alwaysOverwrite";
 

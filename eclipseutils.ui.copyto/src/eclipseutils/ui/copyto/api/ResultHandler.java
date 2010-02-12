@@ -18,12 +18,12 @@ import org.eclipse.jface.window.IShellProvider;
  * @author <a href="mailto:kursawe@topsystem.de">Philipp Kursawe</a>
  * 
  */
-public interface ResultsHandler {
+public interface ResultHandler {
 	/**
 	 * 
 	 * @param results
 	 * @param shellProvider
-	 * @uithread This is called in the UI-thread.
+	 * @uithread This method is called from the UI-Thread.
 	 */
 	void handleResults(Results results, IShellProvider shellProvider);
 }

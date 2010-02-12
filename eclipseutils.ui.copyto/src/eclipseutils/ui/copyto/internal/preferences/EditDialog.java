@@ -6,15 +6,21 @@ import java.util.HashSet;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.fieldassist.SimpleContentProposalProvider;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 
 import eclipseutils.ui.copyto.internal.Target;
 import eclipseutils.ui.copyto.internal.jface.databinding.Builder;
 import eclipseutils.ui.copyto.internal.jface.databinding.BuiltDialog;
+import eclipseutils.ui.copyto.internal.jface.databinding.FieldOptions;
 import eclipseutils.ui.copyto.internal.jface.databinding.StandardBuilder;
+import eclipseutils.ui.copyto.internal.jface.databinding.validators.AbstractValidator;
 import eclipseutils.ui.copyto.internal.jface.databinding.validators.CompoundValidator;
 import eclipseutils.ui.copyto.internal.jface.databinding.validators.ListValidator;
 import eclipseutils.ui.copyto.internal.jface.databinding.validators.NotEmptyValidator;
@@ -57,7 +63,17 @@ class EditDialog extends BuiltDialog {
 		return control;
 	}
 
+	final static SimpleContentProposalProvider proposalProvider = new SimpleContentProposalProvider(
+			new String[] { "${copyto.text}", "${copyto.mime-type}",
+					"${copyto.source}" });
+
 	public Builder createBuilder(final Composite parent) {
+		final FormToolkit toolkit = new FormToolkit(parent.getDisplay());
+		parent.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(final DisposeEvent e) {
+				toolkit.dispose();
+			}
+		});
 		final IValidator labelValidator = new CompoundValidator(
 				NotEmptyValidator.getInstance(true),
 				new NotValidator(
@@ -65,8 +81,25 @@ class EditDialog extends BuiltDialog {
 						"A Target with that name already exists. You should choose another name.",
 						IStatus.WARNING));
 		return new StandardBuilder(parent, target,
-				UpdateValueStrategy.POLICY_CONVERT).field("name",
-				labelValidator).newLine().field("url",
-				URLValidator.getInstance()).newLine().field("visible");
+				UpdateValueStrategy.POLICY_CONVERT)
+				.field("name", new FieldOptions(labelValidator))
+				.newLine()
+				.field(
+						"url",
+						new FieldOptions(new CompoundValidator(URLValidator
+								.getInstance(), new AbstractValidator(
+								IStatus.ERROR) {
+							@Override
+							protected String performValidation(
+									final Object value) throws Throwable {
+								if (value.toString().indexOf("${copyto.text}") == -1) {
+									return "The URL must contain the \"${copyto.text}\" variable";
+								}
+								return null;
+							}
+						})).setProposalProvider(proposalProvider)
+								.setAutoActivationnCharacters(
+										new char[] { '$' }))
+				.newLine().field("visible");
 	}
 }

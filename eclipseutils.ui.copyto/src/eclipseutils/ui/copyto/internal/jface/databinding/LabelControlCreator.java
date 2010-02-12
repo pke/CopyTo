@@ -8,18 +8,19 @@ import org.eclipse.swt.widgets.Label;
 
 abstract class LabelControlCreator extends AbstractControlCreator {
 
-	public IObservableValue createControl(final Composite parent,
-			final Object bean, final String property) {
-		final Label label = new Label(parent, SWT.LEFT);
-		label.setText(LocalizationHelper.getLabel(bean, property) + ":");
+	public IObservableValue create(final CreatorToolkit toolkit,
+			final Composite parent, final Object bean, final String property) {
+		final Label label = toolkit.createLabel(parent, LocalizationHelper
+				.getLabel(bean, property)
+				+ ":", SWT.LEFT);
 		setToolTip(label, bean, property);
 		GridDataFactory.swtDefaults().align(SWT.RIGHT, SWT.CENTER).applyTo(
 				label);
-		final IObservableValue editorValue = createEditor(parent, bean,
-				property);
+		final IObservableValue editorValue = createEditor(toolkit, parent,
+				bean, property);
 		return editorValue;
 	}
 
-	abstract IObservableValue createEditor(Composite parent, Object bean,
-			String property);
+	abstract IObservableValue createEditor(CreatorToolkit toolkit,
+			Composite parent, Object bean, String property);
 }

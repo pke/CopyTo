@@ -2,11 +2,23 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension-point id="targets" name="%Bundle-Name" schema="schema/targets.exsd"/>
+   <extension-point id="resultHandlers" name="Result Handlers Extension Point" schema="schema/resultHandlers.exsd"/>
    <extension
          point="org.eclipse.ui.menus">
-      <menuContribution locationURI="popup:org.eclipse.ui.popup.any?after=copy" class="eclipseutils.ui.copyto.internal.MenuFactory"/>
-      <menuContribution locationURI="popup:org.eclipse.ui.popup.any?before=additions" class="eclipseutils.ui.copyto.internal.MenuFactory"/>
-      <menuContribution locationURI="menu:edit?after=copy" class="eclipseutils.ui.copyto.internal.MenuFactory"/>
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.popup.any?after=copy">
+         <dynamic
+               class="eclipseutils.ui.copyto.internal.DynamicItem"
+               id="eclipseutils.ui.copyto.dynamic1">
+         </dynamic>
+      </menuContribution>
+      <menuContribution
+            locationURI="menu:edit?after=copy">
+         <dynamic
+               class="eclipseutils.ui.copyto.internal.DynamicItem"
+               id="eclipseutils.ui.copyto.dynamic1">
+         </dynamic>
+      </menuContribution>
       <menuContribution locationURI="toolbar:org.eclipse.ui.workbench.file?before=print">
             <command
                   commandId="eclipseutils.ui.copyto.dropdown"

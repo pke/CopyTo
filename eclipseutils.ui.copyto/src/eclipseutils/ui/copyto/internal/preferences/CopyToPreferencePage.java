@@ -1,16 +1,22 @@
 package eclipseutils.ui.copyto.internal.preferences;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.model.WorkbenchAdapter;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
+import org.eclipse.ui.services.IServiceScopes;
 import org.osgi.framework.FrameworkUtil;
 
+import eclipseutils.ui.copyto.internal.CopyToHandler;
 import eclipseutils.ui.copyto.internal.Target;
 import eclipseutils.ui.copyto.internal.results.ClipboardResultsHandler;
 
@@ -39,7 +45,7 @@ public class CopyToPreferencePage extends FieldEditorPreferencePage implements
 	static class TargetWorkbenchAdapter extends WorkbenchAdapter {
 
 		@Override
-		public String getLabel(Object object) {
+		public String getLabel(final Object object) {
 			return ((Target) object).getName();
 		}
 
@@ -54,6 +60,19 @@ public class CopyToPreferencePage extends FieldEditorPreferencePage implements
 	}
 
 	@Override
+	public boolean performOk() {
+		final boolean result = super.performOk();
+		if (result) {
+			final ICommandService cs = (ICommandService) workbench
+					.getService(ICommandService.class);
+			final Map<Object, Object> filter = new HashMap<Object, Object>();
+			filter.put(IServiceScopes.WORKBENCH_SCOPE, workbench);
+			cs.refreshElements(CopyToHandler.COMMAND_ID, filter);
+		}
+		return result;
+	}
+
+	@Override
 	protected void createFieldEditors() {
 		addField(new BooleanFieldEditor(
 				ClipboardResultsHandler.CLIPBOARD_ALWAYS_OVERWRITE,
@@ -64,7 +83,7 @@ public class CopyToPreferencePage extends FieldEditorPreferencePage implements
 				+ "/targets", "Targets", getFieldEditorParent()));
 	}
 
-	public void init(IWorkbench workbench) {
+	public void init(final IWorkbench workbench) {
 		this.workbench = workbench;
 	}
 }

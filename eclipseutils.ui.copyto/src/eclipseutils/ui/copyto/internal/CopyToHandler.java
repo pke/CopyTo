@@ -70,7 +70,7 @@ import org.osgi.util.tracker.ServiceTracker;
 import eclipseutils.ui.copyto.api.Copyable;
 import eclipseutils.ui.copyto.api.Result;
 import eclipseutils.ui.copyto.api.Results;
-import eclipseutils.ui.copyto.api.ResultsHandler;
+import eclipseutils.ui.copyto.api.ResultHandler;
 import eclipseutils.ui.copyto.internal.dialogs.RequestParamsDialog;
 import eclipseutils.ui.copyto.internal.results.ClipboardResultsHandler;
 
@@ -90,7 +90,7 @@ public class CopyToHandler extends AbstractHandler implements IStateListener,
 	private final IAdapterManager adapterManager = Platform.getAdapterManager();
 	private final ServiceTracker resultsHandlerTracker = new ServiceTracker(
 			FrameworkUtil.getBundle(CopyToHandler.class).getBundleContext(),
-			ResultsHandler.class.getName(), null) {
+			ResultHandler.class.getName(), null) {
 		{
 			open();
 		}
@@ -284,7 +284,7 @@ public class CopyToHandler extends AbstractHandler implements IStateListener,
 					if (services != null) {
 						for (Object service : services) {
 							try {
-								((ResultsHandler) service).handleResults(
+								((ResultHandler) service).handleResults(
 										results[0], workbenchWindow);
 							} catch (Throwable t) {
 							}

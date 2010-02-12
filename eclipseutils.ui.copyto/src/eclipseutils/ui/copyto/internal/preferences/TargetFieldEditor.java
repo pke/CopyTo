@@ -1,5 +1,7 @@
 package eclipseutils.ui.copyto.internal.preferences;
 
+import java.util.Collection;
+
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -17,21 +19,16 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.osgi.service.prefs.Preferences;
 
 import eclipseutils.ui.copyto.internal.Target;
-import eclipseutils.ui.copyto.internal.jface.preferences.TableViewerFieldEditor;
+import eclipseutils.ui.copyto.internal.TargetFactory;
+import eclipseutils.ui.copyto.internal.jface.preferences.AbstractTableViewerFieldEditor;
 
-class TargetFieldEditor extends TableViewerFieldEditor<Target> {
+class TargetFieldEditor extends AbstractTableViewerFieldEditor<Target> {
 
 	TargetFieldEditor(final String preferencePath, final String labelText,
 			final Composite parent) {
 		super(preferencePath, labelText, parent, 0);
-	}
-
-	@Override
-	protected Target loadItem(final Preferences preferences) {
-		return new Target(preferences);
 	}
 
 	@Override
@@ -138,16 +135,6 @@ class TargetFieldEditor extends TableViewerFieldEditor<Target> {
 	}
 
 	@Override
-	protected void store(final Target item, final Preferences node) {
-		item.save(node);
-	}
-
-	@Override
-	protected String getId(final Target item) {
-		return item.getId();
-	}
-
-	@Override
 	protected String[] getColumnNames() {
 		return new String[] { "name", "url" };
 	}
@@ -169,5 +156,20 @@ class TargetFieldEditor extends TableViewerFieldEditor<Target> {
 							"label"));
 		}*/
 		return super.createEditingSupport(name, viewer, context);
+	}
+
+	@Override
+	protected Collection<Target> loadItems() {
+		return TargetFactory.load();
+	}
+
+	@Override
+	protected void doLoadDefault() {
+		doLoad();
+	}
+
+	@Override
+	protected void doStore() {
+		TargetFactory.save(getItems());
 	}
 }

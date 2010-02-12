@@ -11,27 +11,36 @@
 package eclipseutils.ui.copyto.internal;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.expressions.EvaluationResult;
+import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.ISources;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.CommandContributionItemParameter;
 import org.eclipse.ui.menus.ExtensionContributionFactory;
 import org.eclipse.ui.menus.IContributionRoot;
-import org.eclipse.ui.menus.IMenuService;
-import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.eclipse.ui.services.IServiceLocator;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
-import org.osgi.service.prefs.Preferences;
+
+import eclipseutils.ui.copyto.api.Copyable;
 
 /**
  * Creates the menus for copyto in the main/edit and in popup menus.
@@ -45,60 +54,104 @@ public class MenuFactory extends ExtensionContributionFactory {
 	public static final String MENU_URI = "menu:" + bundle.getSymbolicName() //$NON-NLS-1$
 			+ ".menu"; //$NON-NLS-1$
 
+	private static final Expression visibleExpression = new Expression() {
+
+		<T> T getVariable(final IEvaluationContext context, final String name,
+				final Class<T> clazz) {
+			final Object object = context.getVariable(name);
+			if (object != null
+					&& object != IEvaluationContext.UNDEFINED_VARIABLE) {
+				if (clazz.isInstance(object)) {
+					return clazz.cast(object);
+				}
+			}
+
+			return null;
+		}
+
+		@Override
+		public EvaluationResult evaluate(final IEvaluationContext context)
+				throws CoreException {
+			ISelection selection = getVariable(context,
+					ISources.ACTIVE_MENU_SELECTION_NAME, ISelection.class);
+			if (selection == null) {
+				selection = getVariable(context,
+						ISources.ACTIVE_CURRENT_SELECTION_NAME,
+						ISelection.class);
+			}
+			if (selection == null) {
+				return EvaluationResult.FALSE;
+			}
+
+			if (selection instanceof IStructuredSelection) {
+				if (((IStructuredSelection) selection).size() > 1) {
+					return EvaluationResult.FALSE;
+				}
+
+				final Object element = ((IStructuredSelection) selection)
+						.getFirstElement();
+				if (!Platform.getAdapterManager().hasAdapter(element,
+						Copyable.class.getName())) {
+					return EvaluationResult.FALSE;
+				}
+
+			} else if (selection instanceof ITextSelection) {
+				final IEditorPart part = getVariable(context,
+						ISources.ACTIVE_PART_NAME, IEditorPart.class);
+				if (null == part
+						|| !Platform.getAdapterManager().hasAdapter(part,
+								Copyable.class.getName())) {
+					return EvaluationResult.FALSE;
+				}
+			}
+
+			return EvaluationResult.TRUE;
+		}
+	};
+
 	@Override
 	public void createContributionItems(final IServiceLocator locator,
 			final IContributionRoot root) {
-		final IMenuService menuService = (IMenuService) locator
-				.getService(IMenuService.class);
-
 		final URL iconEntry = FileLocator.find(bundle, new Path(
 				"$nl$/icons/e16/copyto.png"), null); //$NON-NLS-1$
 		final ImageDescriptor icon = (iconEntry != null) ? ImageDescriptor
 				.createFromURL(iconEntry) : null;
-		// Make sure the preferences are initialized
-		final ScopedPreferenceStore preferenceStore = new ScopedPreferenceStore(
-				new InstanceScope(), "copyto");
 
-		final Preferences node = new InstanceScope().getNode("copyto/targets");
-		try {
-			final List<Target> targets = new ArrayList<Target>();
-			for (final String child : node.childrenNames()) {
-				final Target target = new Target(node.node(child));
-				targets.add(target);
-			}
+		final List<Target> targets = TargetFactory.load();
+		if (targets.isEmpty()) {
+			return;
+		}
+
+		final MenuManager menuManager = new MenuManager("Copy To", icon, null);
+
+		String format = "{0}";
+		if (targets.size() == 1) {
+			format = "CopyTo {0}";
+		} else {
 			Collections.sort(targets, new Comparator<Target>() {
 				public int compare(final Target o1, final Target o2) {
 					return o1.getName().compareTo(o2.getName());
 				}
 			});
-			for (final Target target : targets) {
-				final Map<String, String> parameters = new HashMap<String, String>();
-				final CommandContributionItemParameter contributionParameters = new CommandContributionItemParameter(
-						locator, target.getId(), CopyToHandler.COMMAND_ID,
-						CommandContributionItem.STYLE_PUSH);
-				contributionParameters.label = target.getName();
-				contributionParameters.parameters = parameters;
-				parameters.put("id", contributionParameters.id);
-				parameters.put("url", target.getUrl());
-				root.addContributionItem(new CommandContributionItem(
-						contributionParameters), null);
-			}
-		} catch (final Exception e) {
 		}
-		/*
-				final MenuManager menuManager = new MenuManager("Copy To", icon, null) {
-					@Override
-					public void dispose() {
-						menuService.releaseContributions(this);
-						super.dispose();
-					};
-				};
-				menuService.populateContributionManager(menuManager, MENU_URI);
-				if (menuManager.getSize() == 1) {
-					root.addContributionItem(menuManager.getItems()[0], null);
-					menuManager.dispose();
-				} else {
-					root.addContributionItem(menuManager, null);
-				}*/
+		for (final Target target : targets) {
+			final Map<String, String> parameters = new HashMap<String, String>();
+			final CommandContributionItemParameter contributionParameters = new CommandContributionItemParameter(
+					locator, target.getId(), CopyToHandler.COMMAND_ID,
+					CommandContributionItem.STYLE_PUSH);
+			contributionParameters.label = NLS.bind(format, target.getName());
+			contributionParameters.parameters = parameters;
+			parameters.put("id", contributionParameters.id);
+			parameters.put("url", target.getUrl());
+			menuManager
+					.add(new CommandContributionItem(contributionParameters));
+		}
+		if (menuManager.getSize() == 1) {
+			root.addContributionItem(menuManager.getItems()[0],
+					visibleExpression);
+			menuManager.dispose();
+		} else {
+			root.addContributionItem(menuManager, visibleExpression);
+		}
 	}
 }

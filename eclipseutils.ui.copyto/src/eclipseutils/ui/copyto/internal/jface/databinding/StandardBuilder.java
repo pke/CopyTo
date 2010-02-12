@@ -4,7 +4,6 @@ import org.eclipse.core.databinding.AggregateValidationStatus;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
-import org.eclipse.core.databinding.ValidationStatusProvider;
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -23,9 +22,10 @@ public class StandardBuilder extends AbstractBuilder {
 
 	private final DataBindingContext ctx;
 
-	public StandardBuilder(final Composite parent, final Object bean,
+	public StandardBuilder(final CreatorToolkit toolkit,
+			final Composite parent, final Object bean,
 			final int targetToModelPolicy) {
-		super(parent, bean, targetToModelPolicy);
+		super(toolkit, parent, bean, targetToModelPolicy);
 		ctx = new DataBindingContext();
 		parent.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(final DisposeEvent e) {
@@ -33,6 +33,11 @@ public class StandardBuilder extends AbstractBuilder {
 			}
 		});
 		GridLayoutFactory.swtDefaults().numColumns(2).applyTo(parent);
+	}
+
+	public StandardBuilder(final Composite parent, final Object bean,
+			final int targetToModelPolicy) {
+		this(SWTToolkit.getInstance(), parent, bean, targetToModelPolicy);
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package eclipseutils.ui.copyto.internal.jface.preferences;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -45,7 +46,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
-import org.osgi.service.prefs.Preferences;
 
 /**
  * An abstract field editor that manages a master/detail table of input values.
@@ -104,8 +104,6 @@ public abstract class AbstractTableViewerFieldEditor<T> extends FieldEditor {
 	 * @uithread This method is called from the UI-Thread.
 	 */
 	protected abstract T createItem(Shell shell);
-
-	protected abstract void store(T item, Preferences node);
 
 	/**
 	 * <p>
@@ -437,6 +435,16 @@ public abstract class AbstractTableViewerFieldEditor<T> extends FieldEditor {
 		setPresentsDefaultValue(false);
 		refreshValidState();
 	}
+
+	@Override
+	protected void doLoad() {
+		final Collection<T> loadedItems = loadItems();
+		if (loadedItems != null) {
+			this.items.addAll(loadedItems);
+		}
+	}
+
+	protected abstract Collection<T> loadItems();
 
 	@SuppressWarnings("unchecked")
 	protected List<T> getItems() {

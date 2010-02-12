@@ -3,6 +3,7 @@ package eclipseutils.ui.copyto.internal.jface.preferences;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.swt.widgets.Composite;
 import org.osgi.service.prefs.BackingStoreException;
@@ -24,8 +25,8 @@ import org.osgi.service.prefs.Preferences;
 public abstract class TableViewerFieldEditor<T> extends
 		AbstractTableViewerFieldEditor<T> {
 
-	protected TableViewerFieldEditor(String preferencePath, String labelText,
-			Composite parent, int flags) {
+	protected TableViewerFieldEditor(final String preferencePath,
+			final String labelText, final Composite parent, final int flags) {
 		super(preferencePath, labelText, parent, flags);
 	}
 
@@ -51,41 +52,47 @@ public abstract class TableViewerFieldEditor<T> extends
 	 */
 	protected abstract T loadItem(Preferences preferences);
 
+	protected IScopeContext getScopeContext() {
+		return new InstanceScope();
+	}
+
 	@Override
 	protected void doStore() {
-		InstanceScope instanceScope = new InstanceScope();
+		final IScopeContext instanceScope = getScopeContext();
 		Preferences node = instanceScope.getNode(getPreferenceName());
 		try {
 			node.removeNode();
 			if (!presentsDefaultValue()) {
 				node = instanceScope.getNode(getPreferenceName());
-				Iterator<T> it = getItems().iterator();
+				final Iterator<T> it = getItems().iterator();
 				while (it.hasNext()) {
-					T item = it.next();
+					final T item = it.next();
 					store(item, node.node(getId(item)));
 				}
 				node.flush();
 			}
-		} catch (BackingStoreException e) {
+		} catch (final BackingStoreException e) {
 		}
 	}
 
+	protected abstract void store(T item, Preferences node);
+
 	@Override
 	protected void doLoad() {
-		final Preferences node = new InstanceScope()
-				.getNode(getPreferenceName());
+		final Preferences node = getScopeContext().getNode(getPreferenceName());
 		try {
 			doLoad(node, node.childrenNames());
-		} catch (BackingStoreException e) {
+		} catch (final BackingStoreException e) {
 		}
 	}
 
 	@Override
 	protected void doLoadDefault() {
-		Preferences node = new DefaultScope().getNode(getPreferenceName());
+		final Preferences node = new DefaultScope()
+				.getNode(getPreferenceName());
 		try {
 			doLoad(node, node.childrenNames());
-		} catch (BackingStoreException e) {
+		} catch (final BackingStoreException e) {
 		}
 	}
 
@@ -98,9 +105,10 @@ public abstract class TableViewerFieldEditor<T> extends
 	 * @param instanceNode
 	 * @param childrenNames
 	 */
-	protected void doLoad(Preferences instanceNode, String... childrenNames) {
-		for (String key : childrenNames) {
-			T item = loadItem(instanceNode.node(key));
+	protected void doLoad(final Preferences instanceNode,
+			final String... childrenNames) {
+		for (final String key : childrenNames) {
+			final T item = loadItem(instanceNode.node(key));
 			if (item != null) {
 				add(item);
 			}
@@ -114,8 +122,8 @@ public abstract class TableViewerFieldEditor<T> extends
 	 * @param defaultNode
 	 * @param childrenNames
 	 */
-	protected void doLoadDefault(Preferences defaultNode,
-			String... childrenNames) {
+	protected void doLoadDefault(final Preferences defaultNode,
+			final String... childrenNames) {
 		doLoad();
 	}
 
