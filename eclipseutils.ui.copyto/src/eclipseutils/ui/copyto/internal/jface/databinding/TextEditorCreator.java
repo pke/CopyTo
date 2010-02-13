@@ -10,14 +10,28 @@
  ******************************************************************************/
 package eclipseutils.ui.copyto.internal.jface.databinding;
 
+import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Text;
 
 /**
- * Provides access to a <code>Builder</code>.
+ * Creates a text editor.
  * 
  * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
- * @see BuiltTitleAreaDialog
+ * 
  */
-public interface BuilderProvider {
-	Builder createBuilder(Composite parent);
+public class TextEditorCreator extends AbstractEditorCreator {
+
+	public IObservableValue create(final ControlCreator toolkit,
+			final Composite parent, final Object bean, final String property) {
+		final Text text = toolkit.createText(parent, null, SWT.BORDER);
+		return SWTObservables.observeText(text, SWT.Modify);
+	}
+
+	@Override
+	public boolean hasLabel() {
+		return true;
+	}
 }

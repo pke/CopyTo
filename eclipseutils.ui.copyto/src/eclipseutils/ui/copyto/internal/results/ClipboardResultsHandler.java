@@ -14,7 +14,7 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -32,27 +32,27 @@ import org.osgi.framework.FrameworkUtil;
 
 import eclipseutils.ui.copyto.api.Result;
 import eclipseutils.ui.copyto.api.Results;
-import eclipseutils.ui.copyto.api.ResultHandler;
 
-public class ClipboardResultsHandler implements ResultHandler {
+public class ClipboardResultsHandler {
 
 	public static final String CLIPBOARD_ALWAYS_OVERWRITE = "clipboard.alwaysOverwrite";
 
-	public void handleResults(Results results, IShellProvider shellProvider) {
+	public void handleResults(final Results results,
+			final IShellProvider shellProvider) {
 		final IPreferenceStore prefs = new ScopedPreferenceStore(
-				new InstanceScope(), FrameworkUtil.getBundle(getClass())
+				new ConfigurationScope(), FrameworkUtil.getBundle(getClass())
 						.getSymbolicName());
-		boolean overwrite = prefs.getBoolean(CLIPBOARD_ALWAYS_OVERWRITE);
+		final boolean overwrite = prefs.getBoolean(CLIPBOARD_ALWAYS_OVERWRITE);
 
 		final String joinedURLs = joinURLs(results.getSuccesses());
 		if (joinedURLs.length() > 0) {
 			final Clipboard clipboard = new Clipboard(Display.getDefault());
 			try {
 				if (!overwrite) {
-					TransferData[] availableTypes = clipboard
+					final TransferData[] availableTypes = clipboard
 							.getAvailableTypes();
 					if (availableTypes.length > 0) {
-						MessageDialogWithToggle dialog = MessageDialogWithToggle
+						final MessageDialogWithToggle dialog = MessageDialogWithToggle
 								.openYesNoQuestion(
 										shellProvider.getShell(),
 										"Confirm overwriting of clipboard content",

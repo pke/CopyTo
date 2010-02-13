@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2010 Philipp Kursawe.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *   Philipp Kursawe (phil.kursawe@gmail.com) - initial API and implementation
+ ******************************************************************************/
 package eclipseutils.ui.copyto.internal.preferences;
 
 import java.util.Collection;
@@ -20,8 +30,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+import osgiutils.services.DefaultCollectionServiceRunnable;
+import osgiutils.services.SimpleServiceRunnable;
+import osgiutils.services.Trackers;
 import eclipseutils.ui.copyto.internal.Target;
-import eclipseutils.ui.copyto.internal.TargetFactory;
+import eclipseutils.ui.copyto.internal.TargetService;
 import eclipseutils.ui.copyto.internal.jface.preferences.AbstractTableViewerFieldEditor;
 
 class TargetFieldEditor extends AbstractTableViewerFieldEditor<Target> {
@@ -47,7 +60,7 @@ class TargetFieldEditor extends AbstractTableViewerFieldEditor<Target> {
 
 	@Override
 	protected void createCustomButtons(final Composite parent) {
-		createTestButton(parent);
+		// createTestButton(parent);
 		createCopyButton(parent);
 		createPasteButton(parent);
 	}
@@ -160,7 +173,12 @@ class TargetFieldEditor extends AbstractTableViewerFieldEditor<Target> {
 
 	@Override
 	protected Collection<Target> loadItems() {
-		return TargetFactory.load();
+		return Trackers.run(TargetService.class,
+				new DefaultCollectionServiceRunnable<TargetService, Target>() {
+					public Collection<Target> run(final TargetService service) {
+						return service.findAll();
+					}
+				});
 	}
 
 	@Override
@@ -170,6 +188,12 @@ class TargetFieldEditor extends AbstractTableViewerFieldEditor<Target> {
 
 	@Override
 	protected void doStore() {
-		TargetFactory.save(getItems());
+		Trackers.run(TargetService.class,
+				new SimpleServiceRunnable<TargetService>() {
+					@Override
+					public void doRun(final TargetService service) {
+						service.save(getItems());
+					}
+				});
 	}
 }

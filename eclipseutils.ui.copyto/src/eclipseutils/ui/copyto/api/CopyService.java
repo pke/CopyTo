@@ -8,16 +8,28 @@
  * Contributors:
  *   Philipp Kursawe (phil.kursawe@gmail.com) - initial API and implementation
  ******************************************************************************/
-package eclipseutils.ui.copyto.internal.jface.databinding;
 
-import org.eclipse.swt.widgets.Composite;
+package eclipseutils.ui.copyto.api;
+
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * Provides access to a <code>Builder</code>.
- * 
  * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
- * @see BuiltTitleAreaDialog
+ * 
  */
-public interface BuilderProvider {
-	Builder createBuilder(Composite parent);
+public interface CopyService {
+	/**
+	 * This will try to copy all the <i>copyable</i> to a target.
+	 * 
+	 * <p>
+	 * It will inform ResultHandler about the results of the copy process.
+	 * 
+	 * @param targetId
+	 * @param monitor
+	 *            TODO
+	 * @param copyable
+	 * @return the results of the copy action
+	 */
+	Results copy(String targetId, IProgressMonitor monitor,
+			Copyable... copyables);
 }

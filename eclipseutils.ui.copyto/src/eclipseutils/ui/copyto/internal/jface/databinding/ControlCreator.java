@@ -10,14 +10,22 @@
  ******************************************************************************/
 package eclipseutils.ui.copyto.internal.jface.databinding;
 
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 /**
- * Provides access to a <code>Builder</code>.
+ * Unified interface for control creation that mirros the FormToolkit methods
+ * for creating widgets.
  * 
  * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
- * @see BuiltTitleAreaDialog
+ * 
  */
-public interface BuilderProvider {
-	Builder createBuilder(Composite parent);
+public interface ControlCreator {
+	Button createButton(Composite parent, String text, int style);
+
+	Text createText(final Composite parent, String text, int style);
+
+	Label createLabel(Composite parent, String text, int style);
 }

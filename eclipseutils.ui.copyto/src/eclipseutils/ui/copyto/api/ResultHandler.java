@@ -10,7 +10,6 @@
  ******************************************************************************/
 package eclipseutils.ui.copyto.api;
 
-import org.eclipse.jface.window.IShellProvider;
 
 /**
  * Performs some actions on a set of Results.
@@ -22,8 +21,6 @@ public interface ResultHandler {
 	/**
 	 * 
 	 * @param results
-	 * @param shellProvider
-	 * @uithread This method is called from the UI-Thread.
 	 */
-	void handleResults(Results results, IShellProvider shellProvider);
+	void handleResults(Results results);
 }

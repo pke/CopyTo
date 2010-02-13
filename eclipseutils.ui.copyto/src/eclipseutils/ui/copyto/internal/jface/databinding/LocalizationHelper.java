@@ -1,5 +1,17 @@
+/*******************************************************************************
+ * Copyright (c) 2010 Philipp Kursawe.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *   Philipp Kursawe (phil.kursawe@gmail.com) - initial API and implementation
+ ******************************************************************************/
 package eclipseutils.ui.copyto.internal.jface.databinding;
 
+import java.io.Serializable;
+import java.util.EventListener;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
@@ -27,16 +39,19 @@ public final class LocalizationHelper {
 	public static String localize(final Object bean, final String key,
 			final String defaultValue) {
 
-		for (Class<?> clazz = bean.getClass(); clazz == Object.class; clazz = clazz
+		for (Class<?> clazz = bean.getClass(); clazz != Object.class; clazz = clazz
 				.getSuperclass()) {
 			for (final Class<?> i : clazz.getInterfaces()) {
+				if (i == Serializable.class || i == EventListener.class) {
+					continue;
+				}
 				try {
 					return ResourceBundle.getBundle(i.getName()).getString(key);
 				} catch (final MissingResourceException e) {
 				}
 			}
 			try {
-				ResourceBundle.getBundle(clazz.getName()).getString(key);
+				return ResourceBundle.getBundle(clazz.getName()).getString(key);
 			} catch (final MissingResourceException e) {
 			}
 		}

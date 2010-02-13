@@ -10,14 +10,13 @@
  ******************************************************************************/
 package eclipseutils.ui.copyto.internal.jface.databinding;
 
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.swt.widgets.Composite;
 
-/**
- * Provides access to a <code>Builder</code>.
- * 
- * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
- * @see BuiltTitleAreaDialog
- */
-public interface BuilderProvider {
-	Builder createBuilder(Composite parent);
+
+public interface EditorCreator {
+	IObservableValue create(ControlCreator toolkit, Composite parent,
+			Object bean, String property);
+
+	boolean hasLabel();
 }

@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2010 Philipp Kursawe.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *   Philipp Kursawe (phil.kursawe@gmail.com) - initial API and implementation
+ ******************************************************************************/
 package eclipseutils.ui.copyto.internal;
 
 import java.beans.PropertyChangeListener;
@@ -8,6 +18,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
@@ -16,9 +27,15 @@ import java.util.UUID;
 import java.util.Map.Entry;
 
 import org.apache.commons.codec.binary.Base64;
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.model.WorkbenchAdapter;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
@@ -54,16 +71,39 @@ public class Target extends PlatformObject implements Serializable {
 				newValue);
 	}
 
+	public interface IconLoader {
+		void iconLoaded(ImageDescriptor descriptor);
+	}
+
+	interface IconResponse {
+		void iconLoaded(ImageDescriptor icon);
+	}
+
+	public ImageDescriptor getIcon() {
+		try {
+			// Do we have a local version cached?
+			// Simple return that
+
+			final URL iconUrl = new URL("http://" + new URL(getUrl()).getHost()
+					+ "/favicon.ico");
+			final ImageDescriptor imageDesc = ImageDescriptor
+					.createFromURL(iconUrl);
+		} catch (final MalformedURLException e) {
+		}
+		return null;
+	}
+
 	public Target() {
 		id = UUID.randomUUID().toString();
 		name = "unnamed";
 		url = "http://";
 	}
 
-	public Target(final Preferences node) {
+	public Target(final Preferences node, final IPath path) {
 		id = node.name();
 		name = node.get("label", null);
 		url = node.get("url", null);
+
 		try {
 			if (node.nodeExists("params")) {
 				final Preferences paramsNode = node.node("params");
@@ -75,9 +115,30 @@ public class Target extends PlatformObject implements Serializable {
 		}
 	}
 
+	static class TargetWorkenchAdapter extends WorkbenchAdapter {
+
+		private static TargetWorkenchAdapter instance;
+
+		static IWorkbenchAdapter getInstance() {
+			if (instance == null) {
+				instance = new TargetWorkenchAdapter();
+			}
+
+			return instance;
+		}
+
+		@Override
+		public String getLabel(final Object object) {
+			return ((Target) object).getName();
+		}
+	}
+
 	@SuppressWarnings("rawtypes")
 	@Override
 	public Object getAdapter(final Class adapter) {
+		if (adapter == IWorkbenchAdapter.class) {
+			return TargetWorkenchAdapter.getInstance();
+		}
 		return super.getAdapter(adapter);
 	}
 
@@ -158,19 +219,17 @@ public class Target extends PlatformObject implements Serializable {
 		}
 	}
 
-	public boolean isVisible() {
-		return true;
-	}
-
-	public void setVisible(final boolean visible) {
-
-	}
-
 	public void setConnectionStatus(final IStatus connectionStatus) {
 		this.connectionStatus = connectionStatus;
 	}
 
 	public IStatus getConnectionStatus() {
 		return connectionStatus;
+	}
+
+	public ParameterizedCommand createCommand(final Command command) {
+		final Map<String, String> params = new HashMap<String, String>();
+		params.put("id", getId());
+		return ParameterizedCommand.generateCommand(command, params);
 	}
 }
