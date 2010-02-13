@@ -2,29 +2,6 @@
 <?eclipse version="3.4"?>
 <fragment>
    <extension
-         point="org.eclipse.ui.menus">
-         <menuContribution
-            locationURI="menu:eclipseutils.ui.copyto.menu">
-         <command
-               commandId="eclipseutils.ui.copyto"
-               label="pastebin.ca"
-               style="push">
-            <parameter
-                  name="url"
-                  value="http://pastebin.ca/ffox-post.php">
-            </parameter>
-            <parameter
-                  name="params"
-                  value="apikey=Adjat1pmLJw3dWEV8nar95EMxjU1OrCc&amp;content=${copyto.text}">
-            </parameter>
-            <parameter
-                  name="id"
-                  value="eclipseutils.ui.copyto.pastebin.ca">
-            </parameter>
-         </command>
-      </menuContribution>
-   </extension>
-   <extension
          id="copyto.pastebin.ca"
          name="pastebin.ca"
          point="eclipseutils.ui.copyto.targets">
@@ -34,5 +11,11 @@
       <responseHandler
             class="eclipseutils.ui.copyto.responses.JsonResponseHandler">
       </responseHandler>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="eclipseutils.ui.copyto.pastebin.ca.internal.PreferenceInitializer">
+      </initializer>
    </extension>
 </fragment>

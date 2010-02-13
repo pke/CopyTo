@@ -2,31 +2,6 @@
 <?eclipse version="3.4"?>
 <fragment>
    <extension
-         point="org.eclipse.ui.menus">
-      <menuContribution
-            locationURI="menu:eclipseutils.ui.copyto.menu">
-         <command
-               commandId="eclipseutils.ui.copyto"
-               icon="icons/favicon.ico"
-               id="eclipseutils.ui.copyto.pastebin.com"
-               label="pastebin.com"
-               style="push">
-            <parameter
-                  name="url"
-                  value="http://pastebin.com/pastebin.php">
-            </parameter>
-            <parameter
-                  name="params"
-                  value="code2=${copyto.text}&amp;paste=Send&amp;format=${pastebin.format:${copyto.mime-type}}">
-            </parameter>
-            <parameter
-                  name="id"
-                  value="eclipseutils.ui.copyto.pastebin.com">
-            </parameter>
-         </command>
-      </menuContribution>
-   </extension>
-   <extension
          id="eclipseutils.ui.copyto.pastebin.com"
          point="eclipseutils.ui.copyto.targets">
       <paramInfos
