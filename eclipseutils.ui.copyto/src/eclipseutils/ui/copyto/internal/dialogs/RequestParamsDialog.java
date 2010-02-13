@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.osgi.framework.FrameworkUtil;
 
-import eclipseutils.ui.copyto.internal.CopyToHandler;
+import eclipseutils.ui.copyto.internal.commands.CopyToHandler;
 
 public class RequestParamsDialog extends TitleAreaDialog {
 	private final Map<String, ?> params;

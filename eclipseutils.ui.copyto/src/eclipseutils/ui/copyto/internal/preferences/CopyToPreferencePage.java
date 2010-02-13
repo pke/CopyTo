@@ -10,9 +10,6 @@
  ******************************************************************************/
 package eclipseutils.ui.copyto.internal.preferences;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -25,11 +22,10 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.model.WorkbenchAdapter;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
-import org.eclipse.ui.services.IServiceScopes;
 import org.osgi.framework.FrameworkUtil;
 
-import eclipseutils.ui.copyto.internal.CopyToHandler;
-import eclipseutils.ui.copyto.internal.Target;
+import eclipseutils.ui.copyto.internal.api.Target;
+import eclipseutils.ui.copyto.internal.commands.CopyToHandler;
 import eclipseutils.ui.copyto.internal.results.ClipboardResultsHandler;
 
 /**
@@ -79,9 +75,7 @@ public class CopyToPreferencePage extends FieldEditorPreferencePage implements
 		if (result) {
 			final ICommandService cs = (ICommandService) workbench
 					.getService(ICommandService.class);
-			final Map<Object, Object> filter = new HashMap<Object, Object>();
-			filter.put(IServiceScopes.WORKBENCH_SCOPE, workbench);
-			cs.refreshElements(CopyToHandler.COMMAND_ID, filter);
+			cs.refreshElements(CopyToHandler.COMMAND_ID, null);
 		}
 		return result;
 	}

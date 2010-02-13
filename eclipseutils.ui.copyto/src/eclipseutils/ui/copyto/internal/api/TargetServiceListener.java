@@ -8,28 +8,21 @@
  * Contributors:
  *   Philipp Kursawe (phil.kursawe@gmail.com) - initial API and implementation
  ******************************************************************************/
-package eclipseutils.ui.copyto.internal;
 
-import org.eclipse.jface.text.ITextSelection;
+package eclipseutils.ui.copyto.internal.api;
 
-import eclipseutils.ui.copyto.api.Copyable;
+import java.util.Collection;
 
-public class TextSelectionCopyable implements Copyable {
-	private final ITextSelection selection;
 
-	public TextSelectionCopyable(final ITextSelection selection) {
-		this.selection = selection;
-	}
-
-	public String getText() {
-		return this.selection.getText();
-	}
-
-	public String getMimeType() {
-		return "plain/text"; //$NON-NLS-1$
-	}
-
-	public Object getSource() {
-		return this.selection;
-	}
+/**
+ * Notified by the TargetService about changes in targets.
+ * 
+ * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
+ * 
+ */
+public interface TargetServiceListener {
+	/**
+	 * @param changedTargets
+	 */
+	void targetsChanged(Collection<Target> changedTargets);
 }

@@ -16,6 +16,7 @@ import java.util.Map.Entry;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -25,6 +26,9 @@ import org.osgi.framework.FrameworkUtil;
 import eclipseutils.ui.copyto.api.Copyable;
 import eclipseutils.ui.copyto.api.ResponseHandler;
 import eclipseutils.ui.copyto.api.Result;
+import eclipseutils.ui.copyto.internal.api.Target;
+import eclipseutils.ui.copyto.internal.commands.CopyToHandler;
+import eclipseutils.ui.copyto.internal.impl.ResultImpl;
 import eclipseutils.ui.copyto.responses.RedirectResponseHandler;
 
 /**
@@ -33,12 +37,35 @@ import eclipseutils.ui.copyto.responses.RedirectResponseHandler;
  * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
  * 
  */
-public abstract class HttpCopyToHandler implements Handler {
+public class HttpCopyToHandler {
 
 	public static final String symbolicName = FrameworkUtil.getBundle(
 			HttpCopyToHandler.class).getSymbolicName();
 
 	private ResponseHandler responseHandler;
+	private final HttpMethod method;
+	private final String id;
+
+	public HttpCopyToHandler(final String id, final String url) {
+		this.id = id;
+		this.method = new PostMethod(url);
+	}
+
+	protected HttpMethod getMethod() {
+		return this.method;
+	}
+
+	public String getId() {
+		return this.id;
+	}
+
+	public String getHost() {
+		try {
+			return getMethod().getURI().toString();
+		} catch (final URIException e) {
+			return "Unknown";
+		}
+	}
 
 	private ResponseHandler getResponseHandler() {
 		if (null == responseHandler) {
@@ -64,13 +91,11 @@ public abstract class HttpCopyToHandler implements Handler {
 		return responseHandler;
 	}
 
-	protected abstract HttpMethod getMethod();
-
-	public Result copy(final Copyable copyable,
+	public Result copy(final Copyable copyable, final Target target,
 			final Map<String, String> params, final IProgressMonitor monitor) {
 		final HttpMethod method = getMethod();
 
-		for (Entry<String, String> entry : params.entrySet()) {
+		for (final Entry<String, String> entry : params.entrySet()) {
 			final String name = entry.getKey();
 			if (method instanceof PostMethod) {
 				((PostMethod) method).addParameter(name, entry.getValue());
@@ -83,9 +108,9 @@ public abstract class HttpCopyToHandler implements Handler {
 			final int status = httpClient.executeMethod(method);
 			// TODO: Handle status here
 			final URL location = getResponseHandler().getLocation(method);
-			return new ResultImpl(copyable, location);
+			return new ResultImpl(copyable, target, location);
 		} catch (final Throwable t) {
-			return new ResultImpl(copyable, t);
+			return new ResultImpl(copyable, target, t);
 		}
 	}
 

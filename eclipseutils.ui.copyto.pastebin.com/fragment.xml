@@ -52,4 +52,10 @@
             resolver="eclipseutils.ui.copyto.pastebin.com.internal.FormatResolver"
             supportsArgument="true"/>      
    </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="eclipseutils.ui.copyto.pastebin.com.internal.PreferenceInitializer">
+      </initializer>
+   </extension>
 </fragment>

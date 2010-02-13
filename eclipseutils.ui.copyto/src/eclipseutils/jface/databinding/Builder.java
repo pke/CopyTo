@@ -8,28 +8,27 @@
  * Contributors:
  *   Philipp Kursawe (phil.kursawe@gmail.com) - initial API and implementation
  ******************************************************************************/
-package eclipseutils.ui.copyto.internal;
+package eclipseutils.jface.databinding;
 
-import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.jface.dialogs.TitleAreaDialog;
 
-import eclipseutils.ui.copyto.api.Copyable;
 
-public class TextSelectionCopyable implements Copyable {
-	private final ITextSelection selection;
 
-	public TextSelectionCopyable(final ITextSelection selection) {
-		this.selection = selection;
-	}
+/**
+ * A builder for creating a UI.
+ * 
+ * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
+ * 
+ */
+public interface Builder {
+	Builder field(String property);
 
-	public String getText() {
-		return this.selection.getText();
-	}
+	Builder field(String property, FieldOptions fieldOptions);
 
-	public String getMimeType() {
-		return "plain/text"; //$NON-NLS-1$
-	}
+	Builder newLine();
 
-	public Object getSource() {
-		return this.selection;
-	}
+	Builder addDialogSupport(TitleAreaDialog dialog, IObservableValue target);
+
+	Builder updateModels();
 }

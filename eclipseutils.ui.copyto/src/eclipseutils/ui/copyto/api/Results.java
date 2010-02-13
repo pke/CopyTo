@@ -2,6 +2,8 @@ package eclipseutils.ui.copyto.api;
 
 import java.util.Collection;
 
+import eclipseutils.ui.copyto.internal.api.Target;
+
 /**
  * A set of results of a copy action.
  * 
@@ -20,4 +22,8 @@ public interface Results {
 	 */
 	Collection<Result> getFailures();
 
+	/**
+	 * @return the target this result is for
+	 */
+	Target getTarget();
 }

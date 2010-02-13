@@ -31,17 +31,17 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.osgi.framework.FrameworkUtil;
 
-import eclipseutils.ui.copyto.internal.Target;
-import eclipseutils.ui.copyto.internal.jface.databinding.Builder;
-import eclipseutils.ui.copyto.internal.jface.databinding.BuiltTitleAreaDialog;
-import eclipseutils.ui.copyto.internal.jface.databinding.FieldOptions;
-import eclipseutils.ui.copyto.internal.jface.databinding.GridLayoutBuilder;
-import eclipseutils.ui.copyto.internal.jface.databinding.validators.AbstractValidator;
-import eclipseutils.ui.copyto.internal.jface.databinding.validators.CompoundValidator;
-import eclipseutils.ui.copyto.internal.jface.databinding.validators.ListValidator;
-import eclipseutils.ui.copyto.internal.jface.databinding.validators.NotEmptyValidator;
-import eclipseutils.ui.copyto.internal.jface.databinding.validators.NotValidator;
-import eclipseutils.ui.copyto.internal.jface.databinding.validators.URLValidator;
+import eclipseutils.jface.databinding.Builder;
+import eclipseutils.jface.databinding.BuiltTitleAreaDialog;
+import eclipseutils.jface.databinding.FieldOptions;
+import eclipseutils.jface.databinding.GridLayoutBuilder;
+import eclipseutils.jface.databinding.validators.AbstractValidator;
+import eclipseutils.jface.databinding.validators.CompoundValidator;
+import eclipseutils.jface.databinding.validators.ListValidator;
+import eclipseutils.jface.databinding.validators.NotEmptyValidator;
+import eclipseutils.jface.databinding.validators.NotValidator;
+import eclipseutils.jface.databinding.validators.URLValidator;
+import eclipseutils.ui.copyto.internal.api.Target;
 
 /**
  * TODO: Add validation of URL that it contains at least ${copyto.text} Make
@@ -85,6 +85,8 @@ class EditDialog extends BuiltTitleAreaDialog {
 	}
 
 	private static final String COPYTO_TEXT_VAR = "${copyto.text}";
+	private static final String[] PROPOSALS = new String[] { COPYTO_TEXT_VAR,
+			"${copyto.mime-type}", "${copyto.source}" };
 	private final Target target;
 	private final HashSet<String> existingItems;
 	private static final IValidator urlValidator = new CompoundValidator(
@@ -130,8 +132,7 @@ class EditDialog extends BuiltTitleAreaDialog {
 	}
 
 	final static SimpleContentProposalProvider proposalProvider = new SimpleContentProposalProvider(
-			new String[] { COPYTO_TEXT_VAR, "${copyto.mime-type}",
-					"${copyto.source}" });
+			PROPOSALS);
 
 	public Builder createBuilder(final Composite parent) {
 		final IValidator labelValidator = new CompoundValidator(
@@ -140,6 +141,19 @@ class EditDialog extends BuiltTitleAreaDialog {
 						new ListValidator(existingItems),
 						"A Target with that name already exists. It's recommended to choose another name.",
 						IStatus.WARNING));
+		/*
+		final List<IStringVariable> vars = Arrays.asList(VariablesPlugin
+				.getDefault().getStringVariableManager().getVariables());
+		final String varNames[] = new String[vars.size() + PROPOSALS.length];
+		for (int i = 0; i < vars.size(); ++i) {
+			varNames[i] = vars.get(i).getName();
+		}
+		for (int i = 0; i < PROPOSALS.length; ++i) {
+			varNames[vars.size() + i] = PROPOSALS[i];
+		}
+		
+		proposalProvider.setProposals(varNames);
+		*/
 
 		return new GridLayoutBuilder(parent, target,
 				UpdateValueStrategy.POLICY_CONVERT).field("name",

@@ -14,6 +14,8 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.IStatus;
 
+import eclipseutils.ui.copyto.internal.api.Target;
+
 /**
  * Result of a copyTo action.
  * 
@@ -22,9 +24,9 @@ import org.eclipse.core.runtime.IStatus;
  */
 public interface Result {
 	/**
-	 * @return the name of the location. (ie. <code>pastebin.com</code>)
+	 * @return the target.
 	 */
-	String getTargetName();
+	Target getTarget();
 
 	/**
 	 * @return the Copyable used.

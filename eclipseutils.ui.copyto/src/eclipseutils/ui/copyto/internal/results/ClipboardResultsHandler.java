@@ -57,9 +57,11 @@ public class ClipboardResultsHandler {
 										shellProvider.getShell(),
 										"Confirm overwriting of clipboard content",
 										NLS.bind(
-												"Your selection was successfully copied to the URL\n{0}\nand is ready to be copied into your clipboard.\n\nHowever, the clipboard is not empty.\nDo you want to replace its content?",
-												joinedURLs), "Always", false,
-										null, null);
+												"Your selection was successfully copied to \"{0}\" and you can access the result at:\n{1}\n\nIt's ready to be copied into your clipboard.\n\nHowever, the clipboard is not empty.\nDo you want to replace its content?",
+												results.getTarget().getName(),
+												joinedURLs),
+										"Always overwrite clipboard content",
+										false, null, null);
 						if (IDialogConstants.YES_ID != dialog.getReturnCode()) {
 							return;
 						}

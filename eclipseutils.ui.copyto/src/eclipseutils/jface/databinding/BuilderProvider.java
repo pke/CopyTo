@@ -8,28 +8,18 @@
  * Contributors:
  *   Philipp Kursawe (phil.kursawe@gmail.com) - initial API and implementation
  ******************************************************************************/
-package eclipseutils.ui.copyto.internal;
+package eclipseutils.jface.databinding;
 
-import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.swt.widgets.Composite;
 
-import eclipseutils.ui.copyto.api.Copyable;
 
-public class TextSelectionCopyable implements Copyable {
-	private final ITextSelection selection;
 
-	public TextSelectionCopyable(final ITextSelection selection) {
-		this.selection = selection;
-	}
-
-	public String getText() {
-		return this.selection.getText();
-	}
-
-	public String getMimeType() {
-		return "plain/text"; //$NON-NLS-1$
-	}
-
-	public Object getSource() {
-		return this.selection;
-	}
+/**
+ * Provides access to a <code>Builder</code>.
+ * 
+ * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
+ * @see BuiltTitleAreaDialog
+ */
+public interface BuilderProvider {
+	Builder createBuilder(Composite parent);
 }
