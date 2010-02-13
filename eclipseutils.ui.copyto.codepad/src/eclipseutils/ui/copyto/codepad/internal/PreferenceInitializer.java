@@ -15,7 +15,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	@Override
 	public void initializeDefaultPreferences() {
 		final Preferences node = new ConfigurationScope()
-				.getNode("eclipseutils.ui.copyto");
+				.getNode(FrameworkUtil.getBundle(getClass()).getSymbolicName());
 		String symbolicName = "codepad.org";
 		String firstRun = symbolicName + ".firstRun";
 		if (node.getBoolean(firstRun, true)) {

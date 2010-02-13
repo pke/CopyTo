@@ -26,7 +26,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	@SuppressWarnings("nls")
 	@Override
 	public void initializeDefaultPreferences() {
-		final Preferences node = new ConfigurationScope().getNode("eclipseutils.ui.copyto");
+		// This will give a node for our host bundle
+		final Preferences node = new ConfigurationScope().getNode(FrameworkUtil.getBundle(getClass()).getSymbolicName());
 		String symbolicName = "pastebin.com";
 		String firstRun = symbolicName + ".firstRun";
 		if (node.getBoolean(firstRun, true)) {
