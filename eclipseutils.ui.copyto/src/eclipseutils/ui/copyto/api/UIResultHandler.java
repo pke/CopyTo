@@ -8,24 +8,23 @@
  * Contributors:
  *   Philipp Kursawe (phil.kursawe@gmail.com) - initial API and implementation
  ******************************************************************************/
-package eclipseutils.jface.databinding;
 
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
+package eclipseutils.ui.copyto.api;
+
+import org.eclipse.jface.window.IShellProvider;
 
 /**
- * Unified interface for control creation that mirros the FormToolkit methods
- * for creating widgets.
+ * Results handler that wants to display something in the UI.
  * 
  * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
  * 
  */
-public interface ControlCreator {
-	Button createButton(Composite parent, String text, int style);
-
-	Text createText(final Composite parent, String text, int style);
-
-	Label createLabel(Composite parent, String text, int style);
+public interface UIResultHandler {
+	/**
+	 * 
+	 * @param result
+	 * @param shellProvider
+	 * @uithread This method is called from the UI-Thread.
+	 */
+	void handleResults(Results result, IShellProvider shellProvider);
 }

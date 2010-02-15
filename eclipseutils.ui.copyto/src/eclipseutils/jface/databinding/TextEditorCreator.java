@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Text;
  */
 public class TextEditorCreator extends AbstractEditorCreator {
 
-	public IObservableValue create(final ControlCreator toolkit,
+	public IObservableValue create(final ControlToolkit toolkit,
 			final Composite parent, final Object bean, final String property) {
 		final Text text = toolkit.createText(parent, null, SWT.BORDER);
 		return SWTObservables.observeText(text, SWT.Modify);

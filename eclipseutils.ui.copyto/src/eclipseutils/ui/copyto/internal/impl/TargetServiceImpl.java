@@ -33,17 +33,24 @@ import eclipseutils.ui.copyto.internal.api.TargetService;
 import eclipseutils.ui.copyto.internal.api.TargetServiceListener;
 import eclipseutils.ui.copyto.internal.commands.CopyToHandler;
 
+/**
+ * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
+ * 
+ */
 public class TargetServiceImpl implements TargetService {
 
 	private static final String QUALIFIER = FrameworkUtil.getBundle(
 			Target.class).getSymbolicName()
-			+ "/targets";
+			+ "/targets"; //$NON-NLS-1$
 
+	/**
+	 * 
+	 */
 	public TargetServiceImpl() {
 		// This will trigger PreferenceInitializers to run
 		final ScopedPreferenceStore preferenceStore = new ScopedPreferenceStore(
 				new ConfigurationScope(), QUALIFIER);
-		preferenceStore.getBoolean("test");
+		preferenceStore.getBoolean("test"); //$NON-NLS-1$
 	}
 
 	public Target find(final String id) {
@@ -63,7 +70,7 @@ public class TargetServiceImpl implements TargetService {
 	public Target getLastSelected() {
 		final IEclipsePreferences preferences = new ConfigurationScope()
 				.getNode(QUALIFIER);
-		final String id = preferences.get("lastId", null);
+		final String id = preferences.get("lastId", null); //$NON-NLS-1$
 		if (id != null) {
 			return find(id);
 		}
@@ -74,9 +81,9 @@ public class TargetServiceImpl implements TargetService {
 		final IEclipsePreferences preferences = new ConfigurationScope()
 				.getNode(QUALIFIER);
 		if (id == null) {
-			preferences.remove("lastId");
+			preferences.remove("lastId"); //$NON-NLS-1$
 		} else {
-			preferences.put("lastId", id);
+			preferences.put("lastId", id); //$NON-NLS-1$
 		}
 		try {
 			preferences.flush();
@@ -165,7 +172,8 @@ public class TargetServiceImpl implements TargetService {
 						}
 					} catch (final Throwable t) {
 						LogHelper.error(t,
-								"Error calling TargetServiceListener");
+								"Error calling TargetServiceListener in %s", //$NON-NLS-1$
+								ref.getBundle().getSymbolicName());
 					} finally {
 						context.ungetService(ref);
 					}

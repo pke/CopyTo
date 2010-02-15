@@ -21,8 +21,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
-
-
 /**
  * Abstract subclass of <code>TitleAreaDialog</code> that creates its content
  * using a <code>Builder</code> provided by the implementor of this class.
@@ -35,6 +33,9 @@ public abstract class BuiltTitleAreaDialog extends TitleAreaDialog implements
 
 	private Builder builder;
 
+	/**
+	 * @param parentShell
+	 */
 	public BuiltTitleAreaDialog(final Shell parentShell) {
 		super(parentShell);
 	}

@@ -25,16 +25,22 @@
             <visibleWhen
                   checkEnabled="false">
                <reference
-                     definitionId="eclipseutils.ui.copyto.multiItemsVisible">
+                     definitionId="eclipseutils.ui.copyto.multipleItemsVisible">
                </reference>
             </visibleWhen>
             <dynamic
                   class="eclipseutils.ui.copyto.internal.ui.TargetMenuItems"
                   id="eclipseutils.ui.copyto.editmenu">
+               <visibleWhen
+                     checkEnabled="false">
+                  <reference
+                        definitionId="eclipseutils.ui.copyto.isCopyable">
+                  </reference>
+               </visibleWhen>
             </dynamic>
             <command
                   commandId="org.eclipse.ui.window.preferences"
-                  label="Configure..."
+                  label="%configure.label"
                   style="push">
                <parameter
                      name="preferencePageId"
@@ -62,16 +68,22 @@
             <visibleWhen
                   checkEnabled="false">
                <reference
-                     definitionId="eclipseutils.ui.copyto.multiItemsVisible">
+                     definitionId="eclipseutils.ui.copyto.multipleItemsVisible">
                </reference>
             </visibleWhen>
             <dynamic
                   class="eclipseutils.ui.copyto.internal.ui.TargetMenuItems"
                   id="eclipseutils.ui.copyto.editmenu">
+               <visibleWhen
+                     checkEnabled="false">
+                  <reference
+                        definitionId="eclipseutils.ui.copyto.isCopyable">
+                  </reference>
+               </visibleWhen>
             </dynamic>
             <command
                   commandId="org.eclipse.ui.window.preferences"
-                  label="Configure..."
+                  label="%configure.label"
                   style="push">
                <parameter
                      name="preferencePageId"
@@ -83,6 +95,7 @@
       <menuContribution locationURI="toolbar:org.eclipse.ui.workbench.file?before=print">
             <command
                   commandId="eclipseutils.ui.copyto"
+                  disabledIcon="icons/d16/copyto.png"
                   icon="icons/e16/copyto.png"
                   id="eclipseutils.ui.copyto.dropdown"
                   label="%menu.label"
@@ -103,7 +116,7 @@
          </dynamic>
          <command
                commandId="org.eclipse.ui.window.preferences"
-               label="Configure..."
+               label="%configure.label"
                style="push">
             <parameter
                   name="preferencePageId"
@@ -135,6 +148,11 @@
       <handler
             class="eclipseutils.ui.copyto.internal.commands.CopyToHandler"
             commandId="eclipseutils.ui.copyto">
+         <enabledWhen>
+            <reference
+                  definitionId="eclipseutils.ui.copyto.isCopyable">
+            </reference>
+         </enabledWhen>
       </handler>
    </extension>
    <extension
@@ -184,12 +202,6 @@
          </with>
       </definition>
       <definition
-            id="eclipseutils.ui.copyto.no.targets">
-         <count
-               value="!">
-         </count>
-      </definition>
-      <definition
             id="eclipseutils.ui.copyto.singleItemVisible">
          <and>
             <reference
@@ -201,12 +213,15 @@
          </and>
       </definition>
       <definition
-            id="eclipseutils.ui.copyto.multiItemsVisible">
-         <not>
+            id="eclipseutils.ui.copyto.multipleItemsVisible">
+         <and>
             <reference
-                  definitionId="eclipseutils.ui.copyto.singleItemVisible">
+                  definitionId="eclipseutils.ui.copyto.isCopyable">
             </reference>
-         </not>
+            <reference
+                  definitionId="eclipseutils.ui.copyto.more.targets">
+            </reference>
+         </and>
       </definition>
    </extension>
    <extension
@@ -236,5 +251,12 @@
                priorityLevel="workbench">
          </variable>
       </sourceProvider>
+   </extension>
+   <extension
+         point="eclipseutils.ui.copyto.resultHandlers">
+      <resultHandler
+            class="eclipseutils.ui.copyto.internal.results.ClipboardResultsHandler"
+            name="Copy to clipboard">
+      </resultHandler>
    </extension>
 </plugin>

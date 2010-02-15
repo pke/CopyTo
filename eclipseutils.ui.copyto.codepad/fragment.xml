@@ -8,8 +8,8 @@
             hidden="code,submit">
          <paramInfo
                default="false"
-               label="Run"
-               description="Should the code be run after pasting?"
+               label="%run.label"
+               description="%run.description"
                name="run"
                type="java.lang.Boolean">
          </paramInfo>
@@ -18,7 +18,7 @@
    <extension
          point="org.eclipse.core.variables.dynamicVariables">
       <variable
-            description="codepad Language"
+            description="%langVariable.description"
             name="codepad.lang"
             resolver="eclipseutils.ui.copyto.codepad.internal.CodepadLanguageResolver"
             supportsArgument="true"/>

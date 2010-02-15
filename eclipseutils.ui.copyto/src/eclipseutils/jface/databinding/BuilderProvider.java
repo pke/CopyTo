@@ -12,8 +12,6 @@ package eclipseutils.jface.databinding;
 
 import org.eclipse.swt.widgets.Composite;
 
-
-
 /**
  * Provides access to a <code>Builder</code>.
  * 
@@ -21,5 +19,9 @@ import org.eclipse.swt.widgets.Composite;
  * @see BuiltTitleAreaDialog
  */
 public interface BuilderProvider {
+	/**
+	 * @param parent
+	 * @return a builder, never <code>null</code>.
+	 */
 	Builder createBuilder(Composite parent);
 }

@@ -30,12 +30,12 @@ import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.FieldEditor;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -47,6 +47,8 @@ import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -154,10 +156,21 @@ public abstract class AbstractTableViewerFieldEditor<T> extends FieldEditor {
 			table.setLinesVisible(true);
 			table.setHeaderVisible(true);
 			table.setFont(parent.getFont());
+
+			table.addKeyListener(new KeyAdapter() {
+				@Override
+				public void keyPressed(final KeyEvent e) {
+					if (e.keyCode == SWT.DEL) {
+						removeSelected();
+					}
+				}
+			});
+
 			ctx = new DataBindingContext();
 			table.addDisposeListener(new DisposeListener() {
 				public void widgetDisposed(final DisposeEvent e) {
 					ctx.dispose();
+					viewer = null;
 				}
 			});
 			final String[] columnNames = getColumnNames();
@@ -176,11 +189,6 @@ public abstract class AbstractTableViewerFieldEditor<T> extends FieldEditor {
 			items = new WritableList();
 			ViewerSupport.bind(viewer, items, BeanProperties
 					.values(columnNames));
-			table.addDisposeListener(new DisposeListener() {
-				public void widgetDisposed(final DisposeEvent event) {
-					viewer = null;
-				}
-			});
 			getViewer().addDoubleClickListener(new IDoubleClickListener() {
 				public void doubleClick(final DoubleClickEvent event) {
 					editSelection();
@@ -282,8 +290,7 @@ public abstract class AbstractTableViewerFieldEditor<T> extends FieldEditor {
 		if (isReadOnly()) {
 			return;
 		}
-		final Button button = createPushButton(parent, JFaceResources
-				.getString("ListEditor.add"));
+		final Button button = createPushButton(parent, "Ne&w..."); //$NON-NLS-1$
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
@@ -299,25 +306,23 @@ public abstract class AbstractTableViewerFieldEditor<T> extends FieldEditor {
 		if (isReadOnly()) {
 			return;
 		}
-		final Button button = createPushButton(parent, JFaceResources
-				.getString("ListEditor.remove"));
+		final Button button = createPushButton(parent, "&Remove"); //$NON-NLS-1$
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				visitViewerSelection("Removing selected elements",
-						new Visitor<T>() {
-							public void visit(final T item,
-									final IProgressMonitor monitor) {
-								remove(item);
-							}
-						});
+				if (MessageDialog.openQuestion(button.getShell(),
+						Messages.AbstractTableViewerFieldEditor_Remove_Title,
+						Messages.AbstractTableViewerFieldEditor_Remove_Message)) {
+					removeSelected();
+				}
 			}
 		});
 		enableWithSelection(button, SWT.MULTI | SWT.SINGLE);
 	}
 
 	protected void createEditButton(final Composite parent) {
-		final Button editButton = createPushButton(parent, "Edit...");
+		final Button editButton = createPushButton(parent,
+				Messages.AbstractTableViewerFieldEditor_Edit_Label);
 		editButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
@@ -492,5 +497,16 @@ public abstract class AbstractTableViewerFieldEditor<T> extends FieldEditor {
 
 	protected boolean isReadOnly() {
 		return ((flags & READ_ONLY) == READ_ONLY);
+	}
+
+	private void removeSelected() {
+		visitViewerSelection(
+				Messages.AbstractTableViewerFieldEditor_Remove_JobName,
+				new Visitor<T>() {
+					public void visit(final T item,
+							final IProgressMonitor monitor) {
+						remove(item);
+					}
+				});
 	}
 }

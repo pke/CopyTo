@@ -43,7 +43,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
 
-
+import eclipseutils.jface.databinding.FieldOptions.ControlCustomizer;
 
 /**
  * An abstract implementation of the <code>Builder</code> interface.
@@ -66,16 +66,29 @@ public abstract class AbstractBuilder implements Builder {
 	private final Composite parent;
 	private final Object bean;
 	private final int targetToModelPolicy;
-	private final ControlCreator toolkit;
+	private final ControlToolkit creator;
 	private int fields;
 	protected final DataBindingContext ctx;
 
+	/**
+	 * Creates the builder using the SWTControlCreator.
+	 * 
+	 * @param parent
+	 * @param bean
+	 * @param targetToModelPolicy
+	 */
 	public AbstractBuilder(final Composite parent, final Object bean,
 			final int targetToModelPolicy) {
-		this(SWTControlCreator.getInstance(), parent, bean, targetToModelPolicy);
+		this(SWTControlToolkit.getInstance(), parent, bean, targetToModelPolicy);
 	}
 
-	public AbstractBuilder(final ControlCreator toolkit,
+	/**
+	 * @param creator
+	 * @param parent
+	 * @param bean
+	 * @param targetToModelPolicy
+	 */
+	public AbstractBuilder(final ControlToolkit creator,
 			final Composite parent, final Object bean,
 			final int targetToModelPolicy) {
 		ctx = new DataBindingContext();
@@ -87,7 +100,7 @@ public abstract class AbstractBuilder implements Builder {
 		this.parent = parent;
 		this.bean = bean;
 		this.targetToModelPolicy = targetToModelPolicy;
-		this.toolkit = toolkit;
+		this.creator = creator;
 	}
 
 	public Builder field(final String property, final FieldOptions fieldOptions) {
@@ -97,15 +110,15 @@ public abstract class AbstractBuilder implements Builder {
 			return this;
 		}
 		final Object type = beanValueProperty.getValueType();
-		final EditorCreator creator = creators.get(type);
-		if (creator != null) {
-			final Label label = creator.hasLabel() ? toolkit.createLabel(
-					parent, LocalizationHelper.getLabel(bean, property) + ":",
+		final EditorCreator editorCreator = creators.get(type);
+		if (editorCreator != null) {
+			final Label label = editorCreator.hasLabel() ? creator.createLabel(
+					parent, LocalizationHelper.getLabel(bean, property) + ":", //$NON-NLS-1$
 					SWT.LEFT) : null;
 			if (label != null) {
 				AbstractEditorCreator.setToolTip(label, bean, property);
 			}
-			final IObservableValue control = creator.create(toolkit, parent,
+			final IObservableValue control = editorCreator.create(creator, parent,
 					bean, property);
 			if (control != null) {
 				++fields;
@@ -124,6 +137,11 @@ public abstract class AbstractBuilder implements Builder {
 				final Control controlWidget = getControl(control);
 				if (controlWidget != null && fieldOptions != null) {
 					addContentProposal(controlWidget, fieldOptions);
+					final ControlCustomizer controlCustomizer = fieldOptions
+							.getControlCustomizer();
+					if (controlCustomizer != null) {
+						controlCustomizer.customizeControl(controlWidget);
+					}
 				}
 				applyLayout(label, controlWidget);
 			} else {

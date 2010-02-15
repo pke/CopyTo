@@ -9,12 +9,11 @@ import org.eclipse.ui.ISources;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceRegistration;
 
+import osgiutils.services.DefaultCollectionServiceRunnable;
+import osgiutils.services.Trackers;
 import eclipseutils.ui.copyto.internal.api.Target;
 import eclipseutils.ui.copyto.internal.api.TargetService;
 import eclipseutils.ui.copyto.internal.api.TargetServiceListener;
-
-import osgiutils.services.DefaultCollectionServiceRunnable;
-import osgiutils.services.Trackers;
 
 /**
  * Source provider for copyto.
@@ -30,7 +29,7 @@ import osgiutils.services.Trackers;
 public class SourceProviderImpl extends AbstractSourceProvider implements
 		TargetServiceListener {
 
-	private static final String COPYTO_TARGETS = "copyto.targets";
+	private static final String COPYTO_TARGETS = "copyto.targets"; //$NON-NLS-1$
 	private final ServiceRegistration serviceRegistration;
 
 	/**

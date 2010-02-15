@@ -15,10 +15,14 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Control;
 
-
-
+/**
+ * Base class that contains tooltip handling.
+ * 
+ * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
+ * 
+ */
 public abstract class AbstractEditorCreator implements EditorCreator {
-	private static final String LABEL_TOOLTIP = "label.tooltip";
+	private static final String LABEL_TOOLTIP = "label.tooltip"; //$NON-NLS-1$
 
 	/**
 	 * @param control

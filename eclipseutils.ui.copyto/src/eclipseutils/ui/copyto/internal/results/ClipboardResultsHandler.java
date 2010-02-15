@@ -32,11 +32,23 @@ import org.osgi.framework.FrameworkUtil;
 
 import eclipseutils.ui.copyto.api.Result;
 import eclipseutils.ui.copyto.api.Results;
+import eclipseutils.ui.copyto.api.UIResultHandler;
 
-public class ClipboardResultsHandler {
+/**
+ * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
+ * 
+ */
+public class ClipboardResultsHandler implements UIResultHandler {
 
-	public static final String CLIPBOARD_ALWAYS_OVERWRITE = "clipboard.alwaysOverwrite";
+	/**
+	 * 
+	 */
+	public static final String CLIPBOARD_ALWAYS_OVERWRITE = "clipboard.alwaysOverwrite"; //$NON-NLS-1$
 
+	/**
+	 * @param results
+	 * @param shellProvider
+	 */
 	public void handleResults(final Results results,
 			final IShellProvider shellProvider) {
 		final IPreferenceStore prefs = new ScopedPreferenceStore(
@@ -55,12 +67,12 @@ public class ClipboardResultsHandler {
 						final MessageDialogWithToggle dialog = MessageDialogWithToggle
 								.openYesNoQuestion(
 										shellProvider.getShell(),
-										"Confirm overwriting of clipboard content",
+										Messages.ClipboardResultsHandler_Title,
 										NLS.bind(
-												"Your selection was successfully copied to \"{0}\" and you can access the result at:\n{1}\n\nIt's ready to be copied into your clipboard.\n\nHowever, the clipboard is not empty.\nDo you want to replace its content?",
+												Messages.ClipboardResultsHandler_Message,
 												results.getTarget().getName(),
 												joinedURLs),
-										"Always overwrite clipboard content",
+										Messages.ClipboardResultsHandler_Toggle,
 										false, null, null);
 						if (IDialogConstants.YES_ID != dialog.getReturnCode()) {
 							return;

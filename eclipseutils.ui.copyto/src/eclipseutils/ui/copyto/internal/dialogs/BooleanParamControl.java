@@ -19,12 +19,16 @@ public class BooleanParamControl implements CustomParamControl {
 	private final String label;
 	private final String desc;
 
-	public BooleanParamControl(String label, String desc) {
+	/**
+	 * @param label
+	 * @param desc
+	 */
+	public BooleanParamControl(final String label, final String desc) {
 		this.label = label;
 		this.desc = desc;
 	}
 
-	public IObservableValue createControl(Composite parent) {
+	public IObservableValue createControl(final Composite parent) {
 		final Button button = new Button(parent, SWT.CHECK);
 		button.setText(label);
 		if (desc != null) {

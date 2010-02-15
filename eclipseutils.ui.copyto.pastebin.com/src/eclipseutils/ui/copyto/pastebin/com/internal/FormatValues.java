@@ -7,6 +7,11 @@ import java.util.Properties;
 
 import org.eclipse.core.commands.IParameterValues;
 
+/**
+ * Reads a list of parameter/values from the <code>FormatValus.properties</code> file.
+ * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
+ *
+ */
 public class FormatValues implements IParameterValues {
 	static Properties formats;
 

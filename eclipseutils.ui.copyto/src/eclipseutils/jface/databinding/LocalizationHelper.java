@@ -23,6 +23,11 @@ import java.util.ResourceBundle;
  */
 public final class LocalizationHelper {
 
+	/**
+	 * @param bean
+	 * @param property
+	 * @return the localized label text or the capitalized property.
+	 */
 	public static String getLabel(final Object bean, final String property) {
 		String value = localize(bean, property, null);
 		if (null == value) {
@@ -32,10 +37,29 @@ public final class LocalizationHelper {
 		return value;
 	}
 
+	/**
+	 * @param bean
+	 * @param property
+	 * @return the description text or <code>null</code>.
+	 */
 	public static String getDescription(final Object bean, final String property) {
-		return localize(bean, property + ".desc", null);
+		return localize(bean, property + ".desc", null); //$NON-NLS-1$
 	}
 
+	/**
+	 * Searches the resource bundles of the given bean object for a key and
+	 * returns its value.
+	 * 
+	 * <p>
+	 * The method looks for resource bundles of the beans interfaces as well as
+	 * up the class hierarchy of the bean itself.
+	 * 
+	 * @param bean
+	 * @param key
+	 * @param defaultValue
+	 * @return a value for the given <i>key</i> or <i>defaultValue</i> if the
+	 *         key was not found.
+	 */
 	public static String localize(final Object bean, final String key,
 			final String defaultValue) {
 

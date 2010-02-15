@@ -13,7 +13,6 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.Properties;
 import org.eclipse.core.databinding.property.map.IMapProperty;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -28,16 +27,23 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.osgi.framework.FrameworkUtil;
 
-import eclipseutils.ui.copyto.internal.commands.CopyToHandler;
-
+/**
+ * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
+ * 
+ */
 public class RequestParamsDialog extends TitleAreaDialog {
 	private final Map<String, ?> params;
+	@SuppressWarnings("unused")
 	private final String id;
 
-	public RequestParamsDialog(final Shell parentShell, String id,
-			Map<String, ?> params) {
+	/**
+	 * @param parentShell
+	 * @param id
+	 * @param params
+	 */
+	public RequestParamsDialog(final Shell parentShell, final String id,
+			final Map<String, ?> params) {
 		super(parentShell);
 		this.params = params;
 		this.id = id;
@@ -47,7 +53,7 @@ public class RequestParamsDialog extends TitleAreaDialog {
 	protected Control createDialogArea(final Composite parent) {
 		final DataBindingContext dbx = new DataBindingContext();
 		parent.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent event) {
+			public void widgetDisposed(final DisposeEvent event) {
 				dbx.dispose();
 			}
 		});
@@ -65,10 +71,10 @@ public class RequestParamsDialog extends TitleAreaDialog {
 			paramInfos.put(it.next(), null);
 		}
 
-		final IConfigurationElement[] configurationElements = Platform
+		/*final IConfigurationElement[] configurationElements = Platform
 				.getExtensionRegistry().getConfigurationElementsFor(
 						FrameworkUtil.getBundle(getClass()).getSymbolicName(),
-						CopyToHandler.COMMAND_TARGET_PARAM, id);
+						CopyToHandler.COMMAND_TARGETS_PARAM, id);
 		for (final IConfigurationElement configurationElement : configurationElements) {
 			if ("paramInfos".equals(configurationElement.getName())) {
 				final IConfigurationElement[] paramConfigs = configurationElement
@@ -85,13 +91,14 @@ public class RequestParamsDialog extends TitleAreaDialog {
 					}
 				}
 			}
-		}
+		}*/
 
 		final Composite client = new Composite((Composite) super
 				.createDialogArea(parent), SWT.NULL);
 		GridLayoutFactory.swtDefaults().numColumns(2).applyTo(client);
 
-		for (Entry<String, IConfigurationElement> entry : paramInfos.entrySet()) {
+		for (final Entry<String, IConfigurationElement> entry : paramInfos
+				.entrySet()) {
 			final String key = entry.getKey();
 
 			final IObservableValue controlObservable[] = { null };
@@ -110,13 +117,13 @@ public class RequestParamsDialog extends TitleAreaDialog {
 			if (configElement == null) {
 				continue;
 			}
-			final String text = configElement.getAttribute("label");
+			final String text = configElement.getAttribute("label"); //$NON-NLS-1$
 			if (text != null && text.length() > 0) {
 				labelText = text;
 			}
-			desc = configElement.getAttribute("description");
-			final String className = configElement.getAttribute("type");
-			if ("bool".equals(className) || "boolean".equals(className)
+			desc = configElement.getAttribute("description"); //$NON-NLS-1$
+			final String className = configElement.getAttribute("type"); //$NON-NLS-1$
+			if ("bool".equals(className) || "boolean".equals(className) //$NON-NLS-1$ //$NON-NLS-2$
 					|| Boolean.class.getName().equals(className)
 					|| boolean.class.getName().equals(className)) {
 				editorCreator = new Runnable() {
@@ -129,7 +136,7 @@ public class RequestParamsDialog extends TitleAreaDialog {
 			} else if (className != null) {
 				try {
 					final Object typeInstance = configElement
-							.createExecutableExtension("type");
+							.createExecutableExtension("type"); //$NON-NLS-1$
 					if (typeInstance instanceof IParameterValues) {
 						editorCreator = new Runnable() {
 							public void run() {

@@ -8,7 +8,7 @@
  * Contributors:
  *   Philipp Kursawe (phil.kursawe@gmail.com) - initial API and implementation
  ******************************************************************************/
-package eclipseutils.ui.copyto.internal;
+package eclipseutils.ui.copyto.internal.commands;
 
 import org.eclipse.jface.text.ITextSelection;
 

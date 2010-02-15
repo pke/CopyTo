@@ -14,29 +14,36 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.forms.widgets.FormToolkit;
 
+/**
+ * Unified interface for control creation that mirros the FormToolkit methods
+ * for creating widgets.
+ * 
+ * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
+ * 
+ */
+public interface ControlToolkit {
+	/**
+	 * @param parent
+	 * @param text
+	 * @param style
+	 * @return a button control.
+	 */
+	Button createButton(Composite parent, String text, int style);
 
-public class FormControlCreator implements ControlCreator {
+	/**
+	 * @param parent
+	 * @param text
+	 * @param style
+	 * @return a text control.
+	 */
+	Text createText(final Composite parent, String text, int style);
 
-	private final FormToolkit toolkit;
-
-	public FormControlCreator(final FormToolkit toolkit) {
-		this.toolkit = toolkit;
-	}
-
-	public Button createButton(final Composite parent, final String text,
-			final int style) {
-		return toolkit.createButton(parent, text, style);
-	}
-
-	public Text createText(final Composite parent, final String text,
-			final int style) {
-		return toolkit.createText(parent, text, style);
-	}
-
-	public Label createLabel(final Composite parent, final String text,
-			final int style) {
-		return toolkit.createLabel(parent, text, style);
-	}
+	/**
+	 * @param parent
+	 * @param text
+	 * @param style
+	 * @return a label control.
+	 */
+	Label createLabel(Composite parent, String text, int style);
 }

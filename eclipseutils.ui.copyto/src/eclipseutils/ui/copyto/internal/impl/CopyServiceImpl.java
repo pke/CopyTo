@@ -11,22 +11,20 @@
 
 package eclipseutils.ui.copyto.internal.impl;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.core.variables.IStringVariableManager;
-import org.eclipse.core.variables.IValueVariable;
-import org.eclipse.core.variables.VariablesPlugin;
+import org.eclipse.jface.window.IShellProvider;
+import org.eclipse.swt.widgets.Display;
 
+import osgiutils.services.SimpleServiceRunnable;
+import osgiutils.services.Trackers;
 import eclipseutils.ui.copyto.api.CopyService;
 import eclipseutils.ui.copyto.api.Copyable;
+import eclipseutils.ui.copyto.api.ResultHandler;
 import eclipseutils.ui.copyto.api.Results;
-import eclipseutils.ui.copyto.internal.HttpCopyToHandler;
+import eclipseutils.ui.copyto.api.UIResultHandler;
 import eclipseutils.ui.copyto.internal.LogHelper;
 import eclipseutils.ui.copyto.internal.api.Target;
 import eclipseutils.ui.copyto.internal.api.TargetService;
@@ -40,6 +38,8 @@ import eclipseutils.ui.copyto.internal.api.TargetService;
 public class CopyServiceImpl implements CopyService {
 	private final AtomicReference<TargetService> targetServiceRef = new AtomicReference<TargetService>();
 
+	private final HttpCopyToHandler handler = new HttpCopyToHandler();
+
 	protected void bind(final TargetService service) {
 		targetServiceRef.set(service);
 	}
@@ -49,12 +49,12 @@ public class CopyServiceImpl implements CopyService {
 	}
 
 	public Results copy(final String targetId, final IProgressMonitor monitor,
-			final Copyable... copyables) {
+			final IShellProvider shellProvider, final Copyable... copyables) {
 		final TargetService targetService = targetServiceRef.get();
 		if (targetService != null) {
 			final Target target = targetService.find(targetId);
 			if (null == target) {
-				LogHelper.error(null, "Target \"%s\" not found", targetId);
+				LogHelper.error(null, "Target \"%s\" not found", targetId); //$NON-NLS-1$
 				return null;
 			}
 
@@ -62,7 +62,7 @@ public class CopyServiceImpl implements CopyService {
 					copyables.length);
 
 			final ResultsImpl results = new ResultsImpl(target);
-			final Map<String, String> params = new HashMap<String, String>();
+			/*final Map<String, String> params = new HashMap<String, String>();
 			String urlParams = target.getUrl();
 			final int indexOf = urlParams.indexOf('?');
 			if (indexOf == -1) {
@@ -73,57 +73,54 @@ public class CopyServiceImpl implements CopyService {
 			final String[] pairs = urlParams.split("&"); //$NON-NLS-1$
 			for (int i = 0; i < pairs.length; ++i) {
 				final String[] keyValue = pairs[i].split("="); //$NON-NLS-1$
-				params.put(keyValue[0], keyValue.length == 1 ? "" : keyValue[1]);
-			}
-
-			final HttpCopyToHandler handler = new HttpCopyToHandler(target
-					.getId(), url);
+				params.put(keyValue[0], keyValue.length == 1 ? "" : keyValue[1]); //$NON-NLS-1$
+			}*/
 
 			for (final Copyable copyable : copyables) {
-				final Map<String, String> copyParams = resolveParams(copyable,
-						params);
-				results.add(handler.copy(copyable, target, copyParams, monitor));
+				try {
+					results.add(handler.copy(copyable, target, subMonitor));
+				} catch (final Exception e) {
+					results.add(new ResultImpl(copyable, target, e));
+				}
 			}
 			targetService.setLastSelected(targetId);
+			notifyListeners(results, shellProvider);
 			return results;
 		} else {
-			LogHelper.error(null, "No TargetService available");
+			LogHelper.error(null, "No TargetService available"); //$NON-NLS-1$
 			return null;
 		}
 	}
 
-	private static Map<String, String> resolveParams(final Copyable copyable,
-			final Map<String, String> params) {
-		final IStringVariableManager variableManager = VariablesPlugin
-				.getDefault().getStringVariableManager();
-		final String text = copyable.getText();
-		final IValueVariable vars[] = {
-				variableManager
-						.newValueVariable(
-								"copyto.source", "Source", true, copyable.getSource().getClass().getName()), //$NON-NLS-1$
-				variableManager.newValueVariable(
-						"copyto.text", "Text to copy", true, text), //$NON-NLS-1$
-				variableManager
-						.newValueVariable(
-								"copyto.mime-type", "MIME-Type", true, copyable.getMimeType()) }; //$NON-NLS-1$
-
-		// Make sure they are not registered
-		variableManager.removeVariables(vars);
-		try {
-			variableManager.addVariables(vars);
-		} catch (final CoreException e) {
-		}
-
-		final Map<String, String> result = new HashMap<String, String>(params
-				.size());
-		for (final Entry<String, String> entry : params.entrySet()) {
-			try {
-				result.put(entry.getKey(), variableManager
-						.performStringSubstitution(entry.getValue(), false));
-			} catch (final CoreException e) {
-			}
-		}
-		variableManager.removeVariables(vars);
-		return result;
+	private void notifyListeners(final Results results,
+			final IShellProvider shellProvider) {
+		Trackers.runAll(ResultHandler.class,
+				new SimpleServiceRunnable<ResultHandler>() {
+					@Override
+					protected void doRun(final ResultHandler service) {
+						try {
+							service.handleResults(results);
+						} catch (final Throwable t) {
+							LogHelper.error(t, "Calling result handler"); //$NON-NLS-1$
+						}
+					}
+				});
+		Trackers.runAll(UIResultHandler.class,
+				new SimpleServiceRunnable<UIResultHandler>() {
+					@Override
+					protected void doRun(final UIResultHandler service) {
+						Display.getDefault().asyncExec(new Runnable() {
+							public void run() {
+								try {
+									service.handleResults(results,
+											shellProvider);
+								} catch (final Throwable t) {
+									LogHelper
+											.error(t, "Calling result handler"); //$NON-NLS-1$
+								}
+							}
+						});
+					}
+				});
 	}
 }

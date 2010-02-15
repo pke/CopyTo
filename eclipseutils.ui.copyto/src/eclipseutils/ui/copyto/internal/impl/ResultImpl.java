@@ -17,9 +17,12 @@ import org.eclipse.core.runtime.Status;
 
 import eclipseutils.ui.copyto.api.Copyable;
 import eclipseutils.ui.copyto.api.Result;
-import eclipseutils.ui.copyto.internal.HttpCopyToHandler;
 import eclipseutils.ui.copyto.internal.api.Target;
 
+/**
+ * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
+ * 
+ */
 public class ResultImpl implements Result {
 
 	private final Copyable copyable;
@@ -28,6 +31,12 @@ public class ResultImpl implements Result {
 	private final long timestamp;
 	private final Target target;
 
+	/**
+	 * @param copyable
+	 * @param target
+	 * @param location
+	 * @param status
+	 */
 	public ResultImpl(final Copyable copyable, final Target target,
 			final URL location, final IStatus status) {
 		this.copyable = copyable;
@@ -37,11 +46,21 @@ public class ResultImpl implements Result {
 		this.timestamp = System.currentTimeMillis();
 	}
 
+	/**
+	 * @param copyable
+	 * @param target
+	 * @param location
+	 */
 	public ResultImpl(final Copyable copyable, final Target target,
 			final URL location) {
 		this(copyable, target, location, Status.OK_STATUS);
 	}
 
+	/**
+	 * @param copyable
+	 * @param target
+	 * @param throwable
+	 */
 	public ResultImpl(final Copyable copyable, final Target target,
 			final Throwable throwable) {
 		this(copyable, target, null, new Status(IStatus.ERROR,

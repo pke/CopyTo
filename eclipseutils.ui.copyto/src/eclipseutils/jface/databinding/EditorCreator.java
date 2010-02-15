@@ -13,11 +13,24 @@ package eclipseutils.jface.databinding;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.swt.widgets.Composite;
 
-
-
+/**
+ * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
+ * 
+ */
 public interface EditorCreator {
-	IObservableValue create(ControlCreator toolkit, Composite parent,
+	/**
+	 * @param toolkit
+	 * @param parent
+	 * @param bean
+	 * @param property
+	 * @return an observable to bind to.
+	 */
+	IObservableValue create(ControlToolkit toolkit, Composite parent,
 			Object bean, String property);
 
+	/**
+	 * @return whether or not the editor created by this creator has a label nor
+	 *         not.
+	 */
 	boolean hasLabel();
 }

@@ -7,12 +7,12 @@ import org.eclipse.jdt.core.dom.NodeFinder;
 import org.eclipse.jdt.ui.SharedASTProvider;
 import org.eclipse.jface.text.IRegion;
 
-public class RangeCopyable extends ASTNodeCopyable {
+class RangeCopyable extends ASTNodeCopyable {
 
 	private final ITypeRoot root;
 	private final IRegion range;
 
-	public RangeCopyable(ITypeRoot element, IRegion range) {
+	public RangeCopyable(final ITypeRoot element, final IRegion range) {
 		this.root = element;
 		this.range = range;
 	}

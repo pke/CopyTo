@@ -35,6 +35,7 @@ import eclipseutils.jface.databinding.Builder;
 import eclipseutils.jface.databinding.BuiltTitleAreaDialog;
 import eclipseutils.jface.databinding.FieldOptions;
 import eclipseutils.jface.databinding.GridLayoutBuilder;
+import eclipseutils.jface.databinding.customizers.SelectAllOnFocus;
 import eclipseutils.jface.databinding.validators.AbstractValidator;
 import eclipseutils.jface.databinding.validators.CompoundValidator;
 import eclipseutils.jface.databinding.validators.ListValidator;
@@ -65,11 +66,10 @@ class EditDialog extends BuiltTitleAreaDialog {
 			final String string = (String) value;
 			final int firstIndex = string.indexOf(COPYTO_TEXT_VAR);
 			if (firstIndex == -1) {
-				return "The URL must contain the \"${copyto.text}\" variable";
+				return Messages.EditDialog_URL_MustContainTextVar;
 			}
 			if (string.lastIndexOf(COPYTO_TEXT_VAR) != firstIndex) {
-				return NLS.bind(
-						"The URL contains the {0} variable more than once",
+				return NLS.bind(Messages.EditDialog_URL_MustContainVarOnce,
 						COPYTO_TEXT_VAR);
 			}
 			return null;
@@ -84,9 +84,9 @@ class EditDialog extends BuiltTitleAreaDialog {
 		}
 	}
 
-	private static final String COPYTO_TEXT_VAR = "${copyto.text}";
+	private static final String COPYTO_TEXT_VAR = "${copyto.text}"; //$NON-NLS-1$
 	private static final String[] PROPOSALS = new String[] { COPYTO_TEXT_VAR,
-			"${copyto.mime-type}", "${copyto.source}" };
+			"${copyto.mime-type}", "${copyto.source}" }; //$NON-NLS-1$//$NON-NLS-2$
 	private final Target target;
 	private final HashSet<String> existingItems;
 	private static final IValidator urlValidator = new CompoundValidator(
@@ -108,11 +108,9 @@ class EditDialog extends BuiltTitleAreaDialog {
 	}
 
 	@Override
-	protected Control createDialogArea(final Composite parent) {
-		final Control control = super.createDialogArea(parent);
-		getShell().setText("Copy To Target");
-		setTitle("Target Definition");
-		setMessage("Enter the definition for this CopyTo Target below");
+	protected void configureShell(final Shell newShell) {
+		super.configureShell(newShell);
+		newShell.setText(Messages.EditDialog_ShellText);
 		final URL iconEntry = FileLocator.find(FrameworkUtil
 				.getBundle(getClass()),
 				new Path("$nl$/icons/e32/copyto.png"), null); //$NON-NLS-1$
@@ -121,13 +119,20 @@ class EditDialog extends BuiltTitleAreaDialog {
 		if (icon != null) {
 			final Image image = icon.createImage();
 			setTitleImage(image);
-			parent.addDisposeListener(new DisposeListener() {
+			newShell.addDisposeListener(new DisposeListener() {
 				public void widgetDisposed(final DisposeEvent e) {
 					image.dispose();
 				}
 			});
 		}
+	}
 
+	@Override
+	protected Control createDialogArea(final Composite parent) {
+		final Control control = super.createDialogArea(parent);
+		setTitle(Messages.EditDialog_Title);
+
+		setMessage(Messages.EditDialog_Desc);
 		return control;
 	}
 
@@ -136,11 +141,9 @@ class EditDialog extends BuiltTitleAreaDialog {
 
 	public Builder createBuilder(final Composite parent) {
 		final IValidator labelValidator = new CompoundValidator(
-				NotEmptyValidator.getInstance(true),
-				new NotValidator(
-						new ListValidator(existingItems),
-						"A Target with that name already exists. It's recommended to choose another name.",
-						IStatus.WARNING));
+				NotEmptyValidator.getInstance(true), new NotValidator(
+						IStatus.WARNING, new ListValidator(existingItems),
+						Messages.EditDialog_DuplicateTarget));
 		/*
 		final List<IStringVariable> vars = Arrays.asList(VariablesPlugin
 				.getDefault().getStringVariableManager().getVariables());
@@ -156,9 +159,11 @@ class EditDialog extends BuiltTitleAreaDialog {
 		*/
 
 		return new GridLayoutBuilder(parent, target,
-				UpdateValueStrategy.POLICY_CONVERT).field("name",
-				new FieldOptions(labelValidator)).field(
-				"url",
+				UpdateValueStrategy.POLICY_CONVERT).field(
+				"name", //$NON-NLS-1$
+				new FieldOptions(labelValidator)
+						.setControlCustomizer(new SelectAllOnFocus())).field(
+				"url", //$NON-NLS-1$
 				new FieldOptions(urlValidator).setProposalProvider(
 						proposalProvider).setAutoActivationCharacters('$'));
 	}

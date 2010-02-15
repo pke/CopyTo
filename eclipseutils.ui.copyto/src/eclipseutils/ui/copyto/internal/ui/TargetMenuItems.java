@@ -31,6 +31,10 @@ import eclipseutils.ui.copyto.internal.api.Target;
 import eclipseutils.ui.copyto.internal.api.TargetService;
 import eclipseutils.ui.copyto.internal.commands.CopyToHandler;
 
+/**
+ * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
+ * 
+ */
 public class TargetMenuItems extends CompoundContributionItem implements
 		IWorkbenchContribution {
 	private IServiceLocator locator;
@@ -76,7 +80,7 @@ public class TargetMenuItems extends CompoundContributionItem implements
 
 									int i = 0;
 									for (final Target target : targets) {
-										final String format = "{0}";
+										final String format = "{0}"; //$NON-NLS-1$
 										items[i++] = createCommand(format,
 												target);
 									}
@@ -99,7 +103,7 @@ public class TargetMenuItems extends CompoundContributionItem implements
 				CommandContributionItem.STYLE_PUSH);
 		contributionParameters.label = NLS.bind(format, target.getName());
 		contributionParameters.parameters = parameters;
-		parameters.put("id", target);
+		parameters.put("id", target); //$NON-NLS-1$
 		return new CommandContributionItem(contributionParameters);
 	}
 

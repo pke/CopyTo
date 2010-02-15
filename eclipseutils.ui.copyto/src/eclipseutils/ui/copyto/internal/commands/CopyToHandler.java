@@ -10,8 +10,9 @@
  ******************************************************************************/
 package eclipseutils.ui.copyto.internal.commands;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -48,12 +49,10 @@ import osgiutils.services.Trackers;
 import eclipseutils.ui.copyto.api.CopyService;
 import eclipseutils.ui.copyto.api.Copyable;
 import eclipseutils.ui.copyto.api.Results;
-import eclipseutils.ui.copyto.internal.HttpCopyToHandler;
-import eclipseutils.ui.copyto.internal.TextSelectionCopyable;
 import eclipseutils.ui.copyto.internal.api.Target;
 import eclipseutils.ui.copyto.internal.api.TargetService;
+import eclipseutils.ui.copyto.internal.impl.HttpCopyToHandler;
 import eclipseutils.ui.copyto.internal.preferences.CopyToPreferencePage;
-import eclipseutils.ui.copyto.internal.results.ClipboardResultsHandler;
 
 /**
  * 
@@ -64,8 +63,10 @@ import eclipseutils.ui.copyto.internal.results.ClipboardResultsHandler;
  */
 public class CopyToHandler extends AbstractHandler implements IElementUpdater {
 
+	/**
+	 * 
+	 */
 	public static final String COMMAND_ID = "eclipseutils.ui.copyto"; //$NON-NLS-1$
-	public static final String COMMAND_TARGET_PARAM = "targets"; //$NON-NLS-1$
 
 	private final IAdapterManager adapterManager = Platform.getAdapterManager();
 
@@ -77,7 +78,7 @@ public class CopyToHandler extends AbstractHandler implements IElementUpdater {
 		private final Shell shell;
 
 		public CollectJob(final ExecutionEvent event, final Target currentTarget) {
-			super("Collecting copyable selection");
+			super(Messages.CopyToHandler_JobName);
 			target = currentTarget;
 			selection = HandlerUtil.getActiveMenuSelection(event);
 			if (selection == null) {
@@ -94,9 +95,9 @@ public class CopyToHandler extends AbstractHandler implements IElementUpdater {
 			}
 
 			final SubMonitor subMonitor = SubMonitor.convert(monitor,
-					"Collecting selection", 100);
+					Messages.CopyToHandler_CollectTask, 100);
 
-			final Map<String, Copyable> items = new HashMap<String, Copyable>();
+			final List<Copyable> items = new ArrayList<Copyable>();
 
 			if (selection instanceof IStructuredSelection) {
 				final IStructuredSelection ss = (IStructuredSelection) selection;
@@ -116,7 +117,7 @@ public class CopyToHandler extends AbstractHandler implements IElementUpdater {
 					}
 
 					if (copyable != null) {
-						items.put(copyable.getMimeType(), copyable);
+						items.add(copyable);
 					}
 				}
 			} else if (selection instanceof ITextSelection) {
@@ -126,14 +127,15 @@ public class CopyToHandler extends AbstractHandler implements IElementUpdater {
 				if (null == copyable) {
 					copyable = new TextSelectionCopyable(textSelection);
 				}
-				items.put(copyable.getMimeType(), copyable);
+				items.add(copyable);
 			}
 			final Results results = Trackers.run(CopyService.class,
 					new ServiceRunnable<CopyService, Results>() {
 						public Results run(final CopyService service) {
 							return service.copy(target.getId(), subMonitor
-									.newChild(90), items.values().toArray(
-									new Copyable[items.size()]));
+									.newChild(90),
+									new SameShellProvider(shell),
+									items.toArray(new Copyable[items.size()]));
 						}
 					});
 			if (!results.getFailures().isEmpty()) {
@@ -143,20 +145,12 @@ public class CopyToHandler extends AbstractHandler implements IElementUpdater {
 						true);
 				return new Status(IStatus.ERROR,
 						HttpCopyToHandler.symbolicName,
-						NLS.bind("Copying to {0} had {1} errors.", target
+						NLS.bind(Messages.CopyToHandler_CopyError, target
 								.getUrl(), results.getFailures().size()));
 			}
 			if (results.getSuccesses().isEmpty()) {
 				return Status.CANCEL_STATUS;
 			}
-			Display.getDefault().asyncExec(new Runnable() {
-
-				public void run() {
-					new ClipboardResultsHandler().handleResults(results,
-							new SameShellProvider(shell));
-				}
-
-			});
 			return Status.OK_STATUS;
 		}
 	}
@@ -169,7 +163,7 @@ public class CopyToHandler extends AbstractHandler implements IElementUpdater {
 	 */
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		Target currentTarget = (Target) event
-				.getObjectParameterForExecution("id");
+				.getObjectParameterForExecution("id"); //$NON-NLS-1$
 		if (currentTarget == null) {
 			currentTarget = Trackers.run(TargetService.class,
 					new ServiceRunnable<TargetService, Target>() {
@@ -226,6 +220,7 @@ public class CopyToHandler extends AbstractHandler implements IElementUpdater {
 		return null;
 	}
 
+	@SuppressWarnings("unused")
 	private boolean showDialog(final Object trigger) {
 		if (trigger instanceof Event) {
 			final Event triggerEvent = (Event) trigger;
@@ -242,7 +237,7 @@ public class CopyToHandler extends AbstractHandler implements IElementUpdater {
 					@Override
 					public void doRun(final TargetService service) {
 						// First display the last selected item as tooltip
-						String text = "Select a CopyTo Target from the dropdown list";
+						String text = Messages.CopyToHandler_DropDown_Tooltip_SelectTarget;
 						Target target = service.getLastSelected();
 						// If there is no such item, see how many items there
 						// are
@@ -251,13 +246,16 @@ public class CopyToHandler extends AbstractHandler implements IElementUpdater {
 							// If there is none yet, we set a tooltip that will
 							// aid the user
 							if (count == 0) {
-								text = "Click to configure CopyTo";
+								text = Messages.CopyToHandler_DropDown_Tooltip_Configure;
 							} else if (count == 1) {
 								target = service.findFirst();
 							}
 						}
 						if (target != null) {
-							text = NLS.bind("Copy To {0}", target.getName());
+							text = NLS
+									.bind(
+											Messages.CopyToHandler_DropDown_Tooltip_CopyTo,
+											target.getName());
 						}
 						final String finalText = text;
 						Display.getDefault().asyncExec(new Runnable() {

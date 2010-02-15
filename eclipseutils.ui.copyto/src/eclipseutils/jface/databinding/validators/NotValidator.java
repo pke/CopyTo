@@ -13,9 +13,7 @@ package eclipseutils.jface.databinding.validators;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.runtime.IStatus;
 
-
 /**
- * 
  * Negates a validator.
  * 
  * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
@@ -26,8 +24,14 @@ public class NotValidator extends AbstractValidator {
 	private final IValidator validator;
 	private final String message;
 
-	public NotValidator(final IValidator validator, final String message,
-			final int severity) {
+	/**
+	 * @param severity
+	 * @param validator
+	 *            to negate
+	 * @param message
+	 */
+	public NotValidator(final int severity, final IValidator validator,
+			final String message) {
 		super(severity);
 		this.validator = validator;
 		this.message = message;

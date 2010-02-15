@@ -19,8 +19,7 @@ import org.eclipse.jface.fieldassist.IContentProposal;
 import org.eclipse.jface.fieldassist.IContentProposalProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
-
-
+import org.eclipse.swt.widgets.Control;
 
 /**
  * Describes the various options to use when creating a field with
@@ -31,6 +30,7 @@ import org.eclipse.swt.SWT;
  * options.
  * 
  * <h2>Example</h2>
+ * 
  * <p>
  * 
  * <pre>
@@ -43,21 +43,51 @@ import org.eclipse.swt.SWT;
  * 
  */
 public class FieldOptions {
+	/**
+	 * Allows the customization of the control after it has been crated.
+	 * 
+	 * <h2>Example Usage</h2> Select all text in the created control
+	 * 
+	 * <pre>
+	 * public void customizeControl(final Control control) {
+	 * 	control.addFocusListener(new FocusAdapter() {
+	 * 		&#064;Override
+	 * 		public void focusGained(final FocusEvent e) {
+	 * 			if (!control.isDisposed()) {
+	 * 				((Text) control).selectAll();
+	 * 			}
+	 * 		}
+	 * 	});
+	 * }
+	 * </pre>
+	 * 
+	 * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
+	 * 
+	 */
+	public interface ControlCustomizer {
+		/**
+		 * @param control
+		 */
+		void customizeControl(Control control);
+	}
+
 	private static final int defaultProposalAcceptanceStyle = ContentProposalAdapter.PROPOSAL_INSERT;
-	private static final String defaultProposalDescription = "Use {0} to open the content assist";
+	private static final String defaultProposalDescription = "Use {0} to open the content assist"; //$NON-NLS-1$
+
 	/** The default content assist proposal display keystroke is M1 + SPACE */
 	private static final KeyStroke defaultProposalKeyStroke = KeyStroke
 			.getInstance(SWT.MOD1, 32);
-
 	private char[] autoActivationnCharacters;
+	private ControlCustomizer controlCustomizer;
 	private int proposalAcceptanceStyle = defaultProposalAcceptanceStyle;
 	private String proposalDescription = defaultProposalDescription;
 	private KeyStroke proposalKeyStroke = defaultProposalKeyStroke;
+	private ILabelProvider proposalLabelProvider;
+
 	private IContentProposalProvider proposalProvider;
 	private UpdateValueStrategy targetToModel;
 
 	private IValidator validator;
-	private ILabelProvider proposalLabelProvider;
 
 	/**
 	 * Creates a <code>FieldOptions</code> object with the given activation
@@ -69,6 +99,17 @@ public class FieldOptions {
 	 */
 	public FieldOptions(final char[] autoActivationnCharacters) {
 		setAutoActivationCharacters(autoActivationnCharacters);
+	}
+
+	/**
+	 * Creates a <code>FieldOptions</code> object with the given control
+	 * customizer.
+	 * 
+	 * @param controlCustomizer
+	 * @see #setControlCustomizer(ControlCustomizer)
+	 */
+	public FieldOptions(final ControlCustomizer controlCustomizer) {
+		setControlCustomizer(controlCustomizer);
 	}
 
 	/**
@@ -127,6 +168,13 @@ public class FieldOptions {
 	}
 
 	/**
+	 * @return the set control customizer or <code>null</code> if none are set.
+	 */
+	public ControlCustomizer getControlCustomizer() {
+		return controlCustomizer;
+	}
+
+	/**
 	 * @return the proposal acceptance style.
 	 */
 	public int getProposalAcceptanceStyle() {
@@ -145,6 +193,13 @@ public class FieldOptions {
 	 */
 	public KeyStroke getProposalKeyStroke() {
 		return proposalKeyStroke;
+	}
+
+	/**
+	 * @return the proposals label provider or <code>null</code> if none.
+	 */
+	public ILabelProvider getProposalLabelProvider() {
+		return this.proposalLabelProvider;
 	}
 
 	/**
@@ -175,6 +230,16 @@ public class FieldOptions {
 	public FieldOptions setAutoActivationCharacters(
 			final char... autoActivationnCharacters) {
 		this.autoActivationnCharacters = autoActivationnCharacters;
+		return this;
+	}
+
+	/**
+	 * @param controlCustomizer
+	 * @return <code>this</code> for chaining.
+	 */
+	public FieldOptions setControlCustomizer(
+			final ControlCustomizer controlCustomizer) {
+		this.controlCustomizer = controlCustomizer;
 		return this;
 	}
 
@@ -220,6 +285,19 @@ public class FieldOptions {
 	}
 
 	/**
+	 * Please not that the {@link IContentProposal} provided by your provider
+	 * will be displayed using this label provider.
+	 * 
+	 * @param proposalLabelProvider
+	 * @return <code>this</code> for chaining.
+	 */
+	public FieldOptions setProposalLabelProvider(
+			final ILabelProvider proposalLabelProvider) {
+		this.proposalLabelProvider = proposalLabelProvider;
+		return this;
+	}
+
+	/**
 	 * @param proposalProvider
 	 * @return <code>this</code> for chaining.
 	 */
@@ -245,26 +323,6 @@ public class FieldOptions {
 	 */
 	public FieldOptions setValidator(final IValidator validator) {
 		this.validator = validator;
-		return this;
-	}
-
-	/**
-	 * @return the proposals label provider or <code>null</code> if none.
-	 */
-	public ILabelProvider getProposalLabelProvider() {
-		return this.proposalLabelProvider;
-	}
-
-	/**
-	 * Please not that the {@link IContentProposal} provided by your provider
-	 * will be displayed using this label provider.
-	 * 
-	 * @param proposalLabelProvider
-	 * @return <code>this</code> for chaining.
-	 */
-	public FieldOptions setProposalLabelProvider(
-			final ILabelProvider proposalLabelProvider) {
-		this.proposalLabelProvider = proposalLabelProvider;
 		return this;
 	}
 }

@@ -3,7 +3,7 @@
 <fragment>
    <extension
          id="copyto.pastebin.ca"
-         name="pastebin.ca"
+         name="%extension.name"
          point="eclipseutils.ui.copyto.targets">
       <paramInfos
             hidden="apikey,content">

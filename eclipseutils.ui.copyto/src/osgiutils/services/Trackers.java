@@ -50,6 +50,24 @@ public final class Trackers {
 	public static <T, R> R run(final Class<T> serviceClass,
 			final ServiceRunnable<T, R> runnable) {
 		final T service = getService(serviceClass);
+		return runService(runnable, service);
+	}
+
+	/**
+	 * @param <T>
+	 * @param serviceClass
+	 * @param runnable
+	 */
+	public static <T> void runAll(final Class<T> serviceClass,
+			final ServiceRunnable<T, ?> runnable) {
+		final T services[] = getServices(serviceClass);
+		for (final T service : services) {
+			runService(runnable, service);
+		}
+	}
+
+	private static <T, R> R runService(final ServiceRunnable<T, R> runnable,
+			final T service) {
 		if (service != null) {
 			return runnable.run(service);
 		} else if (runnable instanceof ServiceRunnableFallback<?, ?>) {
@@ -59,12 +77,25 @@ public final class Trackers {
 	}
 
 	private static <T> T getService(final Class<T> serviceClass) {
+		final ServiceTracker tracker = getTracker(serviceClass);
+		return serviceClass.cast(tracker.getService());
+	}
+
+	@SuppressWarnings("unchecked")
+	private static <T> T[] getServices(final Class<T> serviceClass) {
+		final ServiceTracker tracker = getTracker(serviceClass);
+		final Object[] services = tracker.getServices();
+		return (T[]) (services != null ? (T[]) tracker.getServices()
+				: new Object[0]);
+	}
+
+	private static <T> ServiceTracker getTracker(final Class<T> serviceClass) {
 		ServiceTracker tracker = trackers.get(serviceClass);
 		if (null == tracker) {
 			tracker = createTracker(serviceClass);
 			trackers.put(serviceClass, tracker);
 		}
-		return serviceClass.cast(tracker.getService());
+		return tracker;
 	}
 
 	private static <T> ServiceTracker createTracker(final Class<T> serviceClass) {

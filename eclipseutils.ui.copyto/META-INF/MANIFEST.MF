@@ -76,4 +76,4 @@ Import-Package: org.apache.commons.codec.binary,
 Bundle-ActivationPolicy: lazy
 Export-Package: eclipseutils.ui.copyto;version="1.0.0",
  eclipseutils.ui.copyto.api;version="1.0.0"
-Service-Component: OSGI-INF/CopyService.xml, OSGI-INF/TargetService.xml
+Service-Component: OSGI-INF/CopyService.xml, OSGI-INF/TargetService.xml, OSGI-INF/ClipboardResultsHandler.xml

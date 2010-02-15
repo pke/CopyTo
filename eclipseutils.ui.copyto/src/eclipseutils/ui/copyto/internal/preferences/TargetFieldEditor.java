@@ -66,7 +66,8 @@ class TargetFieldEditor extends AbstractTableViewerFieldEditor<Target> {
 	}
 
 	private void createPasteButton(final Composite parent) {
-		final Button pasteButton = createPushButton(parent, "Paste");
+		final Button pasteButton = createPushButton(parent,
+				Messages.TargetFieldEditor_Paste);
 		pasteButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
@@ -79,10 +80,9 @@ class TargetFieldEditor extends AbstractTableViewerFieldEditor<Target> {
 						add(item);
 					}
 				} catch (final Exception ex) {
-					MessageDialog
-							.openError(pasteButton.getShell(),
-									"Error pasting CopyTo target",
-									"The clipboard does not contain a valid CopyTo target for pasting");
+					MessageDialog.openError(pasteButton.getShell(),
+							Messages.TargetFieldEditor_PasteError_Title,
+							Messages.TargetFieldEditor_PasteError_Message);
 					ex.printStackTrace();
 				} finally {
 					clipboard.dispose();
@@ -92,50 +92,58 @@ class TargetFieldEditor extends AbstractTableViewerFieldEditor<Target> {
 	}
 
 	private void createCopyButton(final Composite parent) {
-		final Button copyButton = createPushButton(parent, "Copy");
+		final Button copyButton = createPushButton(parent,
+				Messages.TargetFieldEditor_Copy);
 		enableWithSelection(copyButton, SWT.SINGLE);
 		copyButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				visitViewerSelection("Copying...", new Visitor<Target>() {
-					public void visit(final Target item,
-							final IProgressMonitor monitor) {
-						final String base64 = item.toBase64();
-						Display.getDefault().asyncExec(new Runnable() {
+				visitViewerSelection(Messages.TargetFieldEditor_CopyJob,
+						new Visitor<Target>() {
+							public void visit(final Target item,
+									final IProgressMonitor monitor) {
+								final String base64 = item.toBase64();
+								Display.getDefault().asyncExec(new Runnable() {
 
-							public void run() {
-								final Clipboard clipboard = new Clipboard(
-										Display.getDefault());
-								try {
-									clipboard.setContents(
-											new Object[] { base64 },
-											new Transfer[] { TextTransfer
-													.getInstance() });
-								} finally {
-									clipboard.dispose();
-								}
+									public void run() {
+										final Clipboard clipboard = new Clipboard(
+												Display.getDefault());
+										try {
+											clipboard
+													.setContents(
+															new Object[] { base64 },
+															new Transfer[] { TextTransfer
+																	.getInstance() });
+										} finally {
+											clipboard.dispose();
+										}
+									}
+								});
 							}
 						});
-					}
-				});
 			}
 		});
 	}
 
+	@SuppressWarnings("unused")
 	private void createTestButton(final Composite parent) {
-		final Button testButton = createPushButton(parent, "Test");
-		testButton.setToolTipText("Test the connectivity to the selected URL");
+		final Button testButton = createPushButton(parent,
+				Messages.TargetFieldEditor_Test);
+		testButton.setToolTipText(Messages.TargetFieldEditor_TestDesc);
 		enableWithSelection(testButton, SWT.SINGLE | SWT.MULTI);
 		testButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent event) {
 				testButton.setEnabled(false);
-				visitViewerSelection("Testing connection",
+				visitViewerSelection(Messages.TargetFieldEditor_TestJob,
 						new Visitor<Target>() {
 							public void visit(final Target target,
 									final IProgressMonitor monitor) {
-								monitor.beginTask(NLS.bind("Testing {0}: ",
-										target.getName(), target.getUrl()),
+								monitor.beginTask(
+										NLS.bind(
+												Messages.TargetFieldEditor_TestProgress,
+												target.getName(), target
+														.getUrl()),
 										IProgressMonitor.UNKNOWN);
 								for (int i = 0; i < 10; ++i) {
 									target.testConnection();
@@ -149,12 +157,13 @@ class TargetFieldEditor extends AbstractTableViewerFieldEditor<Target> {
 
 	@Override
 	protected String[] getColumnNames() {
-		return new String[] { "name", "url" };
+		return new String[] { "name", "url" }; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override
 	protected String[] getColumnLabels() {
-		return new String[] { "Name", "URL" };
+		return new String[] { Messages.TargetFieldEditor_NameColumn,
+				Messages.TargetFieldEditor_URLColumn };
 	}
 
 	@Override

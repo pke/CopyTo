@@ -16,8 +16,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
-
-
+/**
+ * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
+ * 
+ */
 public class BooleanEditorCreator extends AbstractEditorCreator {
 
 	private static BooleanEditorCreator instance;
@@ -35,7 +37,7 @@ public class BooleanEditorCreator extends AbstractEditorCreator {
 	protected BooleanEditorCreator() {
 	}
 
-	public IObservableValue create(final ControlCreator toolkit,
+	public IObservableValue create(final ControlToolkit toolkit,
 			final Composite parent, final Object bean, final String property) {
 		final Button control = toolkit.createButton(parent, LocalizationHelper
 				.getLabel(bean, property), SWT.CHECK);

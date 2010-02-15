@@ -1,0 +1,27 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: History View
+Bundle-SymbolicName: eclipseutils.ui.copyto.history;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Philipp Kursawe
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Import-Package: eclipseutils.ui.copyto.api;version="1.0.0",
+ org.eclipse.core.commands.common,
+ org.eclipse.core.databinding,
+ org.eclipse.core.databinding.beans,
+ org.eclipse.core.databinding.observable.list,
+ org.eclipse.core.databinding.property.list,
+ org.eclipse.core.databinding.property.value,
+ org.eclipse.core.runtime;version="3.4.0",
+ org.eclipse.jface,
+ org.eclipse.jface.databinding.viewers,
+ org.eclipse.jface.layout,
+ org.eclipse.jface.util,
+ org.eclipse.jface.viewers,
+ org.eclipse.jface.window,
+ org.eclipse.swt,
+ org.eclipse.swt.events,
+ org.eclipse.swt.widgets,
+ org.eclipse.ui.part,
+ org.osgi.framework;version="1.5.0"
+Bundle-ActivationPolicy: lazy

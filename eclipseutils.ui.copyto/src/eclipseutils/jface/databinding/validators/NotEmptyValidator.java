@@ -13,7 +13,6 @@ package eclipseutils.jface.databinding.validators;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.runtime.IStatus;
 
-
 /**
  * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
  * 
@@ -24,6 +23,10 @@ public class NotEmptyValidator extends AbstractValidator {
 	private static IValidator trimInstance;
 	private static IValidator instance;
 
+	/**
+	 * @param trimBeforeValidate
+	 * @return the validator singleton.
+	 */
 	public static IValidator getInstance(final boolean trimBeforeValidate) {
 		if (trimBeforeValidate) {
 			if (trimInstance == null) {
@@ -54,7 +57,7 @@ public class NotEmptyValidator extends AbstractValidator {
 			final String string = (String) value;
 			final int len = trim ? string.trim().length() : string.length();
 			if (len == 0) {
-				return "Cannot be empty";
+				return "Cannot be empty"; //$NON-NLS-1$
 			}
 		}
 		return null;

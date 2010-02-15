@@ -15,19 +15,23 @@ import java.net.URL;
 
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.HttpStatus;
 
 import eclipseutils.ui.copyto.api.ResponseHandler;
 
 /**
- * (Default) ResonseHandler that handles 302-Redirect responses.
+ * (Default) ResonseHandler that handles 302-Redirect and 201-created responses.
  * 
  * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
  * 
  */
 public class RedirectResponseHandler implements ResponseHandler {
 
+	private static RedirectResponseHandler instance;
+
 	public URL getLocation(final HttpMethod method) throws Exception {
-		if (302 == method.getStatusCode()) {
+		if (HttpStatus.SC_MOVED_TEMPORARILY == method.getStatusCode()
+				|| HttpStatus.SC_CREATED == method.getStatusCode()) {
 			final Header locationHeader = method.getResponseHeader("Location"); //$NON-NLS-1$
 			String value = locationHeader.getValue();
 			if (value.charAt(0) == '/') {
@@ -38,4 +42,16 @@ public class RedirectResponseHandler implements ResponseHandler {
 		throw new IOException("Response did not contain a redirect location"); //$NON-NLS-1$
 	}
 
+	/**
+	 * @return the singleton instance of this response handler.
+	 */
+	public static ResponseHandler getInstance() {
+		if (instance == null) {
+			instance = new RedirectResponseHandler();
+		}
+		return instance;
+	}
+
+	private RedirectResponseHandler() {
+	}
 }

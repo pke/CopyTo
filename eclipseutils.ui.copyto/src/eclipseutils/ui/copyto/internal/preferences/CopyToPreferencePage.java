@@ -37,7 +37,10 @@ import eclipseutils.ui.copyto.internal.results.ClipboardResultsHandler;
 public class CopyToPreferencePage extends FieldEditorPreferencePage implements
 		IWorkbenchPreferencePage {
 
-	public static String ID = "eclipseutils.ui.copyto.PreferencePage";
+	/**
+	 * 
+	 */
+	public static String ID = "eclipseutils.ui.copyto.PreferencePage"; //$NON-NLS-1$
 
 	private IWorkbench workbench;
 
@@ -84,11 +87,11 @@ public class CopyToPreferencePage extends FieldEditorPreferencePage implements
 	protected void createFieldEditors() {
 		addField(new BooleanFieldEditor(
 				ClipboardResultsHandler.CLIPBOARD_ALWAYS_OVERWRITE,
-				"Always copy result URLs to clipboard",
+				Messages.CopyToPreferencePage_AlwaysCopyToClipboard,
 				BooleanFieldEditor.DEFAULT, getFieldEditorParent()));
-		addField(new TargetFieldEditor(FrameworkUtil.getBundle(getClass())
-				.getSymbolicName()
-				+ "/targets", "Targets", getFieldEditorParent()));
+		addField(new TargetFieldEditor(
+				FrameworkUtil.getBundle(getClass()).getSymbolicName()
+						+ "/targets", Messages.CopyToPreferencePage_TargetsLabel, getFieldEditorParent())); //$NON-NLS-1$
 	}
 
 	public void init(final IWorkbench workbench) {

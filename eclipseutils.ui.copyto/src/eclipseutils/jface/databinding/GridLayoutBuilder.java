@@ -17,8 +17,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 
-
-
 /**
  * Builds a Bean Editing/Viewing UI using the GridLayout with 2 columns.
  * 
@@ -27,16 +25,27 @@ import org.eclipse.swt.widgets.Label;
  */
 public class GridLayoutBuilder extends AbstractBuilder {
 
-	public GridLayoutBuilder(final ControlCreator toolkit,
+	/**
+	 * @param toolkit
+	 * @param parent
+	 * @param bean
+	 * @param targetToModelPolicy
+	 */
+	public GridLayoutBuilder(final ControlToolkit toolkit,
 			final Composite parent, final Object bean,
 			final int targetToModelPolicy) {
 		super(toolkit, parent, bean, targetToModelPolicy);
 		GridLayoutFactory.swtDefaults().numColumns(2).applyTo(parent);
 	}
 
+	/**
+	 * @param parent
+	 * @param bean
+	 * @param targetToModelPolicy
+	 */
 	public GridLayoutBuilder(final Composite parent, final Object bean,
 			final int targetToModelPolicy) {
-		this(SWTControlCreator.getInstance(), parent, bean, targetToModelPolicy);
+		this(SWTControlToolkit.getInstance(), parent, bean, targetToModelPolicy);
 	}
 
 	@Override

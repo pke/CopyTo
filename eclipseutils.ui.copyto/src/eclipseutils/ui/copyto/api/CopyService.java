@@ -12,6 +12,7 @@
 package eclipseutils.ui.copyto.api;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.window.IShellProvider;
 
 /**
  * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
@@ -27,9 +28,11 @@ public interface CopyService {
 	 * @param targetId
 	 * @param monitor
 	 *            TODO
+	 * @param shellProvider
+	 * @param copyables
 	 * @param copyable
 	 * @return the results of the copy action
 	 */
 	Results copy(String targetId, IProgressMonitor monitor,
-			Copyable... copyables);
+			IShellProvider shellProvider, Copyable... copyables);
 }

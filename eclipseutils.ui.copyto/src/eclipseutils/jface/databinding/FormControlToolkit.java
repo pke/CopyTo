@@ -12,51 +12,38 @@ package eclipseutils.jface.databinding;
 
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 
 
+/**
+ * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
+ *
+ */
+public class FormControlToolkit implements ControlToolkit {
 
-class SWTControlCreator implements ControlCreator {
-	private static SWTControlCreator instance;
+	private final FormToolkit toolkit;
 
-	public static ControlCreator getInstance() {
-		if (instance == null) {
-			instance = new SWTControlCreator();
-		}
-		return instance;
+	/**
+	 * @param toolkit
+	 */
+	public FormControlToolkit(final FormToolkit toolkit) {
+		this.toolkit = toolkit;
 	}
 
 	public Button createButton(final Composite parent, final String text,
 			final int style) {
-		final Button control = new Button(parent, style);
-		return setText(control, text);
+		return toolkit.createButton(parent, text, style);
 	}
 
 	public Text createText(final Composite parent, final String text,
 			final int style) {
-		final Text control = new Text(parent, style);
-		return setText(control, text);
+		return toolkit.createText(parent, text, style);
 	}
 
 	public Label createLabel(final Composite parent, final String text,
 			final int style) {
-		final Label control = new Label(parent, style);
-		return setText(control, text);
-	}
-
-	protected static <T extends Control> T setText(final T control,
-			final String text) {
-		if (text != null) {
-			if (control instanceof Button) {
-				((Button) control).setText(text);
-			} else if (control instanceof Label) {
-				((Label) control).setText(text);
-			} else if (control instanceof Text) {
-				((Text) control).setText(text);
-			}
-		}
-		return control;
+		return toolkit.createLabel(parent, text, style);
 	}
 }

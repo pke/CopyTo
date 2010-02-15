@@ -13,8 +13,6 @@ package eclipseutils.jface.databinding;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 
-
-
 /**
  * A builder for creating a UI.
  * 
@@ -22,13 +20,40 @@ import org.eclipse.jface.dialogs.TitleAreaDialog;
  * 
  */
 public interface Builder {
+	/**
+	 * Shortcut for {@link #field(String, FieldOptions)}.
+	 * 
+	 * @param property
+	 * @return this builder for chaining
+	 */
 	Builder field(String property);
 
+	/**
+	 * 
+	 * @param property
+	 * @param fieldOptions
+	 * @return this builder for chaining
+	 */
 	Builder field(String property, FieldOptions fieldOptions);
 
+	/**
+	 * 
+	 * @return this builder for chaining
+	 */
 	Builder newLine();
 
+	/**
+	 * 
+	 * @param dialog
+	 * @param target
+	 * @return this builder for chaining
+	 */
 	Builder addDialogSupport(TitleAreaDialog dialog, IObservableValue target);
 
+	/**
+	 * Manually refreshing the models from the targets (controls).
+	 * 
+	 * @return this builder for chaining
+	 */
 	Builder updateModels();
 }

@@ -3,8 +3,30 @@
    <description name="CopyTo Extensions" url="http://pke.github.com/eclipse_helpers">
       CopyTo Extensions for the Eclipse Workbench. Basically adds &quot;Pastebin&quot; support into Eclipse editors and views.
    </description>
-   <feature url="features/eclipseutils.ui.copyto.feature_0.1.0.201002131957.jar" id="eclipseutils.ui.copyto.feature" version="0.1.0.201002131957">
-      <category name="copyto"/>
+   <feature url="features/eclipseutils.ui.copyto.feature_0.1.0.201002140830.jar" id="eclipseutils.ui.copyto.feature" version="0.1.0.201002140830">
+      <category name="main"/>
    </feature>
-   <category-def name="copyto" label="CopyTo"/>
+   <feature url="features/eclipseutils.ui.copyto.from.jdt.feature_0.1.0.201002140830.jar" id="eclipseutils.ui.copyto.from.jdt.feature" version="0.1.0.201002140830">
+      <category name="support"/>
+   </feature>
+   <feature url="features/eclipseutils.ui.copyto.codepad.feature_0.1.0.201002140830.jar" id="eclipseutils.ui.copyto.codepad.feature" version="0.1.0.201002140830">
+      <category name="target"/>
+   </feature>
+   <feature url="features/eclipseutils.ui.copyto.to.pastebin.ca.feature_0.1.0.201002140830.jar" id="eclipseutils.ui.copyto.to.pastebin.ca.feature" version="0.1.0.201002140830">
+      <category name="target"/>
+   </feature>
+   <feature url="features/eclipseutils.ui.copyto.to.pastebin.com.feature_0.1.0.201002140830.jar" id="eclipseutils.ui.copyto.to.pastebin.com.feature" version="0.1.0.201002140830">
+      <category name="target"/>
+   </feature>
+   <category-def name="main" label="CopyTo"/>
+   <category-def name="support" label="Support">
+      <description>
+         Support for various IDE Resources like Java Code (JDT).
+      </description>
+   </category-def>
+   <category-def name="target" label="Targets">
+      <description>
+         Pre-Configured Targets like pastebin.com
+      </description>
+   </category-def>
 </site>

@@ -23,6 +23,9 @@ public abstract class AbstractValidator implements IValidator {
 
 	private final int severity;
 
+	/**
+	 * @param severity
+	 */
 	public AbstractValidator(final int severity) {
 		this.severity = severity;
 	}

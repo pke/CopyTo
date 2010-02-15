@@ -7,16 +7,26 @@ import eclipseutils.ui.copyto.api.Result;
 import eclipseutils.ui.copyto.api.Results;
 import eclipseutils.ui.copyto.internal.api.Target;
 
+/**
+ * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
+ * 
+ */
 public class ResultsImpl implements Results {
 
 	private Collection<Result> successes;
 	private Collection<Result> failures;
 	private final Target target;
 
+	/**
+	 * @param target
+	 */
 	public ResultsImpl(final Target target) {
 		this.target = target;
 	}
 
+	/**
+	 * @param result
+	 */
 	public void add(final Result result) {
 		if (result.getStatus().isOK() && result.getLocation() != null) {
 			getSuccesses().add(result);
