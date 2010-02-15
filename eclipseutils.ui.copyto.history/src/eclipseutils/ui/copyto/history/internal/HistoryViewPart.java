@@ -1,7 +1,5 @@
 package eclipseutils.ui.copyto.history.internal;
 
-import java.lang.annotation.ElementType;
-
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.observable.list.WritableList;
@@ -98,6 +96,9 @@ public class HistoryViewPart extends ViewPart implements UIResultHandler {
 
 	@Override
 	public void setFocus() {
+		if (viewer != null) {
+			viewer.getControl().setFocus();
+		}
 	}
 
 	public void handleResults(Results result, IShellProvider shellProvider) {
