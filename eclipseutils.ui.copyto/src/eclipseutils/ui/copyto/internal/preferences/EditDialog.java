@@ -42,7 +42,8 @@ import eclipseutils.jface.databinding.validators.ListValidator;
 import eclipseutils.jface.databinding.validators.NotEmptyValidator;
 import eclipseutils.jface.databinding.validators.NotValidator;
 import eclipseutils.jface.databinding.validators.URLValidator;
-import eclipseutils.ui.copyto.internal.api.Target;
+import eclipseutils.ui.copyto.internal.Messages;
+import eclipseutils.ui.copyto.internal.models.Target;
 
 /**
  * TODO: Add validation of URL that it contains at least ${copyto.text} Make

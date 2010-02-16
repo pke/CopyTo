@@ -11,9 +11,9 @@ import org.osgi.framework.ServiceRegistration;
 
 import osgiutils.services.DefaultCollectionServiceRunnable;
 import osgiutils.services.Trackers;
-import eclipseutils.ui.copyto.internal.api.Target;
 import eclipseutils.ui.copyto.internal.api.TargetService;
 import eclipseutils.ui.copyto.internal.api.TargetServiceListener;
+import eclipseutils.ui.copyto.internal.models.Target;
 
 /**
  * Source provider for copyto.

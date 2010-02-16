@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="eclipseutils.ui.copyto.TargetService">
-   <implementation class="eclipseutils.ui.copyto.internal.impl.TargetServiceImpl"/>
+   <implementation class="eclipseutils.ui.copyto.internal.services.TargetServiceImpl"/>
    <reference cardinality="0..n" interface="eclipseutils.ui.copyto.internal.api.TargetServiceListener" name="TargetServiceListener" policy="dynamic"/>
    <service>
       <provide interface="eclipseutils.ui.copyto.internal.api.TargetService"/>

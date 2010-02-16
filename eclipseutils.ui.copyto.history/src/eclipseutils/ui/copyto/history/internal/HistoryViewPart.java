@@ -1,10 +1,16 @@
 package eclipseutils.ui.copyto.history.internal;
 
+import java.util.ArrayList;
+
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeanProperties;
+import org.eclipse.core.databinding.beans.PojoProperties;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.property.list.DelegatingListProperty;
 import org.eclipse.core.databinding.property.list.IListProperty;
+import org.eclipse.core.databinding.property.list.MultiListProperty;
+import org.eclipse.jface.databinding.viewers.ObservableListTreeContentProvider;
+import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.layout.TreeColumnLayout;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -65,21 +71,29 @@ public class HistoryViewPart extends ViewPart implements UIResultHandler {
 									i == columnNames.length - 1 ? 100 : 30));
 		}
 		items = new WritableList();
-		IListProperty childrenProp = new DelegatingListProperty() {
-			IListProperty inputChildren = BeanProperties.list(Results.class,
-					"successes");
-			IListProperty elementChildren = BeanProperties.list(Result.class,
-					"status");
+		MultiListProperty childrenProp = new MultiListProperty(
+				new IListProperty[] {
+						PojoProperties.list("successes"),
+						PojoProperties.list("failures") });
+		/*ViewerSupport.bind(viewer, items, childrenProp, BeanProperties
+				.values(columnNames));*/
+		
+		ObservableListTreeContentProvider contentProvider = new ObservableListTreeContentProvider(
+				childrenProp.listFactory(), null);
+		viewer.setContentProvider(contentProvider);
 
-			protected IListProperty doGetDelegate(Object source) {
-				if (source instanceof Results)
-					return inputChildren;
-				if (source instanceof Result)
-					return elementChildren;
-				return null;
+		ObservableMapLabelProvider labelProvider = new ObservableMapLabelProvider(
+				BeanProperties.value("target.name").observeDetail(
+						contentProvider.getKnownElements())) {
+			
+			public String getText(Object element) {
+				if (element instanceof Result) {
+				}
+				return super.getText(element);
 			}
 		};
-		ViewerSupport.bind(viewer, items, childrenProp, BeanProperties.values(columnNames));
+		viewer.setLabelProvider(labelProvider);
+		viewer.setInput(items);
 
 		serviceRegistration = FrameworkUtil.getBundle(getClass())
 				.getBundleContext().registerService(

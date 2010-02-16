@@ -49,10 +49,12 @@ import osgiutils.services.Trackers;
 import eclipseutils.ui.copyto.api.CopyService;
 import eclipseutils.ui.copyto.api.Copyable;
 import eclipseutils.ui.copyto.api.Results;
-import eclipseutils.ui.copyto.internal.api.Target;
+import eclipseutils.ui.copyto.internal.Messages;
 import eclipseutils.ui.copyto.internal.api.TargetService;
-import eclipseutils.ui.copyto.internal.impl.HttpCopyToHandler;
+import eclipseutils.ui.copyto.internal.models.Target;
+import eclipseutils.ui.copyto.internal.models.TextSelectionCopyable;
 import eclipseutils.ui.copyto.internal.preferences.CopyToPreferencePage;
+import eclipseutils.ui.copyto.internal.services.HttpCopyToHandler;
 
 /**
  * 

@@ -5,8 +5,8 @@ import org.eclipse.core.commands.ParameterValueConversionException;
 
 import osgiutils.services.ServiceRunnable;
 import osgiutils.services.Trackers;
-import eclipseutils.ui.copyto.internal.api.Target;
 import eclipseutils.ui.copyto.internal.api.TargetService;
+import eclipseutils.ui.copyto.internal.models.Target;
 
 /**
  * Converts Targets into their String IDs and vice versa.

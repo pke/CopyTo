@@ -8,7 +8,7 @@
  * Contributors:
  *   Philipp Kursawe (phil.kursawe@gmail.com) - initial API and implementation
  ******************************************************************************/
-package eclipseutils.ui.copyto.internal.api;
+package eclipseutils.ui.copyto.internal.models;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;

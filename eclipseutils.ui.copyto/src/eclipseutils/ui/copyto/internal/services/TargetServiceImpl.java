@@ -8,7 +8,7 @@
  * Contributors:
  *   Philipp Kursawe (phil.kursawe@gmail.com) - initial API and implementation
  ******************************************************************************/
-package eclipseutils.ui.copyto.internal.impl;
+package eclipseutils.ui.copyto.internal.services;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,10 +28,10 @@ import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
 import eclipseutils.ui.copyto.internal.LogHelper;
-import eclipseutils.ui.copyto.internal.api.Target;
 import eclipseutils.ui.copyto.internal.api.TargetService;
 import eclipseutils.ui.copyto.internal.api.TargetServiceListener;
 import eclipseutils.ui.copyto.internal.commands.CopyToHandler;
+import eclipseutils.ui.copyto.internal.models.Target;
 
 /**
  * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>

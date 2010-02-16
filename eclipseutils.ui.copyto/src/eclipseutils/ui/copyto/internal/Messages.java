@@ -1,4 +1,4 @@
-package eclipseutils.ui.copyto.internal.preferences;
+package eclipseutils.ui.copyto.internal;
 
 import org.eclipse.osgi.util.NLS;
 
@@ -7,7 +7,43 @@ import org.eclipse.osgi.util.NLS;
  * 
  */
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "eclipseutils.ui.copyto.internal.preferences.messages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "eclipseutils.ui.copyto.internal.messages"; //$NON-NLS-1$
+	/**
+	 * 
+	 */
+	public static String CopyToHandler_CollectTask;
+	/**
+	 * 
+	 */
+	public static String CopyToHandler_CopyError;
+	/**
+	 * 
+	 */
+	public static String CopyToHandler_DropDown_Tooltip_Configure;
+	/**
+	 * 
+	 */
+	public static String CopyToHandler_DropDown_Tooltip_CopyTo;
+	/**
+	 * 
+	 */
+	public static String CopyToHandler_DropDown_Tooltip_SelectTarget;
+	/**
+	 * 
+	 */
+	public static String CopyToHandler_JobName;
+	/**
+	 * 
+	 */
+	public static String CopyServiceImpl_MimeTypeVar;
+	/**
+	 * 
+	 */
+	public static String CopyServiceImpl_SourceVar;
+	/**
+	 * 
+	 */
+	public static String CopyServiceImpl_TextVar;
 	/**
 	 * 
 	 */
@@ -84,6 +120,18 @@ public class Messages extends NLS {
 	 * 
 	 */
 	public static String TargetFieldEditor_URLColumn;
+	/**
+	 * 
+	 */
+	public static String ClipboardResultsHandler_Message;
+	/**
+	 * 
+	 */
+	public static String ClipboardResultsHandler_Title;
+	/**
+	 * 
+	 */
+	public static String ClipboardResultsHandler_Toggle;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

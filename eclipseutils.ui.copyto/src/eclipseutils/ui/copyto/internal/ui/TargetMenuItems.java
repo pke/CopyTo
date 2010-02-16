@@ -27,9 +27,9 @@ import org.eclipse.ui.services.IServiceLocator;
 
 import osgiutils.services.ServiceRunnableFallback;
 import osgiutils.services.Trackers;
-import eclipseutils.ui.copyto.internal.api.Target;
 import eclipseutils.ui.copyto.internal.api.TargetService;
 import eclipseutils.ui.copyto.internal.commands.CopyToHandler;
+import eclipseutils.ui.copyto.internal.models.Target;
 
 /**
  * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>

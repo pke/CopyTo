@@ -9,22 +9,15 @@
  *   Philipp Kursawe (phil.kursawe@gmail.com) - initial API and implementation
  ******************************************************************************/
 
-package eclipseutils.ui.copyto.internal.api;
-
-import java.util.Collection;
-
-import eclipseutils.ui.copyto.internal.models.Target;
-
+package osgiutils.services;
 
 /**
- * Notified by the TargetService about changes in targets.
  * 
  * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
+ * @param <T>
+ * @param <R>
  * 
  */
-public interface TargetServiceListener {
-	/**
-	 * @param changedTargets
-	 */
-	void targetsChanged(Collection<Target> changedTargets);
+public interface MultiServiceRunnable<T, R> extends ServiceRunnable<T, R> {
+
 }

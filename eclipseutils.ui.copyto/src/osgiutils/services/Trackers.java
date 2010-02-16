@@ -11,28 +11,32 @@
 
 package osgiutils.services;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
-import org.osgi.util.tracker.ServiceTracker;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceReference;
 
 /**
- * Automatic management of OSGi service trackers.
+ * Easier calling of service methods.
  * 
  * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
  * 
  */
 public final class Trackers {
 
-	private static Map<Class<?>, ServiceTracker> trackers = new HashMap<Class<?>, ServiceTracker>();
+	private static BundleContext context = FrameworkUtil.getBundle(
+			Trackers.class).getBundleContext();
+
+	private Trackers() {
+	}
 
 	/**
 	 * Runs the a runnable with the requested service.
 	 * 
-	 * <p>
-	 * This method automatically creates a ServiceTracker for the requested
-	 * service type.
 	 * 
 	 * @param <T>
 	 *            Service type
@@ -49,25 +53,51 @@ public final class Trackers {
 	 */
 	public static <T, R> R run(final Class<T> serviceClass,
 			final ServiceRunnable<T, R> runnable) {
-		final T service = getService(serviceClass);
-		return runService(runnable, service);
+		return runService(context.getServiceReference(serviceClass.getName()),
+				runnable);
 	}
 
 	/**
 	 * @param <T>
+	 * @param <R>
 	 * @param serviceClass
 	 * @param runnable
+	 * @return a collection of items of the return type.
 	 */
-	public static <T> void runAll(final Class<T> serviceClass,
-			final ServiceRunnable<T, ?> runnable) {
-		final T services[] = getServices(serviceClass);
-		for (final T service : services) {
-			runService(runnable, service);
-		}
+	public static <T, R> Collection<R> runAll(final Class<T> serviceClass,
+			final ServiceRunnable<T, R> runnable) {
+		return runAll(serviceClass, null, runnable);
 	}
 
-	private static <T, R> R runService(final ServiceRunnable<T, R> runnable,
-			final T service) {
+	/**
+	 * @param <T>
+	 * @param <R>
+	 * @param serviceClass
+	 * @param filter
+	 * @param runnable
+	 * @return a collection of items of the return type.
+	 */
+	public static <T, R> Collection<R> runAll(final Class<T> serviceClass,
+			final String filter, final ServiceRunnable<T, R> runnable) {
+		try {
+			final ServiceReference[] references = context.getServiceReferences(
+					serviceClass.getName(), filter);
+			if (references != null) {
+				final Collection<R> results = new ArrayList<R>(
+						references.length);
+				for (final ServiceReference reference : references) {
+					results.add(runService(reference, runnable));
+				}
+
+				return results;
+			}
+		} catch (final InvalidSyntaxException e) {
+		}
+		return Collections.emptyList();
+	}
+
+	private static <T, R> R run(final T service,
+			final ServiceRunnable<T, R> runnable) {
 		if (service != null) {
 			return runnable.run(service);
 		} else if (runnable instanceof ServiceRunnableFallback<?, ?>) {
@@ -76,37 +106,19 @@ public final class Trackers {
 		return null;
 	}
 
-	private static <T> T getService(final Class<T> serviceClass) {
-		final ServiceTracker tracker = getTracker(serviceClass);
-		return serviceClass.cast(tracker.getService());
-	}
-
 	@SuppressWarnings("unchecked")
-	private static <T> T[] getServices(final Class<T> serviceClass) {
-		final ServiceTracker tracker = getTracker(serviceClass);
-		final Object[] services = tracker.getServices();
-		return (T[]) (services != null ? (T[]) tracker.getServices()
-				: new Object[0]);
-	}
-
-	private static <T> ServiceTracker getTracker(final Class<T> serviceClass) {
-		ServiceTracker tracker = trackers.get(serviceClass);
-		if (null == tracker) {
-			tracker = createTracker(serviceClass);
-			trackers.put(serviceClass, tracker);
-		}
-		return tracker;
-	}
-
-	private static <T> ServiceTracker createTracker(final Class<T> serviceClass) {
-		return new ServiceTracker(FrameworkUtil.getBundle(Trackers.class)
-				.getBundleContext(), serviceClass.getName(), null) {
-			{
-				open();
+	private static <T, R> R runService(final ServiceReference reference,
+			final ServiceRunnable<T, R> runnable) {
+		if (reference != null) {
+			try {
+				final T service = (T) context.getService(reference);
+				return run(service, runnable);
+			} finally {
+				context.ungetService(reference);
 			}
-		};
-	}
-
-	private Trackers() {
+		} else if (runnable instanceof ServiceRunnableFallback<?, ?>) {
+			return ((ServiceRunnableFallback<T, R>) runnable).run();
+		}
+		return null;
 	}
 }

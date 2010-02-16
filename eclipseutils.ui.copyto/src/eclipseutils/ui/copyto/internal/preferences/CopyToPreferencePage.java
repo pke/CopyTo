@@ -24,8 +24,9 @@ import org.eclipse.ui.model.WorkbenchAdapter;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.osgi.framework.FrameworkUtil;
 
-import eclipseutils.ui.copyto.internal.api.Target;
+import eclipseutils.ui.copyto.internal.Messages;
 import eclipseutils.ui.copyto.internal.commands.CopyToHandler;
+import eclipseutils.ui.copyto.internal.models.Target;
 import eclipseutils.ui.copyto.internal.results.ClipboardResultsHandler;
 
 /**

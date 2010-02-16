@@ -1,11 +1,10 @@
-package eclipseutils.ui.copyto.internal.impl;
+package eclipseutils.ui.copyto.internal.models;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 import eclipseutils.ui.copyto.api.Result;
 import eclipseutils.ui.copyto.api.Results;
-import eclipseutils.ui.copyto.internal.api.Target;
 
 /**
  * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>

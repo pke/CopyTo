@@ -8,7 +8,7 @@
  * Contributors:
  *   Philipp Kursawe (phil.kursawe@gmail.com) - initial API and implementation
  ******************************************************************************/
-package eclipseutils.ui.copyto.internal.impl;
+package eclipseutils.ui.copyto.internal.services;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
@@ -28,7 +28,9 @@ import eclipseutils.ui.copyto.api.Copyable;
 import eclipseutils.ui.copyto.api.ResponseHandler;
 import eclipseutils.ui.copyto.api.Result;
 import eclipseutils.ui.copyto.internal.LogHelper;
-import eclipseutils.ui.copyto.internal.api.Target;
+import eclipseutils.ui.copyto.internal.Messages;
+import eclipseutils.ui.copyto.internal.models.ResultImpl;
+import eclipseutils.ui.copyto.internal.models.Target;
 import eclipseutils.ui.copyto.responses.RedirectResponseHandler;
 
 /**

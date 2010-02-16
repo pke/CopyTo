@@ -34,8 +34,9 @@ import osgiutils.services.DefaultCollectionServiceRunnable;
 import osgiutils.services.SimpleServiceRunnable;
 import osgiutils.services.Trackers;
 import eclipseutils.jface.preferences.AbstractTableViewerFieldEditor;
-import eclipseutils.ui.copyto.internal.api.Target;
+import eclipseutils.ui.copyto.internal.Messages;
 import eclipseutils.ui.copyto.internal.api.TargetService;
+import eclipseutils.ui.copyto.internal.models.Target;
 
 class TargetFieldEditor extends AbstractTableViewerFieldEditor<Target> {
 

@@ -33,6 +33,7 @@ import org.osgi.framework.FrameworkUtil;
 import eclipseutils.ui.copyto.api.Result;
 import eclipseutils.ui.copyto.api.Results;
 import eclipseutils.ui.copyto.api.UIResultHandler;
+import eclipseutils.ui.copyto.internal.Messages;
 
 /**
  * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>

@@ -14,7 +14,7 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.IStatus;
 
-import eclipseutils.ui.copyto.internal.api.Target;
+import eclipseutils.ui.copyto.internal.models.Target;
 
 /**
  * Result of a copyTo action.

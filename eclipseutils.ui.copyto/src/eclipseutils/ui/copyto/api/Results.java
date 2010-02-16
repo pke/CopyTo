@@ -2,7 +2,7 @@ package eclipseutils.ui.copyto.api;
 
 import java.util.Collection;
 
-import eclipseutils.ui.copyto.internal.api.Target;
+import eclipseutils.ui.copyto.internal.models.Target;
 
 /**
  * A set of results of a copy action.

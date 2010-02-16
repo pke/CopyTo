@@ -140,7 +140,7 @@
       <commandParameterType
             converter="eclipseutils.ui.copyto.internal.commands.TargetParameterConverter"
             id="eclipseutils.ui.copyto.TargetParameterType"
-            type="eclipseutils.ui.copyto.internal.api.Target">
+            type="eclipseutils.ui.copyto.internal.models.Target">
       </commandParameterType>
    </extension>
    <extension

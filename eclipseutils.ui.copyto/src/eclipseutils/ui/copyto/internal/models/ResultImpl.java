@@ -8,7 +8,7 @@
  * Contributors:
  *   Philipp Kursawe (phil.kursawe@gmail.com) - initial API and implementation
  ******************************************************************************/
-package eclipseutils.ui.copyto.internal.impl;
+package eclipseutils.ui.copyto.internal.models;
 
 import java.net.URL;
 
@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.Status;
 
 import eclipseutils.ui.copyto.api.Copyable;
 import eclipseutils.ui.copyto.api.Result;
-import eclipseutils.ui.copyto.internal.api.Target;
+import eclipseutils.ui.copyto.internal.services.HttpCopyToHandler;
 
 /**
  * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>

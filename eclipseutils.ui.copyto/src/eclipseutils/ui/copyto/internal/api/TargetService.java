@@ -3,6 +3,8 @@ package eclipseutils.ui.copyto.internal.api;
 import java.util.Collection;
 import java.util.List;
 
+import eclipseutils.ui.copyto.internal.models.Target;
+
 /**
  * Provides management of CopyTo Targets.
  * 
