@@ -4,6 +4,7 @@ import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.ITypeRoot;
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 import eclipseutils.ui.copyto.api.Copyable;
@@ -21,11 +22,14 @@ public class AdapterFactory implements IAdapterFactory {
 			final Class adapterType) {
 		if (adaptableObject instanceof AbstractTextEditor) {
 			final AbstractTextEditor textEditor = (AbstractTextEditor) adaptableObject;
-			final ITypeRoot element = JavaUI.getEditorInputTypeRoot(textEditor
-					.getEditorInput());
-			if (element != null) {
-				return new RangeCopyable(element, textEditor
-						.getHighlightRange());
+			// TODO: Check if editor is selected but *no* Text Selection
+			final IRegion highlightRange = textEditor.getHighlightRange();
+			if (highlightRange != null) {
+				final ITypeRoot element = JavaUI
+						.getEditorInputTypeRoot(textEditor.getEditorInput());
+				if (element != null) {
+					return new RangeCopyable(element, highlightRange);
+				}
 			}
 		} else if (adaptableObject instanceof IMember) {
 			return new MemberCopyable((IMember) adaptableObject);

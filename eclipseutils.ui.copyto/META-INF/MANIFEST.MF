@@ -71,8 +71,7 @@ Import-Package: org.apache.commons.codec.binary,
  org.mortbay.util.ajax;version="6.1.15",
  org.osgi.framework;version="1.5.0",
  org.osgi.service.log,
- org.osgi.service.prefs,
- org.osgi.util.tracker;version="1.4.0"
+ org.osgi.service.prefs
 Bundle-ActivationPolicy: lazy
 Export-Package: eclipseutils.ui.copyto;version="1.0.0",
  eclipseutils.ui.copyto.api;version="1.0.0"

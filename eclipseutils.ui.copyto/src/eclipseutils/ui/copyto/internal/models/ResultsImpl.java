@@ -30,6 +30,9 @@ public class ResultsImpl implements Results {
 		if (result.getStatus().isOK() && result.getLocation() != null) {
 			getSuccesses().add(result);
 		} else {
+			if (result.getStatus().getException() != null) {
+				result.getStatus().getException().printStackTrace(System.err);
+			}
 			getFailures().add(result);
 		}
 	}

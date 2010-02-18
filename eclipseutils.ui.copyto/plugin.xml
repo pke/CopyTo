@@ -167,9 +167,7 @@
       <definition
             id="eclipseutils.ui.copyto.isCopyableSelection">
             <or>
-            <instanceof
-                  value="org.eclipse.jface.text.ITextSelection">
-            </instanceof>
+            <instanceof value="org.eclipse.jface.text.ITextSelection"/>
             <iterate
                   operator="or">
                <or>
@@ -233,6 +231,13 @@
                type="java.net.URL">
          </adapter>
       </factory>
+      <factory
+            adaptableType="org.eclipse.ui.internal.views.markers.MarkerEntry"
+            class="eclipseutils.ui.copyto.internal.AdapterFactory">
+         <adapter
+               type="eclipseutils.ui.copyto.api.Copyable">
+         </adapter>
+      </factory>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
@@ -258,5 +263,15 @@
             class="eclipseutils.ui.copyto.internal.results.ClipboardResultsHandler"
             name="Copy to clipboard">
       </resultHandler>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="eclipseutils.ui.copyto.internal.PropertyTester"
+            id="eclipseutils.ui.copyto.propertyTester"
+            namespace="eclipseutils.ui.copyto.selection"
+            properties="empty"
+            type="org.eclipse.jface.text.ITextSelection">
+      </propertyTester>
    </extension>
 </plugin>

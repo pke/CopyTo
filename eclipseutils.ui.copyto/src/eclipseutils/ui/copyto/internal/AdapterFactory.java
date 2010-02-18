@@ -16,7 +16,6 @@ import java.util.Map.Entry;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IAdapterFactory;
 
 import eclipseutils.ui.copyto.api.Copyable;
@@ -28,11 +27,12 @@ import eclipseutils.ui.copyto.api.Copyable;
 public class AdapterFactory implements IAdapterFactory {
 
 	@SuppressWarnings("rawtypes")
-	public Object getAdapter(Object adaptableObject, final Class adapterType) {
-		if (adaptableObject instanceof IAdaptable) {
+	public Object getAdapter(final Object adaptableObject,
+			final Class adapterType) {
+		/*if (adaptableObject instanceof IAdaptable) {
 			adaptableObject = ((IAdaptable) adaptableObject)
 					.getAdapter(IMarker.class);
-		}
+		}*/
 		if (adaptableObject instanceof IMarker) {
 			final IMarker marker = (IMarker) adaptableObject;
 			return new Copyable() {

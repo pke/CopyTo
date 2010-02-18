@@ -37,6 +37,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.commands.IElementUpdater;
 import org.eclipse.ui.handlers.HandlerUtil;
@@ -110,12 +111,7 @@ public class CopyToHandler extends AbstractHandler implements IElementUpdater {
 					Copyable copyable = (Copyable) adapterManager.loadAdapter(
 							item, Copyable.class.getName());
 					if (copyable == null) {
-						final IResource resource = (IResource) adapterManager
-								.loadAdapter(item, IResource.class.getName());
-						if (resource != null) {
-							copyable = (Copyable) adapterManager.loadAdapter(
-									resource, Copyable.class.getName());
-						}
+						copyable = getResourceCopyable(item);
 					}
 
 					if (copyable != null) {
@@ -123,13 +119,21 @@ public class CopyToHandler extends AbstractHandler implements IElementUpdater {
 					}
 				}
 			} else if (selection instanceof ITextSelection) {
-				final ITextSelection textSelection = (ITextSelection) selection;
 				Copyable copyable = (Copyable) adapterManager.loadAdapter(
 						editorPart, Copyable.class.getName());
 				if (null == copyable) {
-					copyable = new TextSelectionCopyable(textSelection);
+					final ITextSelection textSelection = (ITextSelection) selection;
+					if (textSelection.getLength() == 0) {
+						final IEditorInput editorInput = editorPart
+								.getEditorInput();
+						copyable = getResourceCopyable(editorInput);
+					} else {
+						copyable = new TextSelectionCopyable(textSelection);
+					}
 				}
-				items.add(copyable);
+				if (copyable != null) {
+					items.add(copyable);
+				}
 			}
 			final Results results = Trackers.run(CopyService.class,
 					new ServiceRunnable<CopyService, Results>() {
@@ -267,5 +271,22 @@ public class CopyToHandler extends AbstractHandler implements IElementUpdater {
 						});
 					}
 				});
+	}
+
+	/**
+	 * Tries to adapt the item first to IResource and then to Copyable.
+	 * 
+	 * @param item
+	 * @return
+	 */
+	private Copyable getResourceCopyable(final Object item) {
+		final IResource resource = (IResource) adapterManager.loadAdapter(item,
+				IResource.class.getName());
+		if (resource != null) {
+			final Copyable copyable = (Copyable) adapterManager.loadAdapter(
+					resource, Copyable.class.getName());
+			return copyable;
+		}
+		return null;
 	}
 }
