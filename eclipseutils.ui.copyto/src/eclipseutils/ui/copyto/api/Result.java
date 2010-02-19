@@ -14,8 +14,6 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.IStatus;
 
-import eclipseutils.ui.copyto.internal.models.Target;
-
 /**
  * Result of a copyTo action.
  * 
@@ -23,13 +21,14 @@ import eclipseutils.ui.copyto.internal.models.Target;
  * @since 1.0
  */
 public interface Result {
-	/**
-	 * @return the target.
-	 */
-	Target getTarget();
 
 	/**
-	 * @return the Copyable used.
+	 * @return the Results this Result belongs to.
+	 */
+	Results getParent();
+
+	/**
+	 * @return the copyable that is the result for.
 	 */
 	Copyable getCopyable();
 

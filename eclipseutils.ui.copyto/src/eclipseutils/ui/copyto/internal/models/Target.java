@@ -28,14 +28,27 @@ import java.util.Map.Entry;
 
 import org.apache.commons.codec.binary.Base64;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.model.WorkbenchAdapter;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
+
+import osgiutils.services.LogHelper;
+import osgiutils.services.SimpleServiceRunnable;
+import osgiutils.services.Trackers;
+import eclipseutils.ui.copyto.api.Copyable;
+import eclipseutils.ui.copyto.api.ResultHandler;
+import eclipseutils.ui.copyto.api.Results;
+import eclipseutils.ui.copyto.api.UIResultHandler;
+import eclipseutils.ui.copyto.internal.services.HttpProtocol;
 
 /**
  * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
@@ -304,4 +317,54 @@ public class Target extends PlatformObject implements Serializable {
 		return connectionStatus;
 	}
 
+	public Results copy(final IProgressMonitor monitor, final Shell shell,
+			final Copyable... copyables) {
+		final SubMonitor subMonitor = SubMonitor.convert(monitor,
+				copyables.length);
+
+		final ResultsImpl results = new ResultsImpl(this);
+
+		final HttpProtocol handler = new HttpProtocol();
+
+		for (final Copyable copyable : copyables) {
+			try {
+				results.add(new ResultImpl(results, copyable, handler.copy(
+						copyable, this, subMonitor)));
+			} catch (final Exception e) {
+				results.add(new ResultImpl(results, copyable, e));
+			}
+		}
+		notifyListeners(results, shell);
+		return results;
+	}
+
+	private void notifyListeners(final Results results, final Shell shell) {
+		Trackers.runAll(ResultHandler.class,
+				new SimpleServiceRunnable<ResultHandler>() {
+					@Override
+					protected void doRun(final ResultHandler service) {
+						try {
+							service.handleResults(results);
+						} catch (final Throwable t) {
+							LogHelper.error(t, "Calling result handler"); //$NON-NLS-1$
+						}
+					}
+				});
+		Trackers.runAll(UIResultHandler.class,
+				new SimpleServiceRunnable<UIResultHandler>() {
+					@Override
+					protected void doRun(final UIResultHandler service) {
+						Display.getDefault().asyncExec(new Runnable() {
+							public void run() {
+								try {
+									service.handleResults(results, shell);
+								} catch (final Throwable t) {
+									LogHelper
+											.error(t, "Calling result handler"); //$NON-NLS-1$
+								}
+							}
+						});
+					}
+				});
+	}
 }

@@ -1,26 +1,22 @@
 package eclipseutils.ui.copyto.history.internal;
 
-import java.util.ArrayList;
-
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.beans.PojoProperties;
 import org.eclipse.core.databinding.observable.list.WritableList;
-import org.eclipse.core.databinding.property.list.DelegatingListProperty;
 import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.core.databinding.property.list.MultiListProperty;
 import org.eclipse.jface.databinding.viewers.ObservableListTreeContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
-import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.layout.TreeColumnLayout;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
-import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.part.ViewPart;
 import org.osgi.framework.FrameworkUtil;
@@ -115,7 +111,7 @@ public class HistoryViewPart extends ViewPart implements UIResultHandler {
 		}
 	}
 
-	public void handleResults(Results result, IShellProvider shellProvider) {
+	public void handleResults(Results result, Shell shell) {
 		items.add(result);
 	}
 }

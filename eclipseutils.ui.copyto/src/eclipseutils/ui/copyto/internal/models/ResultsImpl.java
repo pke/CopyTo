@@ -54,5 +54,4 @@ public class ResultsImpl implements Results {
 	public Target getTarget() {
 		return target;
 	}
-
 }

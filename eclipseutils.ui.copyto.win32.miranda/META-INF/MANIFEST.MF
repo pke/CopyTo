@@ -6,19 +6,23 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: %Bundle-Vendor
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Import-Package: com.sun.jna,
- com.sun.jna.examples.win32,
+ com.sun.jna.examples.win32;version="1.0.0",
  com.sun.jna.ptr,
  com.sun.jna.win32,
  eclipseutils.ui.copyto.api;version="1.0.0",
+ eclipseutils.ui.copyto.chat.core,
+ eclipseutils.ui.copyto.chat.ui,
  org.eclipse.core.commands.common,
  org.eclipse.core.runtime;version="3.4.0",
  org.eclipse.jface.dialogs,
  org.eclipse.jface.resource,
  org.eclipse.jface.viewers,
  org.eclipse.jface.window,
+ org.eclipse.osgi.service.debug,
  org.eclipse.swt.events,
  org.eclipse.swt.graphics,
  org.eclipse.swt.widgets,
  org.eclipse.ui.dialogs,
  org.osgi.framework
-Service-Component: OSGI-INF/MirandaIRCPaste.xml
+Service-Component: OSGI-INF/MirandaIRCPaste.xml, OSGI-INF/DebugTrace.xml
+Bundle-ActivationPolicy: lazy

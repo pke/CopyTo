@@ -15,9 +15,10 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 
+import osgiutils.services.LogHelper;
 import osgiutils.services.SimpleServiceRunnable;
 import osgiutils.services.Trackers;
 import eclipseutils.ui.copyto.api.CopyService;
@@ -25,7 +26,6 @@ import eclipseutils.ui.copyto.api.Copyable;
 import eclipseutils.ui.copyto.api.ResultHandler;
 import eclipseutils.ui.copyto.api.Results;
 import eclipseutils.ui.copyto.api.UIResultHandler;
-import eclipseutils.ui.copyto.internal.LogHelper;
 import eclipseutils.ui.copyto.internal.api.TargetService;
 import eclipseutils.ui.copyto.internal.models.ResultImpl;
 import eclipseutils.ui.copyto.internal.models.ResultsImpl;
@@ -40,7 +40,7 @@ import eclipseutils.ui.copyto.internal.models.Target;
 public class CopyServiceImpl implements CopyService {
 	private final AtomicReference<TargetService> targetServiceRef = new AtomicReference<TargetService>();
 
-	private final HttpCopyToHandler handler = new HttpCopyToHandler();
+	private final HttpProtocol handler = new HttpProtocol();
 
 	protected void bind(final TargetService service) {
 		targetServiceRef.set(service);
@@ -51,7 +51,7 @@ public class CopyServiceImpl implements CopyService {
 	}
 
 	public Results copy(final String targetId, final IProgressMonitor monitor,
-			final IShellProvider shellProvider, final Copyable... copyables) {
+			final Shell shell, final Copyable... copyables) {
 		final TargetService targetService = targetServiceRef.get();
 		if (targetService != null) {
 			final Target target = targetService.find(targetId);
@@ -80,13 +80,14 @@ public class CopyServiceImpl implements CopyService {
 
 			for (final Copyable copyable : copyables) {
 				try {
-					results.add(handler.copy(copyable, target, subMonitor));
+					results.add(new ResultImpl(results, copyable, handler.copy(
+							copyable, target, subMonitor)));
 				} catch (final Exception e) {
-					results.add(new ResultImpl(copyable, target, e));
+					results.add(new ResultImpl(results, copyable, e));
 				}
 			}
 			targetService.setLastSelected(targetId);
-			notifyListeners(results, shellProvider);
+			notifyListeners(results, shell);
 			return results;
 		} else {
 			LogHelper.error(null, "No TargetService available"); //$NON-NLS-1$
@@ -94,8 +95,7 @@ public class CopyServiceImpl implements CopyService {
 		}
 	}
 
-	private void notifyListeners(final Results results,
-			final IShellProvider shellProvider) {
+	private void notifyListeners(final Results results, final Shell shell) {
 		Trackers.runAll(ResultHandler.class,
 				new SimpleServiceRunnable<ResultHandler>() {
 					@Override
@@ -114,8 +114,7 @@ public class CopyServiceImpl implements CopyService {
 						Display.getDefault().asyncExec(new Runnable() {
 							public void run() {
 								try {
-									service.handleResults(results,
-											shellProvider);
+									service.handleResults(results, shell);
 								} catch (final Throwable t) {
 									LogHelper
 											.error(t, "Calling result handler"); //$NON-NLS-1$

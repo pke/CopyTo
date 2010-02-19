@@ -1,0 +1,22 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Chat PostAction UI
+Bundle-SymbolicName: eclipseutils.ui.copyto.chat.ui;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Philipp Kursawe
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Import-Package: eclipseutils.ui.copyto;version="1.0.0",
+ eclipseutils.ui.copyto.api;version="1.0.0",
+ eclipseutils.ui.copyto.chat.core,
+ org.eclipse.core.commands.common,
+ org.eclipse.core.runtime;version="3.4.0",
+ org.eclipse.jface.dialogs,
+ org.eclipse.jface.resource,
+ org.eclipse.jface.viewers,
+ org.eclipse.jface.window,
+ org.eclipse.swt.events,
+ org.eclipse.swt.graphics,
+ org.eclipse.swt.widgets,
+ org.eclipse.ui.dialogs,
+ org.osgi.framework
+Export-Package: eclipseutils.ui.copyto.chat.ui

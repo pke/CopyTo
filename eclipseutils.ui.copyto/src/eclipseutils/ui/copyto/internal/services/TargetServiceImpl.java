@@ -27,7 +27,8 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
-import eclipseutils.ui.copyto.internal.LogHelper;
+import osgiutils.services.LogHelper;
+
 import eclipseutils.ui.copyto.internal.api.TargetService;
 import eclipseutils.ui.copyto.internal.api.TargetServiceListener;
 import eclipseutils.ui.copyto.internal.commands.CopyToHandler;

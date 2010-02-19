@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="eclipseutils.ui.copyto.ecf.irc.ChatRoomPaste">
+   <implementation class="eclipse.ui.copyto.ecf.irc.internal.EcfIrcChatRoomPaste"/>
+   <service>
+      <provide interface="eclipseutils.ui.copyto.api.UIResultHandler"/>
+   </service>
+   <reference bind="bind" cardinality="1..1" interface="org.eclipse.ui.IWorkbench" name="IWorkbench" policy="dynamic" unbind="unbind"/>
+</scr:component>

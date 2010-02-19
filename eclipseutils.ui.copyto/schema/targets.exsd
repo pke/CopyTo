@@ -10,6 +10,8 @@
       </documentation>
    </annotation>
 
+   <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
+
    <element name="extension">
       <annotation>
          <appinfo>
@@ -20,6 +22,7 @@
          <sequence>
             <element ref="paramInfos" minOccurs="0" maxOccurs="1"/>
             <element ref="responseHandler" minOccurs="0" maxOccurs="1"/>
+            <element ref="ui" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -123,7 +126,7 @@ Can also be IParameterValues.
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  A special HTTP response handler for this target.
                </documentation>
                <appinfo>
                   <meta.attribute kind="java" basedOn=":eclipseutils.ui.copyto.api.ResponseHandler"/>
@@ -203,6 +206,27 @@ Default: true
                   Fixed parameters cannot be changed by the user.
 Default: false
                </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="ui">
+      <annotation>
+         <documentation>
+            Describes a UI that is presented to the user if he holds the CTRL key down.
+The UI allows the user to tweak the things that will be sent to the target.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The class implementing the UI. It is given a Shell to operate on and the Copyable with its resolved text.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>

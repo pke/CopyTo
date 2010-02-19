@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="eclipseutils.ui.copyto.chat.miranda"
+      label="Miranda-IM Chat Paste to support"
+      version="1.0.0.qualifier"
+      provider-name="Philipp Kursawe"
+      os="win32"
+      ws="win32"
+      arch="x86">
+
+   <description url="http://pke.github.com/CopyTo/support#miranda-im">
+      Provides support to paste URLs into the Miranda-IM IRC (Chat)
+window.
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      EPL 1.0
+   </license>
+
+   <requires>
+      <import plugin="com.sun.jna"/>
+      <import plugin="com.sun.jna.win32"/>
+      <import plugin="eclipseutils.ui.copyto"/>
+      <import plugin="eclipseutils.ui.copyto.chat.core"/>
+      <import plugin="eclipseutils.ui.copyto.chat.ui"/>
+      <import plugin="org.eclipse.core.commands"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.jface"/>
+      <import plugin="org.eclipse.osgi"/>
+      <import plugin="org.eclipse.swt"/>
+   </requires>
+
+   <plugin
+         id="eclipseutils.ui.copyto.win32.miranda"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

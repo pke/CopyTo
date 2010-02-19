@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.dnd.Clipboard;
@@ -27,6 +26,7 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.osgi.framework.FrameworkUtil;
 
@@ -50,8 +50,7 @@ public class ClipboardResultsHandler implements UIResultHandler {
 	 * @param results
 	 * @param shellProvider
 	 */
-	public void handleResults(final Results results,
-			final IShellProvider shellProvider) {
+	public void handleResults(final Results results, final Shell shell) {
 		final IPreferenceStore prefs = new ScopedPreferenceStore(
 				new ConfigurationScope(), FrameworkUtil.getBundle(getClass())
 						.getSymbolicName());
@@ -67,7 +66,7 @@ public class ClipboardResultsHandler implements UIResultHandler {
 					if (availableTypes.length > 0) {
 						final MessageDialogWithToggle dialog = MessageDialogWithToggle
 								.openYesNoQuestion(
-										shellProvider.getShell(),
+										shell,
 										Messages.ClipboardResultsHandler_Title,
 										NLS.bind(
 												Messages.ClipboardResultsHandler_Message,

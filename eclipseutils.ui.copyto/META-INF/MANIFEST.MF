@@ -73,6 +73,12 @@ Import-Package: org.apache.commons.codec.binary,
  org.osgi.service.log,
  org.osgi.service.prefs
 Bundle-ActivationPolicy: lazy
-Export-Package: eclipseutils.ui.copyto;version="1.0.0",
- eclipseutils.ui.copyto.api;version="1.0.0"
-Service-Component: OSGI-INF/CopyService.xml, OSGI-INF/TargetService.xml, OSGI-INF/ClipboardResultsHandler.xml
+Export-Package: eclipseutils.jface.databinding,
+ eclipseutils.jface.databinding.customizers,
+ eclipseutils.jface.databinding.validators,
+ eclipseutils.jface.preferences,
+ eclipseutils.ui.copyto;version="1.0.0",
+ eclipseutils.ui.copyto.api;version="1.0.0",
+ eclipseutils.ui.copyto.api.json,
+ osgiutils.services
+Service-Component: OSGI-INF/TargetService.xml, OSGI-INF/ClipboardResultsHandler.xml

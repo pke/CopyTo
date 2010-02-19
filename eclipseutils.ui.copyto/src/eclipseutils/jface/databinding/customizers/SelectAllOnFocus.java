@@ -15,6 +15,24 @@ import eclipseutils.jface.databinding.FieldOptions.ControlCustomizer;
  */
 public class SelectAllOnFocus implements ControlCustomizer {
 
+	private final boolean always;
+
+	/**
+	 * @param always
+	 *            select all text or only on first time the focus is gained.
+	 */
+	public SelectAllOnFocus(final boolean always) {
+		this.always = always;
+	}
+
+	/**
+	 * Creates a customizer that always selects the text when the control
+	 * receives the focus.
+	 */
+	public SelectAllOnFocus() {
+		this(true);
+	}
+
 	public void customizeControl(final Control control) {
 		if (control instanceof Text) {
 			final Text text = (Text) control;
@@ -23,6 +41,9 @@ public class SelectAllOnFocus implements ControlCustomizer {
 				public void focusGained(final FocusEvent e) {
 					if (!text.isDisposed()) {
 						(text).selectAll();
+					}
+					if (!always) {
+						control.removeFocusListener(this);
 					}
 				}
 			});

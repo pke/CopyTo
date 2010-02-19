@@ -29,7 +29,6 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Rectangle;
@@ -47,7 +46,6 @@ import org.eclipse.ui.progress.IProgressConstants;
 import osgiutils.services.ServiceRunnable;
 import osgiutils.services.SimpleServiceRunnable;
 import osgiutils.services.Trackers;
-import eclipseutils.ui.copyto.api.CopyService;
 import eclipseutils.ui.copyto.api.Copyable;
 import eclipseutils.ui.copyto.api.Results;
 import eclipseutils.ui.copyto.internal.Messages;
@@ -55,7 +53,7 @@ import eclipseutils.ui.copyto.internal.api.TargetService;
 import eclipseutils.ui.copyto.internal.models.Target;
 import eclipseutils.ui.copyto.internal.models.TextSelectionCopyable;
 import eclipseutils.ui.copyto.internal.preferences.CopyToPreferencePage;
-import eclipseutils.ui.copyto.internal.services.HttpCopyToHandler;
+import eclipseutils.ui.copyto.internal.services.HttpProtocol;
 
 /**
  * 
@@ -135,24 +133,16 @@ public class CopyToHandler extends AbstractHandler implements IElementUpdater {
 					items.add(copyable);
 				}
 			}
-			final Results results = Trackers.run(CopyService.class,
-					new ServiceRunnable<CopyService, Results>() {
-						public Results run(final CopyService service) {
-							return service.copy(target.getId(), subMonitor
-									.newChild(90),
-									new SameShellProvider(shell),
-									items.toArray(new Copyable[items.size()]));
-						}
-					});
+			final Results results = target.copy(subMonitor, shell, items
+					.toArray(new Copyable[items.size()]));
 			if (!results.getFailures().isEmpty()) {
 				setProperty(IProgressConstants.KEEP_PROPERTY, true);
 				setProperty(
 						IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY,
 						true);
-				return new Status(IStatus.ERROR,
-						HttpCopyToHandler.symbolicName,
-						NLS.bind(Messages.CopyToHandler_CopyError, target
-								.getUrl(), results.getFailures().size()));
+				return new Status(IStatus.ERROR, HttpProtocol.symbolicName, NLS
+						.bind(Messages.CopyToHandler_CopyError,
+								target.getUrl(), results.getFailures().size()));
 			}
 			if (results.getSuccesses().isEmpty()) {
 				return Status.CANCEL_STATUS;

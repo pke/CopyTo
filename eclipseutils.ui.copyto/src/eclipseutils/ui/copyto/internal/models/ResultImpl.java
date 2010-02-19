@@ -17,7 +17,8 @@ import org.eclipse.core.runtime.Status;
 
 import eclipseutils.ui.copyto.api.Copyable;
 import eclipseutils.ui.copyto.api.Result;
-import eclipseutils.ui.copyto.internal.services.HttpCopyToHandler;
+import eclipseutils.ui.copyto.api.Results;
+import eclipseutils.ui.copyto.internal.services.HttpProtocol;
 
 /**
  * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
@@ -25,54 +26,49 @@ import eclipseutils.ui.copyto.internal.services.HttpCopyToHandler;
  */
 public class ResultImpl implements Result {
 
-	private final Copyable copyable;
 	private final URL location;
 	private final IStatus status;
 	private final long timestamp;
-	private final Target target;
+	private final Results parent;
+	private final Copyable copyable;
 
 	/**
+	 * @param parent
 	 * @param copyable
-	 * @param target
 	 * @param location
 	 * @param status
 	 */
-	public ResultImpl(final Copyable copyable, final Target target,
+	public ResultImpl(final Results parent, final Copyable copyable,
 			final URL location, final IStatus status) {
+		this.parent = parent;
 		this.copyable = copyable;
 		this.location = location;
-		this.target = target;
 		this.status = status;
 		this.timestamp = System.currentTimeMillis();
 	}
 
 	/**
-	 * @param copyable
-	 * @param target
+	 * @param parent
 	 * @param location
 	 */
-	public ResultImpl(final Copyable copyable, final Target target,
+	public ResultImpl(final Results parent, final Copyable copyable,
 			final URL location) {
-		this(copyable, target, location, Status.OK_STATUS);
+		this(parent, copyable, location, Status.OK_STATUS);
 	}
 
 	/**
+	 * @param parent
 	 * @param copyable
-	 * @param target
 	 * @param throwable
 	 */
-	public ResultImpl(final Copyable copyable, final Target target,
+	public ResultImpl(final Results parent, final Copyable copyable,
 			final Throwable throwable) {
-		this(copyable, target, null, new Status(IStatus.ERROR,
-				HttpCopyToHandler.symbolicName, "Failed to copy", throwable)); //$NON-NLS-1$
+		this(parent, copyable, null, new Status(IStatus.ERROR,
+				HttpProtocol.symbolicName, "Failed to copy", throwable)); //$NON-NLS-1$
 	}
 
-	public Target getTarget() {
-		return target;
-	}
-
-	public Copyable getCopyable() {
-		return this.copyable;
+	public Results getParent() {
+		return parent;
 	}
 
 	public URL getLocation() {
@@ -85,6 +81,10 @@ public class ResultImpl implements Result {
 
 	public IStatus getStatus() {
 		return this.status;
+	}
+
+	public Copyable getCopyable() {
+		return copyable;
 	}
 
 }

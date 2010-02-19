@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="eclipseutils.ui.copyto.chat.ui.chatProviders">
+      <chatProvider
+            class="eclipseutils.ui.copyto.ecf.irc.internal.EcfChatProvider"
+            name="Eclipse IRC">
+      </chatProvider>
+   </extension>
+
+</plugin>

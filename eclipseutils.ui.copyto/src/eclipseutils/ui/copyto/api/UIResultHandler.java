@@ -11,7 +11,7 @@
 
 package eclipseutils.ui.copyto.api;
 
-import org.eclipse.jface.window.IShellProvider;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * Results handler that wants to display something in the UI.
@@ -26,5 +26,5 @@ public interface UIResultHandler {
 	 * @param shellProvider
 	 * @uithread This method is called from the UI-Thread.
 	 */
-	void handleResults(Results result, IShellProvider shellProvider);
+	void handleResults(Results result, Shell shell);
 }
