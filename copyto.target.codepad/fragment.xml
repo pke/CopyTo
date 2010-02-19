@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<fragment>
+   <extension
+         id="copyto.codepad.org" point="copyto.core.targets">
+      <paramInfos
+            hidden="code,submit">
+         <paramInfo
+               default="false"
+               label="%run.label"
+               description="%run.description"
+               name="run"
+               type="java.lang.Boolean">
+         </paramInfo>
+      </paramInfos>
+   </extension>
+   <extension
+         point="org.eclipse.core.variables.dynamicVariables">
+      <variable
+            description="%langVariable.description"
+            name="codepad.lang"
+            resolver="copyto.target.codepad.internal.CodepadLanguageResolver"
+            supportsArgument="true"/>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="copyto.target.codepad.internal.PreferenceInitializer">
+      </initializer>
+   </extension>
+</fragment>

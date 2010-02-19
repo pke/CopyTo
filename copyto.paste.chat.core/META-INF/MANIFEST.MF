@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Core Chat support
+Bundle-SymbolicName: copyto.paste.chat.core
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Philipp Kursawe
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Export-Package: copyto.paste.chat.core;version="0.1.0"

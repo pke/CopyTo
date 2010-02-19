@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="copyto.paste.chat.ecf.irc"
+      label="PasteTo ECF IRC support"
+      version="0.1.0.qualifier"
+      provider-name="Philipp Kursawe"
+      plugin="copyto.paste.chat.ecf.irc">
+
+   <description url="http://pke.github.com/CopyTo">
+      ECF IRC PastTo support
+   </description>
+
+   <copyright>
+      Copyright (c) 2010 Philipp Kursawe and others. All rights reserved.
+   </copyright>
+
+   <license>
+      Licensed under EPL 1.0
+   </license>
+
+   <plugin
+         id="copyto.paste.chat.ecf.irc"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.ecf.presence.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

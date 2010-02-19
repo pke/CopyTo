@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="copyto.paste.chat.miranda.ChatRoomPaste">
+   <implementation class="copyto.paste.chat.miranda.MirandaChatRoomPaste"/>
+   <service>
+      <provide interface="copyto.ui.UIResultHandler"/>
+   </service>
+</scr:component>

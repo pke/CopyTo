@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<fragment>
+   <extension
+         id="copyto.pastebin.ca"
+         name="%extension.name"
+         point="copyto.core.targets">
+      <paramInfos
+            hidden="apikey,content">
+      </paramInfos>
+      <responseHandler
+            class="copyto.core.responses.JsonResponseHandler">
+      </responseHandler>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="copyto.target.pastebin.ca.internal.PreferenceInitializer">
+      </initializer>
+   </extension>
+</fragment>

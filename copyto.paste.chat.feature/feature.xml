@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="copyto.paste.chat.feature"
+      label="PasteTo Chat Feature"
+      version="1.0.0.qualifier"
+      provider-name="Philipp Kursawe"
+      plugin="copyto.paste.chat.ui">
+
+   <description url="http://pke.github.com/CopyTo">
+      [Enter Feature Description here.]
+   </description>
+
+   <copyright>
+      Copyright (c) 2010 Philipp Kursawe and others. All rights reserved.
+   </copyright>
+
+   <license>
+      Licensed under EPL 1.0
+   </license>
+
+   <requires>
+      <import plugin="copyto.core" version="0.1.0" match="greaterOrEqual"/>
+      <import plugin="copyto.ui" version="0.1.0" match="greaterOrEqual"/>
+   </requires>
+
+   <plugin
+         id="copyto.paste.chat.core"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="copyto.paste.chat.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

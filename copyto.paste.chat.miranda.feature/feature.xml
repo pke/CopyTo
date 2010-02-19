@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="copyto.paste.chat.miranda.feature"
+      label="Miranda-IM Chat Paste to support"
+      version="1.0.0.qualifier"
+      provider-name="Philipp Kursawe"
+      os="win32"
+      ws="win32"
+      arch="x86">
+
+   <description url="http://pke.github.com/CopyTo">
+      Provides support to paste URLs into the Miranda-IM IRC (Chat) window.
+   </description>
+
+   <copyright>
+      Copyright (c) 2010 Philipp Kursawe and others. All rights reserved.
+   </copyright>
+
+   <license>
+      Licensed under EPL 1.0
+   </license>
+
+   <plugin
+         id="copyto.paste.chat.miranda"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.sun.jna"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.sun.jna.examples.win32"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

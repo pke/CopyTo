@@ -1,0 +1,16 @@
+{toc}
+
+h1. Introduction
+
+After some weeks of development I am happy to introduce the first public version of "CopyTo".
+
+h1. Installation
+
+The installation is pretty easy using the Eclipse Update Site provided at "http://pke.github.com/CopyTo/update":http://pke.github.com/CopyTo/update.
+
+Just add the site to your Eclipse Update Sites.
+
+
+h1. Thanks
+
+I wanna thank Remi and Paul Webster for answering my endless questions on the #eclipse IRC channel.

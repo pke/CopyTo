@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="copyto.target.codepad.feature"
+      label="codepad.org support"
+      version="0.1.0.qualifier"
+      provider-name="Philipp Kursawe">
+
+   <description url="http://pke.github.com/CopyTo">
+      [Enter Feature Description here.]
+   </description>
+
+   <copyright>
+      Copyright (c) 2010 Philipp Kursawe and others. All rights reserved.
+   </copyright>
+
+   <license>
+      Licensed under EPL 1.0
+   </license>
+
+   <requires>
+      <import plugin="copyto.core" version="0.1.0"/>
+   </requires>
+
+   <plugin
+         id="copyto.target.codepad"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"
+         unpack="false"/>
+
+</feature>

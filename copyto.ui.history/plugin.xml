@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="copyto.ui.history.internal.HistoryViewPart"
+            id="eclipseutils.ui.copyto.history.view"
+            name="CopyTo History"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:eclipseutils.ui.copyto.history.view">
+         <command
+               commandId="org.eclipse.ui.window.preferences"
+               label="Preferences..."
+               style="push">
+            <parameter
+                  name="preferencePageId"
+                  value="eclipseutils.ui.copyto.PreferencePage">
+            </parameter>
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="toolbar:eclipseutils.ui.copyto.history.view">
+         <command
+               commandId="org.eclipse.ui.edit.delete"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+
+</plugin>

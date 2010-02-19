@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="eclipseutils.ui.copyto.ClipboardResultsHandler">
-   <implementation class="eclipseutils.ui.copyto.internal.results.ClipboardResultsHandler"/>
-   <service>
-      <provide interface="eclipseutils.ui.copyto.api.UIResultHandler"/>
-   </service>
-</scr:component>
