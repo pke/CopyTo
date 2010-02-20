@@ -7,7 +7,7 @@ Bundle-Vendor: %Bundle-Vendor
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: copyto.ui;version="0.1.0"
 Bundle-ActivationPolicy: lazy
-Service-Component: OSGI-INF/TargetService.xml
+Service-Component: OSGI-INF/TargetService.xml, OSGI-INF/ClipboardResultsHandler.xml
 Import-Package: copyto.core;version="0.1.0",
  copyto.core.json,
  copyto.core.responses;version="0.1.0",
