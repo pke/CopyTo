@@ -30,7 +30,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.osgi.framework.FrameworkUtil;
 
-
 import copyto.core.Result;
 import copyto.core.Results;
 import copyto.ui.UIResultHandler;

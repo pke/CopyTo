@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.Platform;
 import org.mortbay.util.ajax.JSON;
 
-import copyto.core.ResponseHandler;
+import copyto.core.HttpResponseHandler;
 import copyto.core.json.MapResponse;
 import copyto.core.json.Response;
 
@@ -31,7 +31,7 @@ import copyto.core.json.Response;
  * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
  * 
  */
-public class JsonResponseHandler implements ResponseHandler {
+public class JsonResponseHandler implements HttpResponseHandler {
 
 	private final IAdapterManager adapterManager = Platform.getAdapterManager();
 

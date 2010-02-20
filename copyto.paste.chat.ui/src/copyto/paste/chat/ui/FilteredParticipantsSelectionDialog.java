@@ -7,17 +7,20 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
+import org.eclipse.jface.viewers.StyledString.Styler;
+import org.eclipse.swt.graphics.TextStyle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.FilteredItemsSelectionDialog;
 
+import copyto.paste.chat.core.ChannelUser;
 import copyto.paste.chat.core.ChatUser;
-
 
 public abstract class FilteredParticipantsSelectionDialog extends
 		FilteredItemsSelectionDialog {
@@ -29,20 +32,17 @@ public abstract class FilteredParticipantsSelectionDialog extends
 		super(shell);
 		setDetailsLabelProvider(getDetailsLabelProvider());
 		setListLabelProvider(getListLabelProvider());
-		setInitialPattern("?");		
+		setInitialPattern("?");
 	}
-
 
 	@Override
 	protected Control createExtendedContentArea(Composite parent) {
-		/*
-		  Composite client = new Composite(parent, SWT.NULL);
-		  GridLayoutFactory.fillDefaults().applyTo(client); Label label = new
-		  Label(client, SWT.LEFT); label.setText("Paste to channel" + ":");
-		  
-		  return client;
-		*/
+		/*Composite client = new Composite(parent, SWT.NULL);
+		GridLayoutFactory.fillDefaults().applyTo(client);
+		Label label = new Label(client, SWT.LEFT);
+		label.setText("Paste to channel" + ":");*/
 		return null;
+
 	}
 
 	@Override
@@ -86,6 +86,11 @@ public abstract class FilteredParticipantsSelectionDialog extends
 	protected Comparator getItemsComparator() {
 		return new Comparator<ChatUser>() {
 			public int compare(ChatUser person1, ChatUser person2) {
+				if (person1 instanceof ChannelUser) {
+					return -1;
+				} else if (person2 instanceof ChannelUser) {
+					return 1;
+				}
 				Collator collator = Collator.getInstance();
 				return collator.compare(person1.getName(), person2.getName());
 			}
@@ -104,7 +109,17 @@ public abstract class FilteredParticipantsSelectionDialog extends
 			StyledString result = new StyledString();
 			if (element instanceof ChatUser) {
 				ChatUser participant = (ChatUser) element;
-				result.append(participant.getName());
+				if (participant instanceof ChannelUser) {
+					result.append("All users", new Styler() {
+						@Override
+						public void applyStyles(final TextStyle textStyle) {
+							textStyle.font = JFaceResources.getFontRegistry().getBold(
+									JFaceResources.DIALOG_FONT);
+						}
+					});
+				} else {
+					result.append(participant.getName());
+				}
 				result.append(" in " + participant.getRoom().getName(),
 						StyledString.QUALIFIER_STYLER);
 			}

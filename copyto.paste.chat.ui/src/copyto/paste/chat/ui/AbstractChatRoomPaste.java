@@ -28,13 +28,12 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.SelectionStatusDialog;
 import org.osgi.framework.Bundle;
 
-
 import copyto.core.Result;
 import copyto.core.Results;
+import copyto.paste.chat.core.ChannelUser;
 import copyto.paste.chat.core.ChatRoom;
 import copyto.paste.chat.core.ChatUser;
 import copyto.ui.UIResultHandler;
-
 
 /**
  * 
@@ -51,7 +50,7 @@ public abstract class AbstractChatRoomPaste implements UIResultHandler {
 		if (!canHandleResults(results)) {
 			return;
 		}
-		
+
 		SelectionStatusDialog dialog = new FilteredParticipantsSelectionDialog(
 				shell) {
 
@@ -61,12 +60,14 @@ public abstract class AbstractChatRoomPaste implements UIResultHandler {
 					ItemsFilter itemsFilter, IProgressMonitor progressMonitor)
 					throws CoreException {
 				for (ChatRoom room : getChatRooms()) {
+					contentProvider.add(new ChannelUser(room), itemsFilter);
 					for (ChatUser user : room.getUsers()) {
 						contentProvider.add(user, itemsFilter);
 					}
 				}
 			}
 		};
+		dialog.setHelpAvailable(false);
 		configureDialog(dialog);
 
 		final Image image = getImage();
@@ -78,7 +79,7 @@ public abstract class AbstractChatRoomPaste implements UIResultHandler {
 				}
 			});
 		}
-		
+
 		if (Window.OK == dialog.open()) {
 			Object selection[] = dialog.getResult();
 			if (selection != null) {
@@ -113,7 +114,7 @@ public abstract class AbstractChatRoomPaste implements UIResultHandler {
 	}
 
 	protected void setMessage(SelectionStatusDialog dialog) {
-		dialog.setMessage("Select the user that you want to message with the link:");
+		dialog.setMessage("Select the user/channel that you want to message with the link.\nPress '?' to show all oder '#' to show only channels.");
 	}
 
 	private String joinURLs(final Collection<Result> results) {

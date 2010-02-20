@@ -74,6 +74,37 @@
                </appinfo>
             </annotation>
          </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  A more detailed description what this action does.
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  a 32x32 icon resource
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="iconProvider" type="string">
+            <annotation>
+               <documentation>
+                  Allows the extension to provide a dynamic icon.
+Causes plugin activation.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":copyto.ui.IconProvider"/>
+               </appinfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

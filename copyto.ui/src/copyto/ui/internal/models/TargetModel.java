@@ -369,7 +369,7 @@ public class TargetModel extends PlatformObject implements Target, Serializable 
 				results.add(new ResultImpl(results, copyable, e));
 			}
 		}
-		notifyListeners(results);
+		//notifyListeners(results);
 		return results;
 	}
 
@@ -383,23 +383,6 @@ public class TargetModel extends PlatformObject implements Target, Serializable 
 						} catch (final Throwable t) {
 							LogHelper.error(t, "Calling result handler"); //$NON-NLS-1$
 						}
-					}
-				});
-		Trackers.runAll(UIResultHandler.class,
-				new SimpleServiceRunnable<UIResultHandler>() {
-					@Override
-					protected void doRun(final UIResultHandler service) {
-						Display.getDefault().asyncExec(new Runnable() {
-							public void run() {
-								Shell shell = Display.getDefault().getActiveShell();
-								try {
-									service.handleResults(results, shell);
-								} catch (final Throwable t) {
-									LogHelper
-											.error(t, "Calling result handler"); //$NON-NLS-1$
-								}
-							}
-						});
 					}
 				});
 	}

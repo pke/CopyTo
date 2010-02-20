@@ -17,7 +17,7 @@ import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 
-import copyto.core.ResponseHandler;
+import copyto.core.HttpResponseHandler;
 
 /**
  * (Default) ResonseHandler that handles 302-Redirect and 201-created responses.
@@ -25,7 +25,7 @@ import copyto.core.ResponseHandler;
  * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
  * 
  */
-public class RedirectResponseHandler implements ResponseHandler {
+public class RedirectResponseHandler implements HttpResponseHandler {
 
 	private static RedirectResponseHandler instance;
 
@@ -45,7 +45,7 @@ public class RedirectResponseHandler implements ResponseHandler {
 	/**
 	 * @return the singleton instance of this response handler.
 	 */
-	public static ResponseHandler getInstance() {
+	public static HttpResponseHandler getInstance() {
 		if (instance == null) {
 			instance = new RedirectResponseHandler();
 		}

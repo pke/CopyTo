@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Eclipse Helpers for Extensions
+Bundle-SymbolicName: eclipseutils.core.extensions
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Philipp Kursawe
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Import-Package: org.eclipse.core.expressions,
+ org.eclipse.core.runtime,
+ org.osgi.framework
+Export-Package: eclipseutils.core.extensions

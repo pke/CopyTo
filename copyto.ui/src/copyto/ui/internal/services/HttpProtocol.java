@@ -28,7 +28,7 @@ import org.osgi.framework.FrameworkUtil;
 
 
 import copyto.core.Copyable;
-import copyto.core.ResponseHandler;
+import copyto.core.HttpResponseHandler;
 import copyto.core.Target;
 import copyto.core.responses.RedirectResponseHandler;
 import copyto.ui.internal.Messages;
@@ -53,7 +53,7 @@ public class HttpProtocol {
 
 	final private HttpClient httpClient = new HttpClient();
 
-	private static ResponseHandler getResponseHandler(final Target target) {
+	private static HttpResponseHandler getResponseHandler(final Target target) {
 		final IConfigurationElement[] elements = Platform
 				.getExtensionRegistry().getConfigurationElementsFor(
 						HttpProtocol.symbolicName, COMMAND_TARGETS_PARAM,
@@ -61,14 +61,14 @@ public class HttpProtocol {
 		for (final IConfigurationElement element : elements) {
 			try {
 				if ("responseHandler".equals(element.getName())) { //$NON-NLS-1$
-					return (ResponseHandler) element
+					return (HttpResponseHandler) element
 							.createExecutableExtension("class"); //$NON-NLS-1$
 				}
 			} catch (final ClassCastException e) {
 				LogHelper
 						.error(
 								e,
-								"Class returned from %s is not an instance of %s", element.getContributor().getName(), ResponseHandler.class.getName()); //$NON-NLS-1$
+								"Class returned from %s is not an instance of %s", element.getContributor().getName(), HttpResponseHandler.class.getName()); //$NON-NLS-1$
 			} catch (final CoreException e) {
 				LogHelper
 						.error(

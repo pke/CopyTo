@@ -8,27 +8,21 @@
  * Contributors:
  *   Philipp Kursawe (phil.kursawe@gmail.com) - initial API and implementation
  ******************************************************************************/
-package copyto.core;
+package com.sun.jna.examples.win32.ext;
 
-import java.net.URL;
-
-import org.apache.commons.httpclient.HttpMethod;
+import com.sun.jna.Native;
+import com.sun.jna.examples.win32.W32API;
 
 /**
+ * Incomplete Shell32.dll implementation.
  * 
- * @author <a href="mailto:kursawe@topsystem.de">Philipp Kursawe</a>
+ * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
  * 
  */
-public interface HttpResponseHandler {
-	/**
-	 * Retrieves a location URL from a HTTP method response.
-	 * 
-	 * @param method
-	 *            to use for extracting the location URL.
-	 * @return a valid URL object
-	 * @throws Exception
-	 *             if there was an error creating a location URL from the given
-	 *             <code>method</code>.
-	 */
-	URL getLocation(HttpMethod method) throws Exception;
+public interface Shell32 extends W32API {
+	Shell32 INSTANCE = (Shell32) Native.loadLibrary("shell32", Shell32.class,
+			DEFAULT_OPTIONS);
+
+	int ExtractIcon(HINSTANCE hInst, String lpszExeFileName, int nIconIndex);
+	int ExtractIcon(int hInst, String lpszExeFileName, int nIconIndex);
 }

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import org.eclipse.swt.widgets.Shell;
 
-
 import copyto.core.Results;
 import copyto.ui.UIResultHandler;
 

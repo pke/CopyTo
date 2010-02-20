@@ -22,7 +22,6 @@ import org.eclipse.ui.part.ViewPart;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceRegistration;
 
-
 import copyto.core.Result;
 import copyto.core.Results;
 import copyto.ui.UIResultHandler;

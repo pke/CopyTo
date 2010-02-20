@@ -255,9 +255,12 @@
          </variable>
       </sourceProvider>
    </extension>
-   <extension point="copyto.core.resultHandlers">
+   <extension
+         point="copyto.core.resultHandlers">
       <resultHandler
             class="copyto.ui.internal.ClipboardResultsHandler"
+            description="Copies the URLs into the clipboard"
+            icon="icons/e32/paste.png"
             name="Copy to clipboard">
       </resultHandler>
    </extension>   

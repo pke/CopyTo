@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
-Bundle-SymbolicName: copyto.paste.chat.miranda
+Bundle-SymbolicName: copyto.paste.chat.miranda;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: %Bundle-Vendor
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
@@ -14,15 +14,18 @@ Import-Package: com.sun.jna,
  copyto.paste.chat.ui,
  copyto.ui;version="0.1.0",
  org.eclipse.core.commands.common,
+ org.eclipse.core.expressions,
  org.eclipse.core.runtime;version="3.4.0",
  org.eclipse.jface.dialogs,
  org.eclipse.jface.resource,
  org.eclipse.jface.viewers,
  org.eclipse.jface.window,
  org.eclipse.osgi.service.debug,
+ org.eclipse.swt,
  org.eclipse.swt.events,
  org.eclipse.swt.graphics,
  org.eclipse.swt.widgets,
+ org.eclipse.ui,
  org.eclipse.ui.dialogs,
  org.osgi.framework
 Service-Component: OSGI-INF/MirandaIRCPaste.xml, OSGI-INF/DebugTrace.xml

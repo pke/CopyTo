@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="copyto.core.resultHandlers">
+      <resultHandler
+            class="copyto.paste.chat.miranda.MirandaChatRoomPaste"
+            description="Allows to paste the URLs to an IRC channel"
+            iconProvider="copyto.paste.chat.miranda.internal.MirandaIconProvider"
+            name="Paste to Miranda-IM IRC">
+         <enablement>
+            <test
+                  property="copyto.paste.chat.miranda.available">
+            </test>
+         </enablement>
+      </resultHandler>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="copyto.paste.chat.miranda.internal.MirandaPropertyTester"
+            id="copyto.paste.chat.miranda"
+            namespace="copyto.paste.chat.miranda"
+            properties="available"
+            type="copyto.core.Results">
+      </propertyTester>
+   </extension>
+
+</plugin>

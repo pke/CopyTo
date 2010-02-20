@@ -8,27 +8,16 @@
  * Contributors:
  *   Philipp Kursawe (phil.kursawe@gmail.com) - initial API and implementation
  ******************************************************************************/
-package copyto.core;
+package copyto.ui;
 
-import java.net.URL;
-
-import org.apache.commons.httpclient.HttpMethod;
+import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
+ * Provides an ImageDescriptor.
  * 
- * @author <a href="mailto:kursawe@topsystem.de">Philipp Kursawe</a>
+ * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
  * 
  */
-public interface ResponseHandler {
-	/**
-	 * Retrieves a location URL from a HTTP method response.
-	 * 
-	 * @param method
-	 *            to use for extracting the location URL.
-	 * @return a valid URL object
-	 * @throws Exception
-	 *             if there was an error creating a location URL from the given
-	 *             <code>method</code>.
-	 */
-	URL getLocation(HttpMethod method) throws Exception;
+public interface IconProvider {
+	ImageDescriptor getIcon();
 }

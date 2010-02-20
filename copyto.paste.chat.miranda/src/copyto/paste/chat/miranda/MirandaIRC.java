@@ -4,31 +4,36 @@ import static com.sun.jna.examples.win32.ComCtl32.TCIF_PARAM;
 import static com.sun.jna.examples.win32.ComCtl32.TCIF_TEXT;
 import static com.sun.jna.examples.win32.ComCtl32.TCM_GETITEM;
 import static com.sun.jna.examples.win32.ComCtl32.TCM_GETITEMCOUNT;
+import static com.sun.jna.examples.win32.Kernel32.MEM_COMMIT;
+import static com.sun.jna.examples.win32.Kernel32.MEM_RELEASE;
+import static com.sun.jna.examples.win32.Kernel32.PAGE_READWRITE;
+import static com.sun.jna.examples.win32.Kernel32.PROCESS_QUERY_INFORMATION;
+import static com.sun.jna.examples.win32.Kernel32.PROCESS_VM_OPERATION;
+import static com.sun.jna.examples.win32.Kernel32.PROCESS_VM_READ;
+import static com.sun.jna.examples.win32.Kernel32.PROCESS_VM_WRITE;
 import static com.sun.jna.examples.win32.User32.GWL_USERDATA;
 import static com.sun.jna.examples.win32.User32.IDOK;
 import static com.sun.jna.examples.win32.User32.WM_COMMAND;
 import static com.sun.jna.examples.win32.User32.WM_SETTEXT;
 import static com.sun.jna.examples.win32.User32.WM_USER;
-import static com.sun.jna.examples.win32.Kernel32.PROCESS_VM_READ;
-import static com.sun.jna.examples.win32.Kernel32.PROCESS_VM_WRITE;
-import static com.sun.jna.examples.win32.Kernel32.PROCESS_QUERY_INFORMATION;
-import static com.sun.jna.examples.win32.Kernel32.PROCESS_VM_OPERATION;
-import static com.sun.jna.examples.win32.Kernel32.MEM_COMMIT;
-import static com.sun.jna.examples.win32.Kernel32.MEM_RELEASE;
-import static com.sun.jna.examples.win32.Kernel32.PAGE_READWRITE;
 import miranda.api.chat.dll.SESSION_INFO;
 
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
+
 import com.sun.jna.examples.win32.Kernel32;
-import com.sun.jna.examples.win32.ext.ProcessAddressSpace;
-import com.sun.jna.examples.win32.ext.ProcessWindowVisitor;
-import com.sun.jna.examples.win32.ext.Windows;
 import com.sun.jna.examples.win32.User32;
-import com.sun.jna.examples.win32.ext.Visitor;
 import com.sun.jna.examples.win32.ComCtl32.TCITEM;
-import com.sun.jna.examples.win32.ext.ProcessAddressSpace.SendMessageRunnable;
 import com.sun.jna.examples.win32.W32API.HANDLE;
 import com.sun.jna.examples.win32.W32API.HWND;
 import com.sun.jna.examples.win32.W32API.SIZE_T;
+import com.sun.jna.examples.win32.ext.ProcessAddressSpace;
+import com.sun.jna.examples.win32.ext.ProcessWindowVisitor;
+import com.sun.jna.examples.win32.ext.Shell32;
+import com.sun.jna.examples.win32.ext.Visitor;
+import com.sun.jna.examples.win32.ext.Windows;
+import com.sun.jna.examples.win32.ext.ProcessAddressSpace.SendMessageRunnable;
 import com.sun.jna.ptr.IntByReference;
 
 public class MirandaIRC {
@@ -38,10 +43,11 @@ public class MirandaIRC {
 	private static int IDC_MESSAGE = 1009;
 	private HWND window;
 	private HANDLE process;
+	private String path;
 	private final static User32 user32 = User32.INSTANCE;
 	private final static Kernel32 kernel32 = Kernel32.INSTANCE;
 
-	public MirandaIRC(HWND window) {
+	public MirandaIRC(HANDLE process, String path, HWND window) {
 		IntByReference processId = new IntByReference();
 		user32.GetWindowThreadProcessId(window, processId);
 		// TODO: Use DuplicateHandle here?
@@ -49,6 +55,7 @@ public class MirandaIRC {
 				| PROCESS_QUERY_INFORMATION | PROCESS_VM_OPERATION, false,
 				processId.getValue());
 		this.window = window;
+		this.path = path;
 	}
 
 	public void dispose() {
@@ -177,7 +184,7 @@ public class MirandaIRC {
 			if (user32.IsWindow(tab)) {
 				int result = user32.GetWindowLong(window, GWL_USERDATA);
 				if (result != 0) {
-					found = new MirandaIRC(window);
+					found = new MirandaIRC(process, path, window);
 					return false;
 				}
 			}
@@ -193,5 +200,20 @@ public class MirandaIRC {
 		MirandaIRC.MirandaWindowFinder visitor = new MirandaWindowFinder();
 		Windows.visitWindows(visitor);
 		return visitor.getFound();
+	}
+
+	public ImageDescriptor getIcon() {
+		int icon = Shell32.INSTANCE.ExtractIcon(Kernel32.INSTANCE
+				.GetModuleHandle(null), path, 0);
+		if (icon != 0) {
+			Image image = Image.win32_new(null, SWT.ICON, icon);
+			try {
+				return ImageDescriptor
+						.createFromImageData(image.getImageData());
+			} finally {
+				image.dispose();
+			}
+		}
+		return null;
 	}
 }

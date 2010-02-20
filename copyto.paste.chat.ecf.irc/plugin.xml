@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="copyto.core.resultHandlers">
+      <resultHandler
+            class="copyto.ecf.irc.internal.EcfIrcChatRoomPaste"
+            description="Paste the URLs into an open ECF IRC channel"
+            icon="icons/e32/irc_protocol.png"
+            name="ECF IRC">
+      </resultHandler>
+   </extension>
+
+</plugin>
