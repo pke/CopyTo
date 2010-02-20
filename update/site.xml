@@ -18,9 +18,6 @@
    <feature url="features/copyto.target.pastebin.com.feature_0.1.0.201002201311.jar" id="copyto.target.pastebin.com.feature" version="0.1.0.201002201311">
       <category name="target"/>
    </feature>
-   <feature url="features/copyto.paste.chat.feature_1.0.0.201002201311.jar" id="copyto.paste.chat.feature" version="1.0.0.201002201311">
-      <category name="paste"/>
-   </feature>
    <feature url="features/copyto.paste.chat.miranda.feature_1.0.0.201002201311.jar" id="copyto.paste.chat.miranda.feature" version="1.0.0.201002201311" os="win32" ws="win32" arch="x86">
       <category name="paste"/>
    </feature>
