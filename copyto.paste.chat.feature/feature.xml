@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="copyto.paste.chat.feature"
-      label="PasteTo Chat Feature"
+      label="CopyTo PasteTo Chat Feature"
       version="1.0.0.qualifier"
       provider-name="Philipp Kursawe"
       plugin="copyto.paste.chat.ui">

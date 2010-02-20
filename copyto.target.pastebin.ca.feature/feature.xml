@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="copyto.target.pastebin.ca.feature"
-      label="pastebin.ca support"
+      label="CopyTo pastebin.ca support"
       version="0.1.0.qualifier"
       provider-name="Philipp Kursawe">
 

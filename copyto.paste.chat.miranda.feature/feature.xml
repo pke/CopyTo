@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="copyto.paste.chat.miranda.feature"
-      label="Miranda-IM Chat Paste to support"
+      label="CopyTo Miranda-IM Chat Paste to support"
       version="1.0.0.qualifier"
       provider-name="Philipp Kursawe"
       os="win32"
@@ -19,6 +19,10 @@
    <license>
       Licensed under EPL 1.0
    </license>
+
+   <includes
+         id="copyto.paste.chat.feature"
+         version="0.0.0"/>
 
    <plugin
          id="copyto.paste.chat.miranda"

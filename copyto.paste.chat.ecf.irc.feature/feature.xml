@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="copyto.paste.chat.ecf.irc"
-      label="PasteTo ECF IRC support"
+      label="CopyTo PasteTo ECF IRC support"
       version="0.1.0.qualifier"
       provider-name="Philipp Kursawe"
       plugin="copyto.paste.chat.ecf.irc">
@@ -17,6 +17,10 @@
    <license>
       Licensed under EPL 1.0
    </license>
+
+   <includes
+         id="copyto.paste.chat.feature"
+         version="0.0.0"/>
 
    <plugin
          id="copyto.paste.chat.ecf.irc"

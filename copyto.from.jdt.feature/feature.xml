@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="copyto.from.jdt.feature"
-      label="JDT Copy Support"
+      label="CopyTo JDT Support"
       version="0.1.0.qualifier"
       provider-name="Philipp Kursawe">
 
