@@ -99,9 +99,9 @@ public class HttpProtocol {
 		final String[] pairs = uri.getQuery().split("&"); //$NON-NLS-1$
 		final NameValuePair params[] = new NameValuePair[pairs.length];
 		for (int i = 0; i < pairs.length; ++i) {
-			final String[] keyValue = pairs[i].split("="); //$NON-NLS-1$
-			params[i] = new NameValuePair(keyValue[0],
-					keyValue.length == 1 ? "" : keyValue[1]); //$NON-NLS-1$
+			int equalIndex = pairs[i].indexOf('=');
+			params[i] = new NameValuePair(pairs[i].substring(0, equalIndex),
+					equalIndex != -1 ? pairs[i].substring(equalIndex+1) : ""); //$NON-NLS-1$
 		}
 		method.setRequestBody(params);
 
