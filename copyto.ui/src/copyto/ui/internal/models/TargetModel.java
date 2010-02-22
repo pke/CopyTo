@@ -233,12 +233,13 @@ public class TargetModel extends PlatformObject implements Target, Serializable 
 		final Object target = new ObjectInputStream(new ByteArrayInputStream(
 				Base64.decodeBase64(base64Encoding.getBytes()))).readObject();
 		if (target instanceof TargetModel) {
+			((TargetModel)target).id = UUID.randomUUID().toString();
 			return (TargetModel) target;
 		}
 		return null;
 	}
 
-	final String id;
+	private String id;
 	private String name;
 	private String uri;
 	private final Map<String, String> additionalParams = new HashMap<String, String>();

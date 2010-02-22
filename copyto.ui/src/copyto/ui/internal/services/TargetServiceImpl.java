@@ -43,9 +43,7 @@ import copyto.ui.internal.models.TargetModel;
  */
 public class TargetServiceImpl implements TargetService {
 
-	private static final String QUALIFIER = FrameworkUtil.getBundle(
-			Target.class).getSymbolicName()
-			+ "/targets"; //$NON-NLS-1$
+	private static final String QUALIFIER = "copyto.core" + "/targets"; //$NON-NLS-1$
 
 	/**
 	 * 
