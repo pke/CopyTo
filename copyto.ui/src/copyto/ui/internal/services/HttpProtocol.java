@@ -12,6 +12,7 @@ package copyto.ui.internal.services;
 
 import java.net.URL;
 
+import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.NameValuePair;
@@ -106,9 +107,16 @@ public class HttpProtocol {
 		method.setRequestBody(params);
 
 		try {
+			LogHelper.debug("Sending paste to %s", method.getPath());
 			final int status = httpClient.executeMethod(method);
+			for (Header header : method.getRequestHeaders()) {
+				LogHelper.debug("%s: %s", header.getName(), header.getValue());
+			}
 			LogHelper.debug(
-					"HTTP: Response: %s", HttpStatus.getStatusText(status)); //$NON-NLS-1$
+					"Response: %d - %s", status, HttpStatus.getStatusText(status)); //$NON-NLS-1$
+			for (Header header : method.getResponseHeaders()) {
+				LogHelper.debug("%s: %s", header.getName(), header.getValue());
+			}
 			return getResponseHandler(target).getLocation(method);
 		} finally {
 			method.releaseConnection();

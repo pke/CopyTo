@@ -23,7 +23,7 @@
          point="org.eclipse.core.variables.dynamicVariables">
       <variable
             description="%formatVariable.description"
-            name="pastebin.format"
+            name="pastebin.com.format"
             resolver="copyto.target.pastebin.com.internal.FormatResolver"
             supportsArgument="true"/>      
    </extension>

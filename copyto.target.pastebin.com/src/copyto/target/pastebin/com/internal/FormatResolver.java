@@ -15,7 +15,7 @@ public class FormatResolver implements IDynamicVariableResolver {
 		if (argument != null && argument.startsWith("text/java")) { //$NON-NLS-1$
 			return "java"; //$NON-NLS-1$
 		}
-		return ""; //$NON-NLS-1$
+		return "0"; //$NON-NLS-1$
 	}
 
 }

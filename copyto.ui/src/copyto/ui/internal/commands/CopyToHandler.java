@@ -227,17 +227,18 @@ public class CopyToHandler extends AbstractHandler implements IElementUpdater {
 					}
 				}
 			} else if (selection instanceof ITextSelection) {
-				Copyable copyable = (Copyable) adapterManager.loadAdapter(
-						editorPart, Copyable.class.getName());
+				final ITextSelection textSelection = (ITextSelection) selection;
+				Copyable copyable;
+				if (textSelection.getLength() > 0) {
+					copyable = new TextSelectionCopyable(textSelection);
+				} else {
+					copyable = (Copyable) adapterManager.loadAdapter(
+							editorPart, Copyable.class.getName());
+				}
 				if (null == copyable) {
-					final ITextSelection textSelection = (ITextSelection) selection;
-					if (textSelection.getLength() == 0) {
-						final IEditorInput editorInput = editorPart
-								.getEditorInput();
-						copyable = getResourceCopyable(editorInput);
-					} else {
-						copyable = new TextSelectionCopyable(textSelection);
-					}
+					final IEditorInput editorInput = editorPart
+							.getEditorInput();
+					copyable = getResourceCopyable(editorInput);
 				}
 				if (copyable != null) {
 					items.add(copyable);
@@ -317,7 +318,8 @@ public class CopyToHandler extends AbstractHandler implements IElementUpdater {
 							Object[] dialogResults = dialog.getResult();
 							if (dialogResults != null) {
 								for (Object result : dialogResults) {
-									runAction((IConfigurationElement) result, results);
+									runAction((IConfigurationElement) result,
+											results);
 								}
 							}
 						}
@@ -339,8 +341,7 @@ public class CopyToHandler extends AbstractHandler implements IElementUpdater {
 					@Override
 					public IStatus runInUIThread(IProgressMonitor monitor) {
 						if (handler instanceof WorkbenchResultHandler) {
-							((WorkbenchResultHandler) handler)
-									.init(workbench);
+							((WorkbenchResultHandler) handler).init(workbench);
 						}
 						handler.handleResults(results, shell);
 						return Status.OK_STATUS;

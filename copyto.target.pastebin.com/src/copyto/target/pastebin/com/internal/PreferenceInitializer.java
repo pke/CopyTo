@@ -37,7 +37,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 			preferences
 					.put(
 							"url",
-							"http://pastebin.com/pastebin.php?code2=${copyto.text}&paste=Send&format=${pastebin.format:${copyto.mime-type}}");
+							"http://pastebin.com/post.php?paste_code=${copyto.text}&submit=Submit&paste_format=${pastebin.com.format:${copyto.mime-type}}");
 			preferences.put("label", "pastebin.com");
 			try {
 				node.flush();

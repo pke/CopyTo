@@ -5,3 +5,6 @@ Bundle-SymbolicName: eclipseutils.ui.forms.databinding
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Philipp Kursawe
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Import-Package: eclipseutils.jface.databinding,
+ org.eclipse.swt.widgets,
+ org.eclipse.ui.forms.widgets
