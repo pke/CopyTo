@@ -10,11 +10,13 @@
  ******************************************************************************/
 package copyto.ui.internal.preferences;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashSet;
 
 import org.eclipse.core.databinding.UpdateValueStrategy;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IStatus;
@@ -25,19 +27,25 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.osgi.framework.FrameworkUtil;
 
-
 import copyto.core.Target;
+import copyto.core.internal.html.form.Form;
+import copyto.core.internal.html.form.FormParser;
+import copyto.core.internal.html.form.HtmlElement;
+import copyto.core.internal.html.form.TextAreaElement;
 import copyto.ui.internal.Messages;
-
 import eclipseutils.jface.databinding.Builder;
 import eclipseutils.jface.databinding.BuiltTitleAreaDialog;
 import eclipseutils.jface.databinding.FieldOptions;
+import eclipseutils.jface.databinding.FieldOptions.ControlCustomizer;
 import eclipseutils.jface.databinding.GridLayoutBuilder;
 import eclipseutils.jface.databinding.customizers.SelectAllOnFocus;
 import eclipseutils.jface.databinding.validators.AbstractValidator;
@@ -129,18 +137,50 @@ class EditDialog extends BuiltTitleAreaDialog {
 			});
 		}
 	}
+	
+	@Override
+	protected void createButtonsForButtonBar(Composite parent) {
+		super.createButtonsForButtonBar(parent);
+		autoDetectButton = new Button(parent, SWT.PUSH);
+		autoDetectButton.setText("Auto Detect...");		
+	}
 
 	@Override
 	protected Control createDialogArea(final Composite parent) {
 		final Control control = super.createDialogArea(parent);
 		setTitle(Messages.EditDialog_Title);
-
 		setMessage(Messages.EditDialog_Desc);
 		return control;
+	}
+	
+	private class URLControlCustomizer implements ControlCustomizer {
+
+		public void customizeControl(Control control,
+				final IObservableValue observableValue) {
+			
+			autoDetectButton.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent event) {
+					try {
+						URL url = new URL(observableValue.getValue().toString());
+						FormParser parser = new FormParser();
+						Collection<Form> forms = parser.parse(url);
+						for (Form form : forms) {
+							for (HtmlElement element : form.getElements()) {
+								if (element instanceof TextAreaElement) {
+									// This is our form!
+								}
+							}
+						}
+					} catch (MalformedURLException e) {
+					}
+				};
+			});
+		}
 	}
 
 	final static SimpleContentProposalProvider proposalProvider = new SimpleContentProposalProvider(
 			PROPOSALS);
+	private Button autoDetectButton;
 
 	public Builder createBuilder(final Composite parent) {
 		final IValidator labelValidator = new CompoundValidator(
@@ -168,6 +208,6 @@ class EditDialog extends BuiltTitleAreaDialog {
 						.setControlCustomizer(new SelectAllOnFocus())).field(
 				"url", //$NON-NLS-1$
 				new FieldOptions(urlValidator).setProposalProvider(
-						proposalProvider).setAutoActivationCharacters('$'));
+						proposalProvider).setAutoActivationCharacters('$').setControlCustomizer(new URLControlCustomizer()));
 	}
 }

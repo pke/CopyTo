@@ -2,7 +2,7 @@
 <?eclipse version="3.4"?>
 <fragment>
    <extension
-         id="eclipseutils.ui.copyto.pastebin.com"
+         id="pastebin.com"
          point="copyto.core.targets">
       <paramInfos
             hidden="code2,paste">
@@ -12,12 +12,15 @@
                type="copyto.target.pastebin.com.internal.FormatValues">
          </paramInfo>
          <paramInfo
-               default="{user.name}"
+               default="${user.name}"
                description="%name.description"
                label="%name.label"
                name="poster">
          </paramInfo>
       </paramInfos>
+      <responseHandler
+            class="copyto.target.pastebin.com.internal.PasteBinResponseHandler">
+      </responseHandler>
    </extension>
    <extension
          point="org.eclipse.core.variables.dynamicVariables">

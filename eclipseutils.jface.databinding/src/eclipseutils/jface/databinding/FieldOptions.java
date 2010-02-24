@@ -11,6 +11,7 @@
 package eclipseutils.jface.databinding;
 
 import org.eclipse.core.databinding.UpdateValueStrategy;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.bindings.keys.ParseException;
@@ -67,8 +68,9 @@ public class FieldOptions {
 	public interface ControlCustomizer {
 		/**
 		 * @param control
+		 * @param observableValue 
 		 */
-		void customizeControl(Control control);
+		void customizeControl(Control control, IObservableValue observableValue);
 	}
 
 	private static final int defaultProposalAcceptanceStyle = ContentProposalAdapter.PROPOSAL_INSERT;

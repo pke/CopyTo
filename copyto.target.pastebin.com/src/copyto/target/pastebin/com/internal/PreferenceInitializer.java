@@ -10,6 +10,9 @@
  ******************************************************************************/
 package copyto.target.pastebin.com.internal;
 
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.osgi.framework.FrameworkUtil;
@@ -37,8 +40,17 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 			preferences
 					.put(
 							"url",
-							"http://pastebin.com/post.php?paste_code=${copyto.text}&submit=Submit&paste_format=${pastebin.com.format:${copyto.mime-type}}");
+							"http://pastebin.com/api_public.php?paste_code=${copyto.text}&paste_format=${pastebin.com.format:${copyto.mime-type}}");
 			preferences.put("label", "pastebin.com");
+			Preferences params = preferences.node("params");
+			Preferences formatNode = params.node("paste_format");
+			formatNode.put("label", "Format");
+			Map<?, ?> values = new FormatValues().getParameterValues();
+			Preferences itemsNode = formatNode.node("items");
+			for (Entry<?, ?> entry : values.entrySet()) {
+				itemsNode.put(entry.getKey().toString(), entry.getValue().toString());
+			}
+			
 			try {
 				node.flush();
 			} catch (final BackingStoreException e) {

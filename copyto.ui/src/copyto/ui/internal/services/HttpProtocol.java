@@ -57,7 +57,7 @@ public class HttpProtocol {
 	private static HttpResponseHandler getResponseHandler(final Target target) {
 		final IConfigurationElement[] elements = Platform
 				.getExtensionRegistry().getConfigurationElementsFor(
-						HttpProtocol.symbolicName, COMMAND_TARGETS_PARAM,
+						"copyto.core", COMMAND_TARGETS_PARAM,
 						target.getId());
 		for (final IConfigurationElement element : elements) {
 			try {

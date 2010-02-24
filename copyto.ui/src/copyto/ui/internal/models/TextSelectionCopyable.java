@@ -26,8 +26,7 @@ public class TextSelectionCopyable implements Copyable {
 		int length = string.length();
 		int len = length - 1;
 		
-		char c;
-		while ((len>0) && ((c = string.charAt(len)) <= ' ')) {
+		while ((len>0) && ((string.charAt(len)) <= ' ')) {
 		    len--;
 		}
 		return (len < length) ? string.substring(0, len+1) : string;

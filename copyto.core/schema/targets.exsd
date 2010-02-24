@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="com.github.copyto" xmlns="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="copyto.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="com.github.copyto" id="targets" name="CopyTo Extensions"/>
+         <meta.schema plugin="copyto.core" id="targets" name="CopyTo Extensions"/>
       </appinfo>
       <documentation>
          [Enter description of this extension point.]
@@ -129,7 +129,7 @@ Can also be IParameterValues.
                   A special HTTP response handler for this target.
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":eclipseutils.ui.copyto.api.ResponseHandler"/>
+                  <meta.attribute kind="java" basedOn=":copyto.core.HttpResponseHandler"/>
                </appinfo>
             </annotation>
          </attribute>

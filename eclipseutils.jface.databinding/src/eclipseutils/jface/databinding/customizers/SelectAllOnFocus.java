@@ -1,5 +1,6 @@
 package eclipseutils.jface.databinding.customizers;
 
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.widgets.Control;
@@ -33,7 +34,7 @@ public class SelectAllOnFocus implements ControlCustomizer {
 		this(true);
 	}
 
-	public void customizeControl(final Control control) {
+	public void customizeControl(final Control control, IObservableValue observableValue) {
 		if (control instanceof Text) {
 			final Text text = (Text) control;
 			control.addFocusListener(new FocusAdapter() {

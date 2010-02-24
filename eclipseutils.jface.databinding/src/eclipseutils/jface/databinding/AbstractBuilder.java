@@ -140,7 +140,7 @@ public abstract class AbstractBuilder implements Builder {
 					final ControlCustomizer controlCustomizer = fieldOptions
 							.getControlCustomizer();
 					if (controlCustomizer != null) {
-						controlCustomizer.customizeControl(controlWidget);
+						controlCustomizer.customizeControl(controlWidget, control);
 					}
 				}
 				applyLayout(label, controlWidget);
