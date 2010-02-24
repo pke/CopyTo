@@ -3,25 +3,25 @@
    <description name="CopyTo Extensions" url="http://pke.github.com/CopyTo">
       CopyTo Extensions for the Eclipse Workbench. Basically adds &quot;Pastebin&quot; support into Eclipse editors and views.
    </description>
-   <feature url="features/copyto.from.jdt.feature_0.1.0.201002240915.jar" id="copyto.from.jdt.feature" version="0.1.0.201002240915">
+   <feature url="features/copyto.from.jdt.feature_0.1.0.201002241455.jar" id="copyto.from.jdt.feature" version="0.1.0.201002241455">
       <category name="support"/>
    </feature>
-   <feature url="features/copyto.feature_0.1.0.201002240915.jar" id="copyto.feature" version="0.1.0.201002240915">
+   <feature url="features/copyto.feature_0.1.0.201002241455.jar" id="copyto.feature" version="0.1.0.201002241455">
       <category name="main"/>
    </feature>
-   <feature url="features/copyto.target.codepad.feature_0.1.0.201002240915.jar" id="copyto.target.codepad.feature" version="0.1.0.201002240915">
+   <feature url="features/copyto.target.codepad.feature_0.1.0.201002241455.jar" id="copyto.target.codepad.feature" version="0.1.0.201002241455">
       <category name="target"/>
    </feature>
-   <feature url="features/copyto.target.pastebin.ca.feature_0.1.0.201002240915.jar" id="copyto.target.pastebin.ca.feature" version="0.1.0.201002240915">
+   <feature url="features/copyto.target.pastebin.ca.feature_0.1.0.201002241455.jar" id="copyto.target.pastebin.ca.feature" version="0.1.0.201002241455">
       <category name="target"/>
    </feature>
-   <feature url="features/copyto.target.pastebin.com.feature_0.1.0.201002240915.jar" id="copyto.target.pastebin.com.feature" version="0.1.0.201002240915">
+   <feature url="features/copyto.target.pastebin.com.feature_0.1.0.201002241455.jar" id="copyto.target.pastebin.com.feature" version="0.1.0.201002241455">
       <category name="target"/>
    </feature>
-   <feature url="features/copyto.paste.chat.miranda.feature_1.0.0.201002240915.jar" id="copyto.paste.chat.miranda.feature" version="1.0.0.201002240915" os="win32" ws="win32" arch="x86">
+   <feature url="features/copyto.paste.chat.miranda.feature_1.0.0.201002241455.jar" id="copyto.paste.chat.miranda.feature" version="1.0.0.201002241455" os="win32" ws="win32" arch="x86">
       <category name="paste"/>
    </feature>
-   <feature url="features/copyto.paste.chat.ecf.irc_0.1.0.201002240915.jar" id="copyto.paste.chat.ecf.irc" version="0.1.0.201002240915">
+   <feature url="features/copyto.paste.chat.ecf.irc_0.1.0.201002241455.jar" id="copyto.paste.chat.ecf.irc" version="0.1.0.201002241455">
       <category name="paste"/>
    </feature>
    <category-def name="main" label="Main Components"/>
