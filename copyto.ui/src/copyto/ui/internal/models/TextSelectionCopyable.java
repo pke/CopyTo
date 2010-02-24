@@ -21,9 +21,20 @@ public class TextSelectionCopyable implements Copyable {
 	public TextSelectionCopyable(final ITextSelection selection) {
 		this.selection = selection;
 	}
+	
+	private String trimRight(String string) {
+		int length = string.length();
+		int len = length - 1;
+		
+		char c;
+		while ((len>0) && ((c = string.charAt(len)) <= ' ')) {
+		    len--;
+		}
+		return (len < length) ? string.substring(0, len+1) : string;
+	}
 
 	public String getText() {
-		return this.selection.getText();
+		return trimRight(this.selection.getText());
 	}
 
 	public String getMimeType() {
