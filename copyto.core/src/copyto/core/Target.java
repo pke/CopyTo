@@ -1,7 +1,7 @@
 package copyto.core;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.osgi.service.prefs.Preferences;
 
 /**
  * 
@@ -11,29 +11,22 @@ import org.osgi.service.prefs.Preferences;
  * 
  * <pre>
  * StringParam  - Text
- * BooleanParam - Button(SWT.PUSH), it also 
+ * BooleanParam - Button(SWT.PUSH)
  * MapParam     - Combo(SWT.LIST)
  * </pre>
  * 
  * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
  * 
  */
-public interface Target {
-
-	/**
-	 * Copies a Copyable to this target.
-	 * 
-	 * @param copyable
-	 * @param monitor
-	 * @return
-	 */
-	Results copy(final IProgressMonitor monitor, final Copyable... copyables);
+public interface Target extends Persistable, IAdaptable {
 
 	String getName();
 
 	String getId();
 
-	String getUrl();
+	// String getUrl();
 
-	void save(Preferences node);
+	Results transfer(IProgressMonitor monitor, Copyable... copyables);
+
+	Protocol getProtocol();
 }

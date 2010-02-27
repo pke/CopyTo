@@ -138,7 +138,7 @@
       <commandParameterType
             converter="copyto.ui.internal.commands.TargetParameterConverter"
             id="copyto.TargetParameterType"
-            type="copyto.ui.internal.models.TargetModel">
+            type="copyto.core.TargetDescriptor">
       </commandParameterType>
    </extension>
    <extension
@@ -221,14 +221,7 @@
       </definition>
    </extension>
    <extension
-         point="org.eclipse.core.runtime.adapters">
-      <factory
-            adaptableType="copyto.core.json.MapResponse"
-            class="copyto.ui.internal.json.AdapterFactory">
-         <adapter
-               type="java.net.URL">
-         </adapter>
-      </factory>
+         point="org.eclipse.core.runtime.adapters">      
       <factory
             adaptableType="org.eclipse.ui.internal.views.markers.MarkerEntry"
             class="copyto.ui.internal.AdapterFactory">

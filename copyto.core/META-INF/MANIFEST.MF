@@ -6,14 +6,14 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: %Bundle-Vendor
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
-Import-Package: org.apache.commons.httpclient,
+Import-Package: eclipseutils.core.extensions,
+ org.apache.commons.codec.binary,
  org.eclipse.core.runtime,
- org.mortbay.util.ajax,
+ org.eclipse.osgi.util,
  org.osgi.framework,
  org.osgi.service.log,
  org.osgi.service.prefs;version="1.1.1"
 Export-Package: copyto.core;version="0.1.0",
- copyto.core.internal.html.form;x-friends:="copyto.ui",
- copyto.core.json;version="0.1.0",
- copyto.core.responses;version="0.1.0",
+ copyto.core.models,
  osgiutils.services
+Service-Component: OSGI-INF/ProtocolRegistry.xml

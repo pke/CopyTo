@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="copyto.protocol.http.core.HttpTarget"
+            class="copyto.protocol.http.ui.internal.AdapterFactory">
+         <adapter
+               type="eclipseutils.jface.databinding.BuilderAdapter">
+         </adapter>
+         <adapter
+               type="org.eclipse.jface.resource.ImageDescriptor">
+         </adapter>
+      </factory>
+      <factory
+            adaptableType="copyto.protocol.http.core.internal.responses.BodyResponseHandler"
+            class="copyto.protocol.http.ui.internal.BodyResponseHandlerAdapters">
+         <adapter
+               type="eclipseutils.jface.databinding.BuilderAdapter">
+         </adapter>
+      </factory>
+   </extension>
+
+</plugin>

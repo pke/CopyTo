@@ -27,9 +27,7 @@ import org.eclipse.ui.services.IServiceLocator;
 
 import osgiutils.services.ServiceRunnableFallback;
 import osgiutils.services.Trackers;
-
-
-import copyto.core.Target;
+import copyto.core.TargetDescriptor;
 import copyto.core.TargetService;
 import copyto.ui.internal.commands.CopyToHandler;
 
@@ -57,31 +55,33 @@ public class TargetMenuItems extends CompoundContributionItem implements
 									return items;
 								}
 								if (1 == count) {
-									final Target first = targetService
+									final TargetDescriptor first = targetService
 											.findFirst();
 									if (first != null) {
 										final String format = "Copy To {0}";
 										items[0] = createCommand(format, first);
+									} else {
+										return new IContributionItem[0];
 									}
 								} else {
 									// Still nothing assigned?
-									final List<Target> targets = targetService
+									final List<TargetDescriptor> targets = targetService
 											.findAll();
 
 									Collections.sort(targets,
-											new Comparator<Target>() {
+											new Comparator<TargetDescriptor>() {
 												public int compare(
-														final Target o1,
-														final Target o2) {
+														final TargetDescriptor o1,
+														final TargetDescriptor o2) {
 													return o1
-															.getName()
+															.getLabel()
 															.compareTo(
-																	o2.getName());
+																	o2.getLabel());
 												}
 											});
 
 									int i = 0;
-									for (final Target target : targets) {
+									for (final TargetDescriptor target : targets) {
 										final String format = "{0}"; //$NON-NLS-1$
 										items[i++] = createCommand(format,
 												target);
@@ -98,12 +98,12 @@ public class TargetMenuItems extends CompoundContributionItem implements
 	}
 
 	private CommandContributionItem createCommand(final String format,
-			final Target target) {
+			final TargetDescriptor target) {
 		final Map<String, Object> parameters = new HashMap<String, Object>();
 		final CommandContributionItemParameter contributionParameters = new CommandContributionItemParameter(
 				locator, target.getId(), CopyToHandler.COMMAND_ID,
 				CommandContributionItem.STYLE_PUSH);
-		contributionParameters.label = NLS.bind(format, target.getName());
+		contributionParameters.label = NLS.bind(format, target.getLabel());
 		contributionParameters.parameters = parameters;
 		parameters.put("id", target); //$NON-NLS-1$
 		return new CommandContributionItem(contributionParameters);

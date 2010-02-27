@@ -10,7 +10,6 @@
  ******************************************************************************/
 package copyto.ui.internal;
 
-import java.net.URL;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -106,7 +105,7 @@ public class ClipboardResultsHandler implements UIResultHandler {
 		while (it.hasNext()) {
 			final Result result = it.next();
 			if (result.getStatus().isOK()) {
-				final URL url = result.getLocation();
+				final String url = result.getStatus().getMessage(); //getLocation();
 				if (url != null) {
 					sb.append(url.toString());
 					if (it.hasNext()) {

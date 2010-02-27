@@ -37,7 +37,6 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -45,8 +44,8 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
-import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.viewers.StyledString.Styler;
+import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -71,6 +70,7 @@ import org.eclipse.ui.menus.UIElement;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.progress.WorkbenchJob;
+import org.osgi.framework.FrameworkUtil;
 
 import osgiutils.services.ServiceRunnable;
 import osgiutils.services.SimpleServiceRunnable;
@@ -78,6 +78,7 @@ import osgiutils.services.Trackers;
 import copyto.core.Copyable;
 import copyto.core.Results;
 import copyto.core.Target;
+import copyto.core.TargetDescriptor;
 import copyto.core.TargetService;
 import copyto.ui.IconProvider;
 import copyto.ui.UIResultHandler;
@@ -85,7 +86,6 @@ import copyto.ui.WorkbenchResultHandler;
 import copyto.ui.internal.Messages;
 import copyto.ui.internal.models.TextSelectionCopyable;
 import copyto.ui.internal.preferences.CopyToPreferencePage;
-import copyto.ui.internal.services.HttpProtocol;
 import eclipseutils.core.extensions.ExtensionPoint;
 
 /**
@@ -183,13 +183,13 @@ public class CopyToHandler extends AbstractHandler implements IElementUpdater {
 
 		private ISelection selection;
 		private final IEditorPart editorPart;
-		private final Target target;
+		private final TargetDescriptor targetDesc;
 		private Shell shell;
 		private IWorkbench workbench;
 
-		public CollectJob(final ExecutionEvent event, final Target currentTarget) {
+		public CollectJob(final ExecutionEvent event, final TargetDescriptor currentTarget) {
 			super(Messages.CopyToHandler_JobName);
-			target = currentTarget;
+			targetDesc = currentTarget;
 			selection = HandlerUtil.getActiveMenuSelection(event);
 			if (selection == null) {
 				selection = HandlerUtil.getCurrentSelection(event);
@@ -249,19 +249,20 @@ public class CopyToHandler extends AbstractHandler implements IElementUpdater {
 					new SimpleServiceRunnable<TargetService>() {
 						@Override
 						protected void doRun(TargetService service) {
-							service.setLastSelected(target.getId());
+							service.setLastSelected(targetDesc.getId());
 						}
 					});
-			final Results results = target.copy(subMonitor, items
+			Target target = targetDesc.createTarget();
+			final Results results = target.transfer(subMonitor, items
 					.toArray(new Copyable[items.size()]));
 			if (!results.getFailures().isEmpty()) {
 				setProperty(IProgressConstants.KEEP_PROPERTY, true);
 				setProperty(
 						IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY,
 						true);
-				return new Status(IStatus.ERROR, HttpProtocol.symbolicName, NLS
-						.bind(Messages.CopyToHandler_CopyError, target
-								.getName(), results.getFailures().size()));
+				return new Status(IStatus.ERROR, FrameworkUtil.getBundle(getClass()).getSymbolicName(), NLS
+						.bind(Messages.CopyToHandler_CopyError, targetDesc
+								.getLabel(), results.getFailures().size()));
 			}
 			if (results.getSuccesses().isEmpty()) {
 				return Status.CANCEL_STATUS;
@@ -309,7 +310,7 @@ public class CopyToHandler extends AbstractHandler implements IElementUpdater {
 						dialog.setMessage(NLS
 								.bind(
 										"Selection was copied successfully to \"{0}\".\nWhat do you want to do now?",
-										target.getName()));
+										targetDesc.getLabel()));
 						dialog.setHelpAvailable(false);
 						dialog.setLabelProvider(labelProvider);
 						dialog.setContentProvider(ArrayContentProvider
@@ -363,13 +364,13 @@ public class CopyToHandler extends AbstractHandler implements IElementUpdater {
 	 * progress
 	 */
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		Target currentTarget = (Target) event
+		TargetDescriptor currentTarget = (TargetDescriptor) event
 				.getObjectParameterForExecution("id"); //$NON-NLS-1$
 		if (currentTarget == null) {
 			currentTarget = Trackers.run(TargetService.class,
-					new ServiceRunnable<TargetService, Target>() {
-						public Target run(final TargetService service) {
-							Target target = service.getLastSelected();
+					new ServiceRunnable<TargetService, TargetDescriptor>() {
+						public TargetDescriptor run(final TargetService service) {
+							TargetDescriptor target = service.getLastSelected();
 							if (target == null && service.count() == 1) {
 								target = service.findFirst();
 							}
@@ -439,7 +440,7 @@ public class CopyToHandler extends AbstractHandler implements IElementUpdater {
 					public void doRun(final TargetService service) {
 						// First display the last selected item as tooltip
 						String text = Messages.CopyToHandler_DropDown_Tooltip_SelectTarget;
-						Target target = service.getLastSelected();
+						TargetDescriptor target = service.getLastSelected();
 						// If there is no such item, see how many items there
 						// are
 						if (target == null) {
@@ -456,7 +457,7 @@ public class CopyToHandler extends AbstractHandler implements IElementUpdater {
 							text = NLS
 									.bind(
 											Messages.CopyToHandler_DropDown_Tooltip_CopyTo,
-											target.getName());
+											target.getLabel());
 						}
 						final String finalText = text;
 						Display.getDefault().asyncExec(new Runnable() {

@@ -92,7 +92,7 @@ public class ExtensionPoint {
 			final ExtensionPointVisitor visitor) {
 		Assert.isLegal(visitor != null);
 
-		final MultiStatus multiStatus = new MultiStatus(FrameworkUtil.getBundle(getClass()).getSymbolicName(), 0, null,
+		final MultiStatus multiStatus = new MultiStatus(FrameworkUtil.getBundle(visitor.getClass()).getSymbolicName(), 0, null,
 				null);
 
 		final IConfigurationElement[] configurationElements = Platform.getExtensionRegistry()

@@ -10,6 +10,7 @@
  ******************************************************************************/
 package eclipseutils.jface.databinding;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,6 +26,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.databinding.dialog.TitleAreaDialogSupport;
 import org.eclipse.jface.databinding.swt.ISWTObservable;
+import org.eclipse.jface.databinding.viewers.IViewerObservable;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.fieldassist.ContentProposalAdapter;
 import org.eclipse.jface.fieldassist.ControlDecoration;
@@ -44,6 +46,10 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
 
 import eclipseutils.jface.databinding.FieldOptions.ControlCustomizer;
+import eclipseutils.jface.databinding.editors.AbstractEditorCreator;
+import eclipseutils.jface.databinding.editors.BooleanEditorCreator;
+import eclipseutils.jface.databinding.editors.ComboEditorCreator;
+import eclipseutils.jface.databinding.editors.TextEditorCreator;
 
 /**
  * An abstract implementation of the <code>Builder</code> interface.
@@ -61,6 +67,7 @@ public abstract class AbstractBuilder implements Builder {
 		creators.put(String.class, new TextEditorCreator());
 		creators.put(Boolean.class, BooleanEditorCreator.getInstance());
 		creators.put(boolean.class, BooleanEditorCreator.getInstance());
+		creators.put(Collection.class, new ComboEditorCreator());
 	}
 
 	private final Composite parent;
@@ -68,6 +75,7 @@ public abstract class AbstractBuilder implements Builder {
 	private final int targetToModelPolicy;
 	private final ControlToolkit creator;
 	private int fields;
+	private int readOnlyFlag;
 	protected final DataBindingContext ctx;
 
 	/**
@@ -109,7 +117,8 @@ public abstract class AbstractBuilder implements Builder {
 		if (beanValueProperty == null) {
 			return this;
 		}
-		final Object type = beanValueProperty.getValueType();
+		final Object type = fieldOptions!=null && fieldOptions.getType() != null ? fieldOptions
+				.getType() : beanValueProperty.getValueType();
 		final EditorCreator editorCreator = creators.get(type);
 		if (editorCreator != null) {
 			final Label label = editorCreator.hasLabel() ? creator.createLabel(
@@ -118,8 +127,8 @@ public abstract class AbstractBuilder implements Builder {
 			if (label != null) {
 				AbstractEditorCreator.setToolTip(label, bean, property);
 			}
-			final IObservableValue control = editorCreator.create(creator, parent,
-					bean, property);
+			final IObservableValue control = editorCreator.create(creator,
+					parent, bean, property, getStyle(), fieldOptions);
 			if (control != null) {
 				++fields;
 				UpdateValueStrategy targetToModel = fieldOptions != null ? fieldOptions
@@ -140,13 +149,28 @@ public abstract class AbstractBuilder implements Builder {
 					final ControlCustomizer controlCustomizer = fieldOptions
 							.getControlCustomizer();
 					if (controlCustomizer != null) {
-						controlCustomizer.customizeControl(controlWidget, control);
+						controlCustomizer.customizeControl(controlWidget,
+								control, fieldOptions);
 					}
 				}
-				applyLayout(label, controlWidget);
+				if (controlWidget != null) {
+					applyLayout(label, controlWidget);
+				}
 			} else {
-				label.dispose();
+				//label.dispose();
 			}
+		}
+		return this;
+	}
+
+	private int getStyle() {
+		return readOnlyFlag;
+	}
+
+	public Builder control(ControlCreator creator) {
+		Control control = creator.create(parent, bean);
+		if (control != null) {
+			applyLayout(null, control);
 		}
 		return this;
 	}
@@ -160,6 +184,9 @@ public abstract class AbstractBuilder implements Builder {
 			if (widget instanceof Control) {
 				return (Control) widget;
 			}
+		}
+		if (observableValue instanceof IViewerObservable) {
+			return ((IViewerObservable)observableValue).getViewer().getControl();
 		}
 		return null;
 	}
@@ -216,7 +243,7 @@ public abstract class AbstractBuilder implements Builder {
 			final UpdateValueStrategy targetToModel) {
 		final Binding binding = ctx.bindValue(target, model, targetToModel,
 				null);
-		ControlDecorationSupport.create(binding, SWT.TOP | SWT.RIGHT);
+		ControlDecorationSupport.create(binding, SWT.TOP | SWT.LEFT);
 	}
 
 	public Builder updateModels() {
@@ -240,5 +267,18 @@ public abstract class AbstractBuilder implements Builder {
 		}
 		TitleAreaDialogSupport.create(dialog, ctx);
 		return this;
+	}
+
+	public Builder readOnly(boolean readOnly) {
+		readOnlyFlag = readOnly ? SWT.READ_ONLY : 0;
+		return this;
+	}
+
+	public Builder selection(String property, Collection<?> items) {
+		return field(property, new FieldOptions(items));
+	}
+	
+	public Builder selection(String property, FieldOptions options) {
+		return field(property, options);
 	}
 }

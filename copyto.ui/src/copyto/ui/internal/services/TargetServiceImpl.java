@@ -19,29 +19,52 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.preferences.ScopedPreferenceStore;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceReference;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
-import osgiutils.services.LogHelper;
-
-
+import osgiutils.services.ServiceRunnable;
+import osgiutils.services.SimpleServiceRunnable;
+import osgiutils.services.Trackers;
+import copyto.core.ProtocolDescriptor;
+import copyto.core.ProtocolRegistry;
 import copyto.core.Target;
+import copyto.core.TargetDescriptor;
 import copyto.core.TargetService;
 import copyto.core.TargetServiceListener;
 import copyto.ui.internal.commands.CopyToHandler;
-import copyto.ui.internal.models.TargetModel;
-
 
 /**
  * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
  * 
  */
 public class TargetServiceImpl implements TargetService {
+
+	private class TargetDescriptorImpl implements TargetDescriptor {
+		private final String name;
+		private final ProtocolDescriptor desc;
+		private final Preferences itemNode;
+
+		private TargetDescriptorImpl(String name, ProtocolDescriptor desc,
+				Preferences itemNode) {
+			this.name = name;
+			this.desc = desc;
+			this.itemNode = itemNode;
+		}
+
+		public String getId() {
+			return name;
+		}
+
+		public Target createTarget() {
+			Target loaded = desc.getProtocol().createTarget();
+			loaded.load(itemNode);
+			return loaded;
+		}
+
+		public String getLabel() {
+			return itemNode.get("label", "<undefined>");
+		}
+	}
 
 	private static final String QUALIFIER = "copyto.core" + "/targets"; //$NON-NLS-1$
 
@@ -50,26 +73,40 @@ public class TargetServiceImpl implements TargetService {
 	 */
 	public TargetServiceImpl() {
 		// This will trigger PreferenceInitializers to run
-		final ScopedPreferenceStore preferenceStore = new ScopedPreferenceStore(
+		/*final ScopedPreferenceStore preferenceStore = new ScopedPreferenceStore(
 				new ConfigurationScope(), QUALIFIER);
-		preferenceStore.getBoolean("test"); //$NON-NLS-1$
+		preferenceStore.getBoolean("test"); //$NON-NLS-1$*/
 	}
 
-	public Target find(final String id) {
+	public TargetDescriptor find(final String id) {
 		final ConfigurationScope configurationScope = new ConfigurationScope();
 		final IEclipsePreferences preferences = configurationScope
 				.getNode(QUALIFIER);
 		try {
 			if (preferences.nodeExists(id)) {
-				return new TargetModel(preferences.node(id), configurationScope
-						.getLocation());
+				Preferences itemNode = preferences.node(id);
+				final String protocolId = itemNode.get("protocol", null);
+				if (protocolId != null) {
+					final ProtocolDescriptor desc = Trackers
+							.run(
+									ProtocolRegistry.class,
+									new ServiceRunnable<ProtocolRegistry, ProtocolDescriptor>() {
+										public ProtocolDescriptor run(
+												ProtocolRegistry service) {
+											return service.find(protocolId);
+										}
+									});
+					if (desc != null) {
+						return new TargetDescriptorImpl(id, desc, itemNode);
+					}
+				}				
 			}
 		} catch (final Exception e) {
 		}
 		return null;
 	}
 
-	public Target getLastSelected() {
+	public TargetDescriptor getLastSelected() {
 		final IEclipsePreferences preferences = new ConfigurationScope()
 				.getNode(QUALIFIER);
 		final String id = preferences.get("lastId", null); //$NON-NLS-1$
@@ -97,15 +134,14 @@ public class TargetServiceImpl implements TargetService {
 	}
 
 	// TODO:: Add EH and iterate until at least one can be returned.
-	public Target findFirst() {
+	public TargetDescriptor findFirst() {
 		final ConfigurationScope configurationScope = new ConfigurationScope();
 		final IEclipsePreferences preferences = configurationScope
 				.getNode(QUALIFIER);
 		try {
 			final String[] names = preferences.childrenNames();
 			if (names.length > 0) {
-				return new TargetModel(preferences.node(names[0]),
-						configurationScope.getLocation());
+				return find(names[0]);
 			}
 		} catch (final BackingStoreException e) {
 			// TODO Auto-generated catch block
@@ -124,18 +160,36 @@ public class TargetServiceImpl implements TargetService {
 		return 0;
 	}
 
-	public List<Target> findAll() {
+	public List<TargetDescriptor> findAll() {
 		final ConfigurationScope configurationScope = new ConfigurationScope();
 		final IEclipsePreferences preferences = configurationScope
 				.getNode(QUALIFIER);
-		final List<Target> items = new ArrayList<Target>();
+		final List<TargetDescriptor> items = new ArrayList<TargetDescriptor>();
 		try {
 			for (final String name : preferences.childrenNames()) {
-				final Target item = new TargetModel(preferences.node(name),
+				final Preferences itemNode = preferences.node(name);
+				final String protocolId = itemNode.get("protocol", null);
+				if (protocolId != null) {
+					final ProtocolDescriptor desc = Trackers
+							.run(
+									ProtocolRegistry.class,
+									new ServiceRunnable<ProtocolRegistry, ProtocolDescriptor>() {
+										public ProtocolDescriptor run(
+												ProtocolRegistry service) {
+											return service.find(protocolId);
+										}
+									});
+					if (desc != null) {
+						TargetDescriptor target = new TargetDescriptorImpl(
+								name, desc, itemNode);
+						items.add(target);
+					}
+				}
+				/*final Target item = new TargetModel(preferences.node(name),
 						configurationScope.getLocation());
 				if (item != null) {
 					items.add(item);
-				}
+				}*/
 			}
 		} catch (final BackingStoreException e) {
 		}
@@ -149,7 +203,9 @@ public class TargetServiceImpl implements TargetService {
 			node.removeNode();
 			node = instanceScope.getNode(QUALIFIER);
 			for (final Target item : items) {
-				item.save(node.node(item.getId()));
+				Preferences itemNode = node.node(item.getId());
+				itemNode.put("protocol", item.getProtocol().getId());
+				item.save(itemNode);
 			}
 			node.flush();
 		} catch (final BackingStoreException e) {
@@ -159,29 +215,12 @@ public class TargetServiceImpl implements TargetService {
 	}
 
 	private void notifyListeners(final Collection<Target> items) {
-		final BundleContext context = FrameworkUtil.getBundle(getClass())
-				.getBundleContext();
-		try {
-			final ServiceReference[] references = context.getServiceReferences(
-					TargetServiceListener.class.getName(), null);
-			if (references != null) {
-				for (final ServiceReference ref : references) {
-					try {
-						final TargetServiceListener listener = (TargetServiceListener) context
-								.getService(ref);
-						if (listener != null) {
-							listener.targetsChanged(items);
-						}
-					} catch (final Throwable t) {
-						LogHelper.error(t,
-								"Error calling TargetServiceListener in %s", //$NON-NLS-1$
-								ref.getBundle().getSymbolicName());
-					} finally {
-						context.ungetService(ref);
+		Trackers.runAll(TargetServiceListener.class,
+				new SimpleServiceRunnable<TargetServiceListener>() {
+					@Override
+					protected void doRun(TargetServiceListener listener) {
+						listener.targetsChanged(items);
 					}
-				}
-			}
-		} catch (final InvalidSyntaxException e) {
-		}
+				});
 	}
 }

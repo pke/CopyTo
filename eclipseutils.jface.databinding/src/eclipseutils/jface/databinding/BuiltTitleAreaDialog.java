@@ -14,8 +14,13 @@ import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.fieldassist.ControlDecoration;
+import org.eclipse.jface.fieldassist.FieldDecoration;
+import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -32,6 +37,10 @@ public abstract class BuiltTitleAreaDialog extends TitleAreaDialog implements
 		BuilderProvider {
 
 	private Builder builder;
+	private ControlDecoration okButtonDecoration;
+	final FieldDecoration warningDecoration = FieldDecorationRegistry
+			.getDefault().getFieldDecoration(
+					FieldDecorationRegistry.DEC_WARNING);
 
 	/**
 	 * @param parentShell
@@ -63,11 +72,35 @@ public abstract class BuiltTitleAreaDialog extends TitleAreaDialog implements
 							final Button button = getButton(IDialogConstants.OK_ID);
 							if (button != null && !button.isDisposed()) {
 								button.setEnabled(status.getSeverity() != IStatus.ERROR);
+								if (status.getSeverity() == IStatus.WARNING) {
+									okButtonDecoration.show();
+								} else {
+									okButtonDecoration.hide();
+								}
 							}
 						}
 					}
 				});
 		return client;
+	}
+
+	@Override
+	protected void createButtonsForButtonBar(Composite parent) {
+		super.createButtonsForButtonBar(parent);
+
+		Button okButton = getButton(IDialogConstants.OK_ID);
+		okButtonDecoration = new ControlDecoration(okButton, SWT.TOP | SWT.LEFT);
+		okButton.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				okButtonDecoration.dispose();
+			}
+		});
+		okButtonDecoration.hide();
+		okButtonDecoration.setMarginWidth(1);
+		okButtonDecoration.setImage(warningDecoration.getImage());
+		okButtonDecoration
+				.setDescriptionText("The dialog contains warnings. Closing the dialog is discouraged.");
+
 	}
 
 	@Override

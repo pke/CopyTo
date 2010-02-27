@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="responseHandlers" name="HTTP Response Handlers" schema="schema/responseHandlers.exsd"/>
+   <extension
+         point="copyto.core.protocols">
+      <protocol
+            class="copyto.protocol.http.core.internal.HttpProtocol"
+            id="copyto.protocol.http"
+            name="HTTP">
+      </protocol>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="copyto.protocol.http.core.internal.json.MapResponse"
+            class="copyto.protocol.http.core.internal.json.AdapterFactory">
+         <adapter
+               type="java.net.URL">
+         </adapter>
+      </factory>
+   </extension>
+   <extension
+         point="copyto.protocol.http.core.responseHandlers">
+      <responseHandler
+            class="copyto.protocol.http.core.internal.responses.JsonResponseHandler"
+            id="copyto.protocol.http.core.JSONResponseHandler"
+            name="JSON">
+         <param
+               default="/*url*/"
+               name="path"
+               type="string">
+         </param>
+         <description>
+            Parses JSON responses
+         </description>
+      </responseHandler>
+      <responseHandler
+            class="copyto.protocol.http.core.internal.responses.RedirectResponseHandler"
+            id="copyto.protocol.http.core.RedirectResponseHandler"
+            name="Redirect">
+         <description>
+            Handles "302 - Moved" responses.
+         </description>
+      </responseHandler>
+      <responseHandler
+            class="copyto.protocol.http.core.internal.responses.BodyResponseHandler"
+            id="copyto.protocol.http.core.BodyResponseHandler"
+            name="Body">
+         <description>
+            Handles 200 - OK responses that contain the resulting URL in the body of the response.
+You can set a regex to get the response from the body. If you set not regex then the body only contains the URL.
+         </description>
+         <param
+               name="regex"
+               type="string">
+            <value
+                  name="someURL"
+                  value="(http|https|ftp)\://([a-zA-Z0-9\.\-]+(\:[a-zA-Z0-9\.&amp;amp;%\$\-]+)*@)*((25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9])\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[0-9])|localhost|([a-zA-Z0-9\-]+\.)*[a-zA-Z0-9\-]+\.(com|edu|gov|int|mil|net|org|biz|arpa|info|name|pro|aero|coop|museum|[a-zA-Z]{2}))(\:[0-9]+)*(/($|[a-zA-Z0-9\.\,\?\&apos;\\\+&amp;amp;%\$#\=~_\-]+))*">
+            </value>
+         </param>
+      </responseHandler>
+   </extension>
+
+</plugin>

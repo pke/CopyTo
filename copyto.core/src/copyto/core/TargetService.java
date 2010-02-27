@@ -3,7 +3,6 @@ package copyto.core;
 import java.util.Collection;
 import java.util.List;
 
-
 /**
  * Provides management of CopyTo Targets.
  * 
@@ -19,17 +18,17 @@ public interface TargetService {
 	 * @return the found target or <code>null</code> if no target with the given
 	 *         <i>id</i> exist.
 	 */
-	Target find(String id);
+	TargetDescriptor find(String id);
 
 	/**
 	 * @return the first found target or <code>null</code> if no targets exist.
 	 */
-	Target findFirst();
+	TargetDescriptor findFirst();
 
 	/**
 	 * @return a list of all targets in abitrary order.
 	 */
-	List<Target> findAll();
+	List<TargetDescriptor> findAll();
 
 	/**
 	 * @param targets
@@ -39,7 +38,7 @@ public interface TargetService {
 	/**
 	 * @return target
 	 */
-	Target getLastSelected();
+	TargetDescriptor getLastSelected();
 
 	/**
 	 * @param id

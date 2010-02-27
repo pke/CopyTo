@@ -15,13 +15,13 @@ import java.net.URL;
 
 import org.apache.commons.httpclient.HttpMethod;
 
-import copyto.core.HttpResponseHandler;
+import copyto.protocol.http.core.ResponseHandler;
 
 /**
  * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
  *
  */
-public class PasteBinResponseHandler implements HttpResponseHandler {
+public class PasteBinResponseHandler implements ResponseHandler {
 
 	public URL getLocation(HttpMethod method) throws Exception {
 		return new URL(method.getResponseBodyAsString());

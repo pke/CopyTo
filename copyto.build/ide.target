@@ -4,7 +4,14 @@
 <target name="Restored Target">
 <locations>
 <location path="${eclipse_home}" type="Profile"/>
-<location path="${project_loc}" type="Directory"/>
+<location path="${project_loc}" type="Directory">
+<includeBundles>
+<plugin id="com.sun.jna.win32"/>
+<plugin id="org.ops4j.pax.logging.pax-logging-service"/>
+<plugin id="org.ops4j.pax.logging.pax-logging-api"/>
+<plugin id="com.sun.jna.win32.x86"/>
+</includeBundles>
+</location>
 </locations>
 <environment>
 <os>win32</os>

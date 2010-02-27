@@ -11,6 +11,7 @@
 package eclipseutils.ui.forms.databinding;
 
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -39,13 +40,18 @@ public class FormControlToolkit implements ControlToolkit {
 		return toolkit.createButton(parent, text, style);
 	}
 
-	public Text createText(final Composite parent, final String text,
-			final int style) {
-		return toolkit.createText(parent, text, style);
+	public Text createText(final Composite parent, 	final int style) {
+		return toolkit.createText(parent, null, style);
 	}
 
 	public Label createLabel(final Composite parent, final String text,
 			final int style) {
 		return toolkit.createLabel(parent, text, style);
+	}
+
+	public Combo createCombo(Composite parent, int style) {
+		Combo control = new Combo(parent, style);
+		toolkit.adapt(control, true, true);
+		return control;
 	}
 }

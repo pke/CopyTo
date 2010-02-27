@@ -37,8 +37,8 @@ public abstract class TableViewerFieldEditor<T> extends
 		AbstractTableViewerFieldEditor<T> {
 
 	protected TableViewerFieldEditor(final String preferencePath,
-			final String labelText, final Composite parent, final int flags) {
-		super(preferencePath, labelText, parent, flags);
+			final String labelText, final Composite parent) {
+		super(preferencePath, labelText, parent);
 	}
 
 	/**

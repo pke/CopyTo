@@ -13,6 +13,7 @@ import osgiutils.services.DefaultCollectionServiceRunnable;
 import osgiutils.services.Trackers;
 
 import copyto.core.Target;
+import copyto.core.TargetDescriptor;
 import copyto.core.TargetService;
 import copyto.core.TargetServiceListener;
 
@@ -63,10 +64,10 @@ public class SourceProviderImpl extends AbstractSourceProvider implements
 		fireSourceChanged(ISources.WORKBENCH, COPYTO_TARGETS, getTargets());
 	}
 
-	private Collection<Target> getTargets() {
+	private Collection<TargetDescriptor> getTargets() {
 		return Trackers.run(TargetService.class,
-				new DefaultCollectionServiceRunnable<TargetService, Target>() {
-					public Collection<Target> run(final TargetService service) {
+				new DefaultCollectionServiceRunnable<TargetService, TargetDescriptor>() {
+					public Collection<TargetDescriptor> run(final TargetService service) {
 						return service.findAll();
 					}
 				});

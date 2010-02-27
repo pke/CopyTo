@@ -10,8 +10,6 @@
  ******************************************************************************/
 package copyto.core;
 
-import java.net.URL;
-
 import org.eclipse.core.runtime.IStatus;
 
 /**
@@ -37,7 +35,7 @@ public interface Result {
 	 *         <code>null</code> if the copyable could not be stored. Check
 	 *         {@link #getStatus()} for a description of the error.
 	 */
-	URL getLocation();
+	// URL getLocation();
 
 	/**
 	 * @return time when the result was created.

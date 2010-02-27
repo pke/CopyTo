@@ -10,10 +10,6 @@ import java.util.Collection;
 
 import org.junit.Test;
 
-import copyto.core.internal.html.form.Form;
-import copyto.core.internal.html.form.FormParser;
-import copyto.core.internal.html.form.HtmlElement;
-
 public class FormParamParser {
 
 	static private String oneFormValidHtml = "<html><body><div>"

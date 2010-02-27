@@ -10,6 +10,8 @@
  ******************************************************************************/
 package eclipseutils.jface.databinding;
 
+import java.util.Collection;
+
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 
@@ -41,6 +43,8 @@ public interface Builder {
 	 * @return this builder for chaining
 	 */
 	Builder newLine();
+	
+	Builder control(ControlCreator creator);
 
 	/**
 	 * 
@@ -56,4 +60,14 @@ public interface Builder {
 	 * @return this builder for chaining
 	 */
 	Builder updateModels();
+	
+	/**
+	 * Flags the following fields as read-only.
+	 * @return this builder for chaining
+	 */
+	Builder readOnly(boolean readOnly);
+
+	Builder selection(String property, Collection<?> items);
+	
+	Builder selection(String property, FieldOptions options);
 }

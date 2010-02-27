@@ -10,6 +10,8 @@
  ******************************************************************************/
 package eclipseutils.jface.databinding;
 
+import java.util.Collection;
+
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.validation.IValidator;
@@ -69,8 +71,9 @@ public class FieldOptions {
 		/**
 		 * @param control
 		 * @param observableValue 
+		 * @param options TODO
 		 */
-		void customizeControl(Control control, IObservableValue observableValue);
+		void customizeControl(Control control, IObservableValue observableValue, FieldOptions options);
 	}
 
 	private static final int defaultProposalAcceptanceStyle = ContentProposalAdapter.PROPOSAL_INSERT;
@@ -88,6 +91,8 @@ public class FieldOptions {
 
 	private IContentProposalProvider proposalProvider;
 	private UpdateValueStrategy targetToModel;
+	private Collection<?> items;
+	private Class<?> type;
 
 	private IValidator validator;
 
@@ -159,6 +164,10 @@ public class FieldOptions {
 	 */
 	public FieldOptions(final UpdateValueStrategy targetToModel) {
 		setTargetToModel(targetToModel);
+	}
+	
+	public FieldOptions(final Collection<?> items) {
+		setItems(items);
 	}
 
 	/**
@@ -326,5 +335,23 @@ public class FieldOptions {
 	public FieldOptions setValidator(final IValidator validator) {
 		this.validator = validator;
 		return this;
+	}
+
+	public Collection<?> getItems() {
+		return items;
+	}
+
+	public FieldOptions setItems(Collection<?> items) {
+		this.items = items;
+		return setType(Collection.class);
+	}
+
+	public Class<?> getType() {
+		return type;
+	}
+
+	public FieldOptions setType(Class<?> type) {
+		this.type = type;
+		return this; 
 	}
 }

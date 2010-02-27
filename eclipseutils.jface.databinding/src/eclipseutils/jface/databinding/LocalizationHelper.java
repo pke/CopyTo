@@ -77,6 +77,7 @@ public final class LocalizationHelper {
 			try {
 				return ResourceBundle.getBundle(clazz.getName()).getString(key);
 			} catch (final MissingResourceException e) {
+				//e.printStackTrace();
 			}
 		}
 		return defaultValue;

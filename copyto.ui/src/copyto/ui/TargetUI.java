@@ -11,10 +11,8 @@
 
 package copyto.ui;
 
-import org.eclipse.swt.widgets.Shell;
-
-import copyto.core.Copyable;
 import copyto.core.Target;
+import eclipseutils.jface.databinding.Builder;
 
 
 /**
@@ -23,6 +21,8 @@ import copyto.core.Target;
  */
 public interface TargetUI {
 
+	Builder create(Target target, Builder builder);
+	
 	/**
 	 * Shows a UI for the given copyable.
 	 * 
@@ -32,5 +32,5 @@ public interface TargetUI {
 	 * @return a probably modified Copyable or the original handed in. Must
 	 *         <b>not</b> be <code>null</code>.
 	 */
-	Copyable show(Shell parent, Copyable copyable, Target target);
+	//Copyable show(Shell parent, Copyable copyable, Target target);
 }

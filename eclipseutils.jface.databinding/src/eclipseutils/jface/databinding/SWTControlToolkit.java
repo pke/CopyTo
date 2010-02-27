@@ -11,6 +11,7 @@
 package eclipseutils.jface.databinding;
 
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -34,10 +35,9 @@ class SWTControlToolkit implements ControlToolkit {
 		return setText(control, text);
 	}
 
-	public Text createText(final Composite parent, final String text,
-			final int style) {
+	public Text createText(final Composite parent, final int style) {
 		final Text control = new Text(parent, style);
-		return setText(control, text);
+		return control;
 	}
 
 	public Label createLabel(final Composite parent, final String text,
@@ -57,6 +57,11 @@ class SWTControlToolkit implements ControlToolkit {
 				((Text) control).setText(text);
 			}
 		}
+		return control;
+	}
+
+	public Combo createCombo(Composite parent, int style) {
+		final Combo control = new Combo(parent, style);
 		return control;
 	}
 }

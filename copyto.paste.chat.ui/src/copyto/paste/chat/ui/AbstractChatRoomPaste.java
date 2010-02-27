@@ -123,7 +123,7 @@ public abstract class AbstractChatRoomPaste implements UIResultHandler {
 		while (it.hasNext()) {
 			final Result result = it.next();
 			if (result.getStatus().isOK()) {
-				final URL url = result.getLocation();
+				final String url = result.getStatus().getMessage();
 				if (url != null) {
 					sb.append(url.toString());
 					if (it.hasNext()) {

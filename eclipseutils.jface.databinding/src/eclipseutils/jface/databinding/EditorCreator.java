@@ -23,10 +23,12 @@ public interface EditorCreator {
 	 * @param parent
 	 * @param bean
 	 * @param property
+	 * @param style additional style flags (i.e. SWT.READ_ONLY)
+	 * @param fieldOptions TODO
 	 * @return an observable to bind to.
 	 */
 	IObservableValue create(ControlToolkit toolkit, Composite parent,
-			Object bean, String property);
+			Object bean, String property, int style, FieldOptions fieldOptions);
 
 	/**
 	 * @return whether or not the editor created by this creator has a label nor

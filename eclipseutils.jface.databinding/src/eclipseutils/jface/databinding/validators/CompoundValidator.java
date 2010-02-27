@@ -52,7 +52,7 @@ public class CompoundValidator implements IValidator {
 		this.severity = severity;
 		this.validators = new IValidator[validatorParams.length + 2];
 		this.validators[0] = validator1;
-		this.validators[1] = validator1;
+		this.validators[1] = validator2;
 		System.arraycopy(validatorParams, 0, this.validators, 2,
 				validatorParams.length);
 	}
