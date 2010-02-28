@@ -19,9 +19,9 @@ import org.eclipse.swt.widgets.Shell;
 
 import osgiutils.services.DefaultCollectionServiceRunnable;
 import osgiutils.services.Trackers;
-import copyto.core.ProtocolDescriptor;
-import copyto.core.ProtocolRegistry;
 import copyto.core.Target;
+import copyto.core.TargetFactories;
+import copyto.core.TargetFactoryDescriptor;
 import copyto.core.models.AbstractTargetModel;
 import copyto.ui.internal.Messages;
 import eclipseutils.jface.databinding.TableEditor;
@@ -46,8 +46,8 @@ class TargetEditor extends TableEditor<Target> {
 
 	@Override
 	protected Target createItem(Shell shell) {
-		Collection<ProtocolDescriptor> descs = Trackers.run(ProtocolRegistry.class, new DefaultCollectionServiceRunnable<ProtocolRegistry, ProtocolDescriptor>() {
-			public Collection<ProtocolDescriptor> run(ProtocolRegistry service) {
+		Collection<TargetFactoryDescriptor> descs = Trackers.run(TargetFactories.class, new DefaultCollectionServiceRunnable<TargetFactories, TargetFactoryDescriptor>() {
+			public Collection<TargetFactoryDescriptor> run(TargetFactories service) {
 				return service.findAll();
 			}
 		});
@@ -55,8 +55,8 @@ class TargetEditor extends TableEditor<Target> {
 			return null;
 		}
 		if (descs.size() == 1) {
-			ProtocolDescriptor desc = descs.iterator().next();
-			final Target target = desc.getProtocol().createTarget();
+			TargetFactoryDescriptor desc = descs.iterator().next();
+			Target target = desc.getFactory().createTarget();
 			if (new EditDialog(shell, target, getItems()).open() == Window.OK) {
 				return target;
 			}

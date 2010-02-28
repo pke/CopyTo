@@ -28,46 +28,26 @@ import org.eclipse.core.runtime.Status;
 import org.osgi.service.prefs.Preferences;
 
 import osgiutils.services.LogHelper;
-import osgiutils.services.ServiceRunnable;
 import osgiutils.services.SimpleServiceRunnable;
 import osgiutils.services.Trackers;
-import copyto.core.Protocol;
-import copyto.core.ProtocolDescriptor;
-import copyto.core.ProtocolRegistry;
 import copyto.core.ResultHandler;
 import copyto.core.Results;
 import copyto.core.Target;
+import copyto.core.TargetFactory;
 
-/**
- * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
- * 
- */
 public abstract class AbstractTargetModel extends AbstractModel implements
 		Target, Serializable {
 	private static final long serialVersionUID = -395321611927968738L;
-	private transient final Protocol protocol;
+	private transient final TargetFactory targetFactory;
 
-	public AbstractTargetModel(Protocol protocol) {
+	public AbstractTargetModel(TargetFactory targetFactory) {
 		id = UUID.randomUUID().toString();
 		name = "unnamed"; //$NON-NLS-1$
-		this.protocol = protocol;
+		this.targetFactory = targetFactory;
 	}
 
 	public void load(final Preferences preferences) {
 		setName(preferences.get("label", getName()));
-
-		final String protocolId = preferences.get("protocol.id", null);
-		if (protocolId != null) {
-			ProtocolDescriptor desc = Trackers
-					.run(
-							ProtocolRegistry.class,
-							new ServiceRunnable<ProtocolRegistry, ProtocolDescriptor>() {
-								public ProtocolDescriptor run(
-										ProtocolRegistry service) {
-									return service.find(protocolId);
-								}
-							});
-		}
 	}
 
 	/**
@@ -187,8 +167,8 @@ public abstract class AbstractTargetModel extends AbstractModel implements
 		return connectionStatus;
 	}
 
-	public Protocol getProtocol() {
-		return protocol;
+	public TargetFactory getFactory() {
+		return targetFactory;
 	}
 
 	private void notifyListeners(final Results results) {

@@ -24,12 +24,10 @@ import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
@@ -86,7 +84,10 @@ import copyto.ui.WorkbenchResultHandler;
 import copyto.ui.internal.Messages;
 import copyto.ui.internal.models.TextSelectionCopyable;
 import copyto.ui.internal.preferences.CopyToPreferencePage;
-import eclipseutils.core.extensions.ExtensionPoint;
+import eclipseutils.core.extensions.BaseExtensionDescriptor;
+import eclipseutils.core.extensions.ExpressionEvaluatingVisitor;
+import eclipseutils.core.extensions.ExtensionPoints;
+import eclipseutils.core.extensions.ExtensionVisitor;
 
 /**
  * 
@@ -104,6 +105,32 @@ public class CopyToHandler extends AbstractHandler implements IElementUpdater {
 
 	private final IAdapterManager adapterManager = Platform.getAdapterManager();
 
+	private final class ResultHandlerDescriptor extends BaseExtensionDescriptor {
+
+		public ResultHandlerDescriptor(IConfigurationElement configElement) {
+			super(configElement);
+		}
+
+		public ImageDescriptor getImage() {
+			ImageDescriptor descriptor = null;
+			URL url = getFileLocation("icon");
+			if (url != null) {
+				descriptor = ImageDescriptor.createFromURL(url);
+			} else {
+				if (getAttribute("iconProvider") != null) {
+					try {
+						IconProvider provider = createExecutableExtension("iconProvider");
+						if (provider != null) {
+							descriptor = provider.getIcon();
+						}
+					} catch (CoreException e) {
+					}
+				}
+			}
+			return descriptor;
+		}
+	}
+
 	class LabelProvider extends StyledCellLabelProvider implements
 			ILabelProvider {
 
@@ -119,7 +146,7 @@ public class CopyToHandler extends AbstractHandler implements IElementUpdater {
 		@Override
 		public void update(ViewerCell cell) {
 			final StyledString text = new StyledString();
-			final IConfigurationElement element = (IConfigurationElement) cell
+			final ResultHandlerDescriptor element = (ResultHandlerDescriptor) cell
 					.getElement();
 			text.append(getText(element), new Styler() {
 				@Override
@@ -136,7 +163,7 @@ public class CopyToHandler extends AbstractHandler implements IElementUpdater {
 		}
 
 		private void appendDescription(StyledString text,
-				IConfigurationElement element) {
+				ResultHandlerDescriptor element) {
 			String desc = element.getAttribute("description");
 			if (desc != null) {
 				text.append("\n" + desc, StyledString.DECORATIONS_STYLER);
@@ -144,29 +171,8 @@ public class CopyToHandler extends AbstractHandler implements IElementUpdater {
 		}
 
 		public Image getImage(Object element) {
-			IConfigurationElement config = (IConfigurationElement) element;
-			ImageDescriptor descriptor = null;
-			String path = config.getAttribute("icon");
-			if (path != null) {
-				URL url = FileLocator.find(Platform.getBundle(config
-						.getContributor().getName()), new Path(path), null);
-				if (url != null) {
-					descriptor = ImageDescriptor.createFromURL(url);
-				}
-			} else {
-				String clazz = config.getAttribute("iconProvider");
-				if (clazz != null) {
-					IconProvider provider;
-					try {
-						provider = (IconProvider) config
-								.createExecutableExtension("iconProvider");
-						if (provider != null) {
-							descriptor = provider.getIcon();
-						}
-					} catch (CoreException e) {
-					}
-				}
-			}
+			ResultHandlerDescriptor config = (ResultHandlerDescriptor) element;
+			ImageDescriptor descriptor = config.getImage();
 			if (descriptor != null) {
 				return resourceManager.createImage(descriptor);
 			}
@@ -174,8 +180,7 @@ public class CopyToHandler extends AbstractHandler implements IElementUpdater {
 		}
 
 		public String getText(Object element) {
-			IConfigurationElement config = (IConfigurationElement) element;
-			return config.getAttribute("name");
+			return ((ResultHandlerDescriptor) element).getName();
 		}
 	}
 
@@ -187,7 +192,8 @@ public class CopyToHandler extends AbstractHandler implements IElementUpdater {
 		private Shell shell;
 		private IWorkbench workbench;
 
-		public CollectJob(final ExecutionEvent event, final TargetDescriptor currentTarget) {
+		public CollectJob(final ExecutionEvent event,
+				final TargetDescriptor currentTarget) {
 			super(Messages.CopyToHandler_JobName);
 			targetDesc = currentTarget;
 			selection = HandlerUtil.getActiveMenuSelection(event);
@@ -260,21 +266,35 @@ public class CopyToHandler extends AbstractHandler implements IElementUpdater {
 				setProperty(
 						IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY,
 						true);
-				return new Status(IStatus.ERROR, FrameworkUtil.getBundle(getClass()).getSymbolicName(), NLS
-						.bind(Messages.CopyToHandler_CopyError, targetDesc
-								.getLabel(), results.getFailures().size()));
+				return new Status(IStatus.ERROR, FrameworkUtil.getBundle(
+						getClass()).getSymbolicName(), NLS.bind(
+						Messages.CopyToHandler_CopyError,
+						targetDesc.getLabel(), results.getFailures().size()));
 			}
 			if (results.getSuccesses().isEmpty()) {
 				return Status.CANCEL_STATUS;
 			}
 
-			ExtensionPoint ep = new ExtensionPoint("copyto.core.resultHandlers");
 			IEvaluationContext context = new EvaluationContext(null, results);
-			final Collection<IConfigurationElement> elements = ep.getElements(
-					context, false);
+			context.addVariable("result.successes", results.getSuccesses());
+			context.addVariable("result.failures", results.getFailures());
+			context.addVariable("result.target", results.getTarget());
+			final Collection<ResultHandlerDescriptor> elements = ExtensionPoints
+					.visitAll(
+							"copyto.core.resultHandlers",
+							new ExpressionEvaluatingVisitor<ResultHandlerDescriptor>(
+									context,
+									new ExtensionVisitor<ResultHandlerDescriptor>() {
+										@Override
+										protected ResultHandlerDescriptor create(
+												IConfigurationElement configElement) {
+											return new ResultHandlerDescriptor(
+													configElement);
+										}
+									}));
 
 			if (elements.size() == 1) {
-				IConfigurationElement config = elements.iterator().next();
+				ResultHandlerDescriptor config = elements.iterator().next();
 				runAction(config, results);
 			} else {
 
@@ -320,7 +340,7 @@ public class CopyToHandler extends AbstractHandler implements IElementUpdater {
 							Object[] dialogResults = dialog.getResult();
 							if (dialogResults != null) {
 								for (Object result : dialogResults) {
-									runAction((IConfigurationElement) result,
+									runAction((ResultHandlerDescriptor) result,
 											results);
 								}
 							}
@@ -334,12 +354,12 @@ public class CopyToHandler extends AbstractHandler implements IElementUpdater {
 			return Status.OK_STATUS;
 		}
 
-		private void runAction(IConfigurationElement config,
+		private void runAction(ResultHandlerDescriptor config,
 				final Results results) {
 			try {
 				final UIResultHandler handler = (UIResultHandler) config
-						.createExecutableExtension("class");
-				UIJob handlerJob = new UIJob(config.getAttribute("name")) {
+						.createExecutableExtension();
+				UIJob handlerJob = new UIJob(config.getName()) {
 					@Override
 					public IStatus runInUIThread(IProgressMonitor monitor) {
 						if (handler instanceof WorkbenchResultHandler) {

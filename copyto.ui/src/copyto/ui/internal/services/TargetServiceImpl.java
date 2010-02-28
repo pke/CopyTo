@@ -25,8 +25,8 @@ import org.osgi.service.prefs.Preferences;
 import osgiutils.services.ServiceRunnable;
 import osgiutils.services.SimpleServiceRunnable;
 import osgiutils.services.Trackers;
-import copyto.core.ProtocolDescriptor;
-import copyto.core.ProtocolRegistry;
+import copyto.core.TargetFactoryDescriptor;
+import copyto.core.TargetFactories;
 import copyto.core.Target;
 import copyto.core.TargetDescriptor;
 import copyto.core.TargetService;
@@ -39,12 +39,14 @@ import copyto.ui.internal.commands.CopyToHandler;
  */
 public class TargetServiceImpl implements TargetService {
 
+	private static final String FACTORY = "factory";
+
 	private class TargetDescriptorImpl implements TargetDescriptor {
 		private final String name;
-		private final ProtocolDescriptor desc;
+		private final TargetFactoryDescriptor desc;
 		private final Preferences itemNode;
 
-		private TargetDescriptorImpl(String name, ProtocolDescriptor desc,
+		private TargetDescriptorImpl(String name, TargetFactoryDescriptor desc,
 				Preferences itemNode) {
 			this.name = name;
 			this.desc = desc;
@@ -56,7 +58,7 @@ public class TargetServiceImpl implements TargetService {
 		}
 
 		public Target createTarget() {
-			Target loaded = desc.getProtocol().createTarget();
+			Target loaded = desc.getFactory().createTarget();
 			loaded.load(itemNode);
 			return loaded;
 		}
@@ -85,14 +87,14 @@ public class TargetServiceImpl implements TargetService {
 		try {
 			if (preferences.nodeExists(id)) {
 				Preferences itemNode = preferences.node(id);
-				final String protocolId = itemNode.get("protocol", null);
+				final String protocolId = itemNode.get(FACTORY, null);
 				if (protocolId != null) {
-					final ProtocolDescriptor desc = Trackers
+					final TargetFactoryDescriptor desc = Trackers
 							.run(
-									ProtocolRegistry.class,
-									new ServiceRunnable<ProtocolRegistry, ProtocolDescriptor>() {
-										public ProtocolDescriptor run(
-												ProtocolRegistry service) {
+									TargetFactories.class,
+									new ServiceRunnable<TargetFactories, TargetFactoryDescriptor>() {
+										public TargetFactoryDescriptor run(
+												TargetFactories service) {
 											return service.find(protocolId);
 										}
 									});
@@ -168,15 +170,15 @@ public class TargetServiceImpl implements TargetService {
 		try {
 			for (final String name : preferences.childrenNames()) {
 				final Preferences itemNode = preferences.node(name);
-				final String protocolId = itemNode.get("protocol", null);
-				if (protocolId != null) {
-					final ProtocolDescriptor desc = Trackers
+				final String factoryId = itemNode.get(FACTORY, null);
+				if (factoryId != null) {
+					final TargetFactoryDescriptor desc = Trackers
 							.run(
-									ProtocolRegistry.class,
-									new ServiceRunnable<ProtocolRegistry, ProtocolDescriptor>() {
-										public ProtocolDescriptor run(
-												ProtocolRegistry service) {
-											return service.find(protocolId);
+									TargetFactories.class,
+									new ServiceRunnable<TargetFactories, TargetFactoryDescriptor>() {
+										public TargetFactoryDescriptor run(
+												TargetFactories service) {
+											return service.find(factoryId);
 										}
 									});
 					if (desc != null) {
@@ -204,7 +206,7 @@ public class TargetServiceImpl implements TargetService {
 			node = instanceScope.getNode(QUALIFIER);
 			for (final Target item : items) {
 				Preferences itemNode = node.node(item.getId());
-				itemNode.put("protocol", item.getProtocol().getId());
+				itemNode.put(FACTORY, item.getFactory().getId());
 				item.save(itemNode);
 			}
 			node.flush();

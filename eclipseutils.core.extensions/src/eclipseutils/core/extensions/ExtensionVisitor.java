@@ -12,6 +12,8 @@ package eclipseutils.core.extensions;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 
+import eclipseutils.core.extensions.internal.Visitor;
+
 /**
  * A visitor for {@link IConfigurationElement}
  * 

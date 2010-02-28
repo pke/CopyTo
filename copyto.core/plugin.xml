@@ -3,5 +3,5 @@
 <plugin>
    <extension-point id="targets" name="%Bundle-Name" schema="schema/targets.exsd"/>
    <extension-point id="resultHandlers" name="%Bundle-Name" schema="schema/resultHandlers.exsd"/>  
-   <extension-point id="protocols" name="%Bundle-Name" schema="schema/protocols.exsd"/>
+   <extension-point id="targetFactories" name="%Bundle-Name" schema="schema/targetFactories.exsd"/>
 </plugin>

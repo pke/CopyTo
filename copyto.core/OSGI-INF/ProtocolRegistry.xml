@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="false" name="copyto.core.ProtocolRegistry">
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="false" name="copyto.core.TargetFactories">
    <implementation class="copyto.core.internal.services.ProtocolRegistryImpl"/>
    <service>
-      <provide interface="copyto.core.ProtocolRegistry"/>
+      <provide interface="copyto.core.TargetFactories"/>
    </service>
 </scr:component>

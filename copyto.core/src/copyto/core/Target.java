@@ -28,5 +28,5 @@ public interface Target extends Persistable, IAdaptable {
 
 	Results transfer(IProgressMonitor monitor, Copyable... copyables);
 
-	Protocol getProtocol();
+	TargetFactory getFactory();
 }

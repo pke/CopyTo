@@ -28,7 +28,6 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.osgi.framework.FrameworkUtil;
 
@@ -77,9 +76,12 @@ class EditDialog extends BuiltTitleAreaDialog {
 	@Override
 	protected void configureShell(final Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText(NLS.bind(Messages.EditDialog_ShellText, target
-				.getProtocol().getName()));
-
+		String name = target.getFactory().getName();
+		
+		newShell.setText(NLS.bind(Messages.EditDialog_ShellText, name));
+		setTitle(NLS.bind(Messages.EditDialog_Title, name));
+		setMessage(NLS.bind(Messages.EditDialog_Desc, name));
+		
 		ImageDescriptor desc = (ImageDescriptor) Platform.getAdapterManager()
 				.loadAdapter(target, ImageDescriptor.class.getName());
 
@@ -99,15 +101,6 @@ class EditDialog extends BuiltTitleAreaDialog {
 				}
 			});
 		}
-	}
-
-	@Override
-	protected Control createDialogArea(final Composite parent) {
-		final Control control = super.createDialogArea(parent);
-		String name = target.getProtocol().getName();
-		setTitle(NLS.bind(Messages.EditDialog_Title, name));
-		setMessage(NLS.bind(Messages.EditDialog_Desc, name));
-		return control;
 	}
 
 	final static SimpleContentProposalProvider proposalProvider = new SimpleContentProposalProvider(
