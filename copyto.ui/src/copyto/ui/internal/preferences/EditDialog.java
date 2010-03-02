@@ -80,7 +80,7 @@ class EditDialog extends BuiltTitleAreaDialog {
 		
 		newShell.setText(NLS.bind(Messages.EditDialog_ShellText, name));
 		setTitle(NLS.bind(Messages.EditDialog_Title, name));
-		setMessage(NLS.bind(Messages.EditDialog_Desc, name));
+		//setMessage(NLS.bind(Messages.EditDialog_Desc, name));
 		
 		ImageDescriptor desc = (ImageDescriptor) Platform.getAdapterManager()
 				.loadAdapter(target, ImageDescriptor.class.getName());

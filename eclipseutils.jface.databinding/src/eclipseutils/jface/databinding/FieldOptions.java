@@ -95,6 +95,7 @@ public class FieldOptions {
 	private Class<?> type;
 
 	private IValidator validator;
+	private int swtStyle;
 
 	/**
 	 * Creates a <code>FieldOptions</code> object with the given activation
@@ -353,5 +354,14 @@ public class FieldOptions {
 	public FieldOptions setType(Class<?> type) {
 		this.type = type;
 		return this; 
+	}
+
+	public FieldOptions setStyle(int style) {
+		this.swtStyle = style;
+		return this;
+	}
+	
+	public int getStyle() {
+		return swtStyle; 
 	}
 }

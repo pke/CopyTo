@@ -1,31 +1,21 @@
 package copyto.target.http.ui.internal;
 
-import org.eclipse.core.databinding.UpdateValueStrategy;
-import org.eclipse.core.databinding.observable.ChangeEvent;
-import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdapterManager;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 
 import copyto.target.http.core.HttpTarget;
-import copyto.target.http.core.ResponseHandler;
-import copyto.target.http.core.ResponseHandlerDescriptor;
 import copyto.target.http.core.internal.ResponseHandlers;
 import eclipseutils.jface.databinding.Builder;
 import eclipseutils.jface.databinding.BuilderAdapter;
 import eclipseutils.jface.databinding.ControlCreator;
 import eclipseutils.jface.databinding.FieldOptions;
 import eclipseutils.jface.databinding.FieldOptions.ControlCustomizer;
-import eclipseutils.jface.databinding.GridLayoutBuilder;
 import eclipseutils.jface.databinding.validators.URLValidator;
 
 final class HttpBuilderAdapter implements BuilderAdapter {
@@ -47,7 +37,7 @@ final class HttpBuilderAdapter implements BuilderAdapter {
 							public void customizeControl(Control control,
 									final IObservableValue observableValue,
 									FieldOptions options) {
-								final Composite client = new Composite(control
+								/*final Composite client = new Composite(control
 										.getParent(), SWT.NULL);
 								final StackLayout layout = new StackLayout();
 								client.setLayout(layout);
@@ -94,7 +84,7 @@ final class HttpBuilderAdapter implements BuilderAdapter {
 											}
 										});
 									}
-								});
+								});*/
 							}
 						})).control(new ControlCreator() {
 			public Control create(Composite parent, Object bean) {

@@ -36,8 +36,7 @@ class SWTControlToolkit implements ControlToolkit {
 	}
 
 	public Text createText(final Composite parent, final int style) {
-		final Text control = new Text(parent, style);
-		return control;
+		return new Text(parent, style);
 	}
 
 	public Label createLabel(final Composite parent, final String text,
@@ -53,15 +52,12 @@ class SWTControlToolkit implements ControlToolkit {
 				((Button) control).setText(text);
 			} else if (control instanceof Label) {
 				((Label) control).setText(text);
-			} else if (control instanceof Text) {
-				((Text) control).setText(text);
 			}
 		}
 		return control;
 	}
 
 	public Combo createCombo(Composite parent, int style) {
-		final Combo control = new Combo(parent, style);
-		return control;
+		return new Combo(parent, style);
 	}
 }

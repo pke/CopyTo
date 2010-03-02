@@ -1,6 +1,5 @@
 package osgiutils.services;
 
-
 /**
  * Handles the return of a default value, if the service is not available.
  * 
@@ -17,7 +16,7 @@ public abstract class DefaultServiceRunnable<T, R> implements
 	private final R defaultReturn;
 
 	/**
-	 * Creates the runnable with the given default value.
+	 * Creates the runnable with the given default return value.
 	 * 
 	 * <p>
 	 * Please not that for collections as default return value you cannot
@@ -30,7 +29,7 @@ public abstract class DefaultServiceRunnable<T, R> implements
 		this.defaultReturn = defaultReturn;
 	}
 
-	public R run() {
+	public R serviceNotFound() {
 		return defaultReturn;
 	}
 }

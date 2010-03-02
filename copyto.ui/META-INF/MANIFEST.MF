@@ -63,4 +63,5 @@ Import-Package: copyto.core;version="0.1.0",
  org.eclipse.ui.texteditor,
  org.osgi.framework,
  org.osgi.service.prefs,
- osgiutils.services
+ osgiutils.services,
+ patterns.visitor;version="0.0.1"

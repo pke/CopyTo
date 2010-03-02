@@ -1,5 +1,6 @@
 package osgiutils.services;
 
+
 /**
  * A {@link Runnable}-like interface for code that should be executed with a
  * specific OSGi service.
@@ -10,7 +11,7 @@ package osgiutils.services;
  *            service type
  * @param <R>
  *            return value type
- * @see Trackers
+ * @see Services
  */
 public interface ServiceRunnable<T, R> {
 	/**

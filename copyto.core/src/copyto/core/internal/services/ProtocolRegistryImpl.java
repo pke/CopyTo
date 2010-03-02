@@ -27,47 +27,47 @@ import eclipseutils.core.extensions.ExtensionVisitor;
  * 
  */
 public class ProtocolRegistryImpl implements TargetFactories {
+	private static final String COPYTO_CORE_PROTOCOLS = "copyto.core.targetFactories";
 
-	private static final String ID_ATT = "id";
-	private static final String COPYTO_CORE_PROTOCOLS = "copyto.core.protocols";
-
-	private class ProtocolDescriptorImpl extends BaseExtensionDescriptor
+	private class TargetFactoryDescriptorImpl extends BaseExtensionDescriptor
 			implements TargetFactoryDescriptor {
-		private TargetFactory protocol;
+		private TargetFactory factory;
 
-		public ProtocolDescriptorImpl(IConfigurationElement configElement) {
+		public TargetFactoryDescriptorImpl(IConfigurationElement configElement) {
 			super(configElement);
 		}
 
 		public TargetFactory getFactory() {
-			if (null == protocol) {
+			if (null == factory) {
 				try {
-					protocol = createExecutableExtension();
+					factory = createExecutableExtension();
 				} catch (Exception e) {
 				}
 			}
-			return protocol;
+			return factory;
 		}
 	}
 
 	public TargetFactoryDescriptor find(final String id) {
-		return ExtensionPoints.find(COPYTO_CORE_PROTOCOLS, ID_ATT, id,
+		return ExtensionPoints.find(COPYTO_CORE_PROTOCOLS,
+				BaseExtensionDescriptor.ID_ATT, id,
 				new ExtensionVisitor<TargetFactoryDescriptor>() {
 					@Override
 					public TargetFactoryDescriptor create(
 							IConfigurationElement config) {
-						return new ProtocolDescriptorImpl(config);
+						return new TargetFactoryDescriptorImpl(config);
 					}
 				});
 	}
 
 	public Collection<TargetFactoryDescriptor> findAll() {
 		return ExtensionPoints.visitAll(COPYTO_CORE_PROTOCOLS,
-				new ExtensionVisitor<TargetFactoryDescriptor>(ID_ATT) {
+				new ExtensionVisitor<TargetFactoryDescriptor>(
+						BaseExtensionDescriptor.ID_ATT) {
 					@Override
 					protected TargetFactoryDescriptor create(
 							IConfigurationElement configElement) {
-						return new ProtocolDescriptorImpl(configElement);
+						return new TargetFactoryDescriptorImpl(configElement);
 					}
 				});
 	}

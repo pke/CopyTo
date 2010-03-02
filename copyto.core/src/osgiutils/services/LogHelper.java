@@ -2,7 +2,6 @@ package osgiutils.services;
 
 import org.osgi.service.log.LogService;
 
-
 /**
  * Easier logging to the OGSi LogService or the standard output/error streams.
  * 
@@ -31,15 +30,15 @@ public final class LogHelper {
 	public static void log(final int level, final Throwable t,
 			final String message, final Object... args) {
 		final String text = String.format(message, args);
-		Trackers.run(LogService.class, new SimpleServiceRunnable<LogService>() {
+		Services.run(LogService.class, new SimpleServiceRunnable<LogService>() {
 
 			@Override
-			protected void doRun(final LogService service) {
+			protected void runWithService(final LogService service) {
 				service.log(level, text, t);
 			}
 
 			@Override
-			protected void doRun() {
+			protected void runWithoutService() {
 				if (level == LogService.LOG_ERROR) {
 					if (t != null) {
 						t.printStackTrace(System.err);

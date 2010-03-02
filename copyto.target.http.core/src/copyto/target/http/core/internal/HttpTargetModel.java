@@ -39,7 +39,7 @@ public class HttpTargetModel extends AbstractTargetModel implements HttpTarget {
 	private String host;
 	private ResponseHandlerDescriptor responseHandlerDesc;
 	private TargetParamsModel params = new TargetParamsModel();
-
+	
 	public HttpTargetModel(TargetFactory desc) {
 		super(desc);
 		host = "http://pastebin.com";
@@ -51,6 +51,10 @@ public class HttpTargetModel extends AbstractTargetModel implements HttpTarget {
 
 	public String getHost() {
 		return host;
+	}
+	
+	public String getSummary() {
+		return getHost();
 	}
 
 	@Override

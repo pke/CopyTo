@@ -9,14 +9,14 @@
  *   Philipp Kursawe (phil.kursawe@gmail.com) - initial API and implementation
  ******************************************************************************/
 
-package eclipseutils.core.extensions.internal;
+package patterns.visitor;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Easier calling of service methods.
+ * Implementation of visitor pattern over object arrays.
  * 
  * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
  * 
@@ -68,10 +68,15 @@ public final class Visitors {
 
 	public static <T, R, C extends Collection<R>> C visitAll(T[] items,
 			C results, Visitor<T, R> visitor) {
-		for (T item : items) {
-			R result = visit(item, visitor);
-			if (result != null) {
-				results.add(result);
+		if (items != null) {
+			if (results == null) {
+				throw new IllegalArgumentException("Results collection must not be null.");				
+			}
+			for (T item : items) {
+				R result = visit(item, visitor);
+				if (result != null) {
+					results.add(result);
+				}
 			}
 		}
 		return results;

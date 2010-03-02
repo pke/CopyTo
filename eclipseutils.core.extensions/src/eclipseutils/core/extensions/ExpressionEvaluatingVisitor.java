@@ -8,7 +8,7 @@ import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IConfigurationElement;
 
-import eclipseutils.core.extensions.internal.Visitor;
+import patterns.visitor.Visitor;
 
 public final class ExpressionEvaluatingVisitor<T> implements
 		Visitor<IConfigurationElement, T> {
@@ -18,32 +18,30 @@ public final class ExpressionEvaluatingVisitor<T> implements
 	private final Visitor<IConfigurationElement, T> delegated;
 	private final boolean enablementRequired;
 
-	public ExpressionEvaluatingVisitor(
-			Visitor<IConfigurationElement, T> delegated,
-			IEvaluationContext context, String enablementName,
-			boolean enablementRequired) {
+	public ExpressionEvaluatingVisitor(IEvaluationContext context,
+			String enablementName, boolean enablementRequired,
+			Visitor<IConfigurationElement, T> delegated) {
 		this.context = context;
 		this.enablementName = enablementName;
 		this.delegated = delegated;
 		this.enablementRequired = enablementRequired;
 	}
 
-	public ExpressionEvaluatingVisitor(
-			Visitor<IConfigurationElement, T> delegated,
-			IEvaluationContext context, String enablementName) {
-		this(delegated, context, enablementName, true);
+	public ExpressionEvaluatingVisitor(IEvaluationContext context,
+			String enablementName, Visitor<IConfigurationElement, T> delegated) {
+		this(context, enablementName, true, delegated);
 	}
 
 	public ExpressionEvaluatingVisitor(IEvaluationContext context,
-			Visitor<IConfigurationElement, T> delegated,
-			boolean enablementRequired) {
-		this(delegated, context, ExpressionTagNames.ENABLEMENT,
-				enablementRequired);
+			boolean enablementRequired,
+			Visitor<IConfigurationElement, T> delegated) {
+		this(context, ExpressionTagNames.ENABLEMENT,
+				enablementRequired, delegated);
 	}
 
 	public ExpressionEvaluatingVisitor(IEvaluationContext context,
 			Visitor<IConfigurationElement, T> delegated) {
-		this(delegated, context, ExpressionTagNames.ENABLEMENT, true);
+		this(context, ExpressionTagNames.ENABLEMENT, true, delegated);
 	}
 
 	public T visit(IConfigurationElement config) {

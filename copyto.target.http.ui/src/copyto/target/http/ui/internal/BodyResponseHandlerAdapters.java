@@ -16,6 +16,7 @@ import java.util.regex.PatternSyntaxException;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.swt.SWT;
 
 import copyto.target.http.core.ResponseHandler;
 import eclipseutils.jface.databinding.Builder;
@@ -47,7 +48,7 @@ public class BodyResponseHandlerAdapters implements IAdapterFactory {
 		};
 
 		public Builder create(Object bean, Builder parentBuilder) {
-			return parentBuilder.field("regex", new FieldOptions(regExValidator));
+			return parentBuilder.field("regex", new FieldOptions(regExValidator).setStyle(SWT.V_SCROLL | SWT.MULTI));
 		}
 
 	}
@@ -56,7 +57,7 @@ public class BodyResponseHandlerAdapters implements IAdapterFactory {
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		if (adaptableObject instanceof ResponseHandler) {
 			if (adapterType == BuilderAdapter.class) {
-				return new BodyBuilderAdapter();
+				return null; // not working yet. new BodyBuilderAdapter();
 			}
 		}
 		return null;

@@ -10,9 +10,10 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.osgi.service.prefs.Preferences;
 
 import copyto.core.Persistable;
+import copyto.core.models.AbstractModel;
 import copyto.target.http.core.ResponseHandler;
 
-public class BodyResponseHandler implements ResponseHandler, Persistable {
+public class BodyResponseHandler extends AbstractModel implements ResponseHandler, Persistable {
 
 	private Pattern regex;
 
@@ -52,7 +53,9 @@ public class BodyResponseHandler implements ResponseHandler, Persistable {
 	public void setRegex(String regex) {
 		try {
 			if (regex != null) {
-				this.regex = Pattern.compile(regex);
+				firePropertyChange("regex", this.regex, this.regex = Pattern.compile(regex));
+			} else {
+				firePropertyChange("regex", this.regex, this.regex = null);
 			}
 		} catch (PatternSyntaxException e) {
 		}

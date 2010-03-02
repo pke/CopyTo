@@ -26,12 +26,12 @@ import org.osgi.framework.ServiceReference;
  * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
  * 
  */
-public final class Trackers {
+public final class Services {
 
 	private static BundleContext context = FrameworkUtil.getBundle(
-			Trackers.class).getBundleContext();
+			Services.class).getBundleContext();
 
-	private Trackers() {
+	private Services() {
 	}
 
 	/**
@@ -83,6 +83,7 @@ public final class Trackers {
 			final ServiceReference[] references = context.getServiceReferences(
 					serviceClass.getName(), filter);
 			if (references != null) {
+
 				final Collection<R> results = new ArrayList<R>(
 						references.length);
 				for (final ServiceReference reference : references) {
@@ -101,7 +102,7 @@ public final class Trackers {
 		if (service != null) {
 			return runnable.run(service);
 		} else if (runnable instanceof ServiceRunnableFallback<?, ?>) {
-			return ((ServiceRunnableFallback<T, R>) runnable).run();
+			return ((ServiceRunnableFallback<T, R>) runnable).serviceNotFound();
 		}
 		return null;
 	}
@@ -117,7 +118,7 @@ public final class Trackers {
 				context.ungetService(reference);
 			}
 		} else if (runnable instanceof ServiceRunnableFallback<?, ?>) {
-			return ((ServiceRunnableFallback<T, R>) runnable).run();
+			return ((ServiceRunnableFallback<T, R>) runnable).serviceNotFound();
 		}
 		return null;
 	}

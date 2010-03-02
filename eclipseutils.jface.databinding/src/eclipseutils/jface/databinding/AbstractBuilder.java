@@ -19,6 +19,7 @@ import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.beans.PojoObservables;
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -77,6 +78,7 @@ public abstract class AbstractBuilder implements Builder {
 	private int fields;
 	private int readOnlyFlag;
 	protected final DataBindingContext ctx;
+	private boolean isBean = true;
 
 	/**
 	 * Creates the builder using the SWTControlCreator.
@@ -110,10 +112,16 @@ public abstract class AbstractBuilder implements Builder {
 		this.targetToModelPolicy = targetToModelPolicy;
 		this.creator = creator;
 	}
+	
+	protected IObservableValue getPropertyObservable(String property) {
+		if (isBean ) {
+			return BeansObservables.observeValue(bean, property);
+		} 
+		return PojoObservables.observeValue(bean, property);
+	}
 
 	public Builder field(final String property, final FieldOptions fieldOptions) {
-		final IObservableValue beanValueProperty = BeansObservables
-				.observeValue(bean, property);
+		final IObservableValue beanValueProperty = getPropertyObservable(property);
 		if (beanValueProperty == null) {
 			return this;
 		}
@@ -154,10 +162,13 @@ public abstract class AbstractBuilder implements Builder {
 					}
 				}
 				if (controlWidget != null) {
+					if (label == null) {
+						AbstractEditorCreator.setToolTip(controlWidget, bean, property);
+					}
 					applyLayout(label, controlWidget);
 				}
 			} else {
-				//label.dispose();
+				label.dispose();
 			}
 		}
 		return this;

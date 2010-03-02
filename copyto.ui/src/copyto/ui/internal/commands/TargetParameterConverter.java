@@ -4,7 +4,7 @@ import org.eclipse.core.commands.AbstractParameterValueConverter;
 import org.eclipse.core.commands.ParameterValueConversionException;
 
 import osgiutils.services.ServiceRunnable;
-import osgiutils.services.Trackers;
+import osgiutils.services.Services;
 import copyto.core.TargetDescriptor;
 import copyto.core.TargetService;
 
@@ -19,7 +19,7 @@ public class TargetParameterConverter extends AbstractParameterValueConverter {
 	@Override
 	public Object convertToObject(final String parameterValue)
 			throws ParameterValueConversionException {
-		return Trackers.run(TargetService.class,
+		return Services.run(TargetService.class,
 				new ServiceRunnable<TargetService, TargetDescriptor>() {
 					public TargetDescriptor run(final TargetService service) {
 						return service.find(parameterValue);

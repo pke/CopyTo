@@ -46,7 +46,6 @@ public class BooleanEditorCreator extends AbstractEditorCreator {
 			final Composite parent, final Object bean, final String property, int style, FieldOptions fieldOptions) {
 		final Button control = toolkit.createButton(parent, LocalizationHelper
 				.getLabel(bean, property), SWT.CHECK | style);
-		setToolTip(control, bean, property);
 		return SWTObservables.observeSelection(control);
 	}
 	

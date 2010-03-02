@@ -13,7 +13,7 @@ package copyto.core;
 import java.util.Collection;
 
 /**
- * Service for acccessing the Protocols Extension Point.
+ * Service for acccessing the targetFactories Extension Point.
  * 
  * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
  * 

@@ -10,12 +10,17 @@
  ******************************************************************************/
 package copyto.ui.internal.services;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
@@ -24,7 +29,7 @@ import org.osgi.service.prefs.Preferences;
 
 import osgiutils.services.ServiceRunnable;
 import osgiutils.services.SimpleServiceRunnable;
-import osgiutils.services.Trackers;
+import osgiutils.services.Services;
 import copyto.core.TargetFactoryDescriptor;
 import copyto.core.TargetFactories;
 import copyto.core.Target;
@@ -39,28 +44,29 @@ import copyto.ui.internal.commands.CopyToHandler;
  */
 public class TargetServiceImpl implements TargetService {
 
-	private static final String FACTORY = "factory";
+	private static final String FACTORY = "factory"; //$NON-NLS-1$
+	private static final String QUALIFIER = "copyto.core/targets"; //$NON-NLS-1$
 
 	private class TargetDescriptorImpl implements TargetDescriptor {
-		private final String name;
-		private final TargetFactoryDescriptor desc;
+		private final String id;
+		private final TargetFactoryDescriptor factoryDesc;
 		private final Preferences itemNode;
 
-		private TargetDescriptorImpl(String name, TargetFactoryDescriptor desc,
+		private TargetDescriptorImpl(String id, TargetFactoryDescriptor desc,
 				Preferences itemNode) {
-			this.name = name;
-			this.desc = desc;
+			this.id = id;
+			this.factoryDesc = desc;
 			this.itemNode = itemNode;
 		}
 
 		public String getId() {
-			return name;
+			return id;
 		}
 
 		public Target createTarget() {
-			Target loaded = desc.getFactory().createTarget();
-			loaded.load(itemNode);
-			return loaded;
+			Target target = factoryDesc.getFactory().createTarget();
+			target.load(itemNode);
+			return target;
 		}
 
 		public String getLabel() {
@@ -68,8 +74,7 @@ public class TargetServiceImpl implements TargetService {
 		}
 	}
 
-	private static final String QUALIFIER = "copyto.core" + "/targets"; //$NON-NLS-1$
-
+	
 	/**
 	 * 
 	 */
@@ -80,6 +85,37 @@ public class TargetServiceImpl implements TargetService {
 		preferenceStore.getBoolean("test"); //$NON-NLS-1$*/
 	}
 
+	public OutputStream exportToStream(String id) {
+		final ConfigurationScope configurationScope = new ConfigurationScope();
+		final IEclipsePreferences preferences = configurationScope
+				.getNode(QUALIFIER + "/id");
+		if (preferences != null) {
+			return Services.run(IPreferencesService.class, new ServiceRunnable<IPreferencesService, OutputStream>() {
+				public OutputStream run(IPreferencesService service) {
+					OutputStream output = new ByteArrayOutputStream();
+					try {
+						service.exportPreferences(preferences, output, null);
+						return output;
+					} catch (CoreException e) {
+					}
+					return null;
+				}
+			});
+		}
+		return null;
+	}
+	
+	public void importFromStream(final InputStream is) {
+		Services.run(IPreferencesService.class, new SimpleServiceRunnable<IPreferencesService>() {
+			public void runWithService(IPreferencesService service) {
+				try {
+					service.importPreferences(is);
+				} catch (CoreException e) {
+				}
+			}
+		});
+	}
+	
 	public TargetDescriptor find(final String id) {
 		final ConfigurationScope configurationScope = new ConfigurationScope();
 		final IEclipsePreferences preferences = configurationScope
@@ -89,7 +125,7 @@ public class TargetServiceImpl implements TargetService {
 				Preferences itemNode = preferences.node(id);
 				final String protocolId = itemNode.get(FACTORY, null);
 				if (protocolId != null) {
-					final TargetFactoryDescriptor desc = Trackers
+					final TargetFactoryDescriptor desc = Services
 							.run(
 									TargetFactories.class,
 									new ServiceRunnable<TargetFactories, TargetFactoryDescriptor>() {
@@ -172,7 +208,7 @@ public class TargetServiceImpl implements TargetService {
 				final Preferences itemNode = preferences.node(name);
 				final String factoryId = itemNode.get(FACTORY, null);
 				if (factoryId != null) {
-					final TargetFactoryDescriptor desc = Trackers
+					final TargetFactoryDescriptor desc = Services
 							.run(
 									TargetFactories.class,
 									new ServiceRunnable<TargetFactories, TargetFactoryDescriptor>() {
@@ -187,11 +223,6 @@ public class TargetServiceImpl implements TargetService {
 						items.add(target);
 					}
 				}
-				/*final Target item = new TargetModel(preferences.node(name),
-						configurationScope.getLocation());
-				if (item != null) {
-					items.add(item);
-				}*/
 			}
 		} catch (final BackingStoreException e) {
 		}
@@ -212,15 +243,14 @@ public class TargetServiceImpl implements TargetService {
 			node.flush();
 		} catch (final BackingStoreException e) {
 		}
-
 		notifyListeners(items);
 	}
 
 	private void notifyListeners(final Collection<Target> items) {
-		Trackers.runAll(TargetServiceListener.class,
+		Services.runAll(TargetServiceListener.class,
 				new SimpleServiceRunnable<TargetServiceListener>() {
 					@Override
-					protected void doRun(TargetServiceListener listener) {
+					protected void runWithService(TargetServiceListener listener) {
 						listener.targetsChanged(items);
 					}
 				});

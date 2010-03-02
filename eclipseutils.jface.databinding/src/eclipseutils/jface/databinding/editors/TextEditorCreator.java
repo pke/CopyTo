@@ -31,7 +31,7 @@ public class TextEditorCreator extends AbstractEditorCreator {
 
 	public IObservableValue create(final ControlToolkit toolkit,
 			final Composite parent, final Object bean, final String property, int style, FieldOptions fieldOptions) {
-		final Text text = toolkit.createText(parent, SWT.BORDER | style);
+		final Text text = toolkit.createText(parent, SWT.BORDER | style | fieldOptions.getStyle());
 		return SWTObservables.observeText(text, SWT.Modify);
 	}
 }

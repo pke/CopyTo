@@ -12,6 +12,7 @@ package eclipseutils.jface.databinding;
 
 import java.io.Serializable;
 import java.util.EventListener;
+import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
@@ -65,21 +66,25 @@ public final class LocalizationHelper {
 
 		for (Class<?> clazz = bean.getClass(); clazz != Object.class; clazz = clazz
 				.getSuperclass()) {
+			try {
+				return localize(clazz, key);
+			} catch (final MissingResourceException e) {				
+			}
+			
 			for (final Class<?> i : clazz.getInterfaces()) {
 				if (i == Serializable.class || i == EventListener.class) {
 					continue;
 				}
 				try {
-					return ResourceBundle.getBundle(i.getName()).getString(key);
+					return localize(i, key);
 				} catch (final MissingResourceException e) {
 				}
 			}
-			try {
-				return ResourceBundle.getBundle(clazz.getName()).getString(key);
-			} catch (final MissingResourceException e) {
-				//e.printStackTrace();
-			}
 		}
 		return defaultValue;
+	}
+
+	private static String localize(Class<?> clazz, final String key) {
+		return ResourceBundle.getBundle(clazz.getName(), Locale.getDefault(), clazz.getClassLoader()).getString(key);
 	}
 }

@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * Unified interface for control creation that mirros the FormToolkit methods
+ * Unified interface for control creation that mimics the FormToolkit methods
  * for creating widgets.
  * 
  * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>

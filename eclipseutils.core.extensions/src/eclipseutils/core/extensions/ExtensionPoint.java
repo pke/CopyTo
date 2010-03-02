@@ -37,7 +37,7 @@ public abstract class ExtensionPoint<T> {
 	public Collection<T> findAll(IEvaluationContext context,
 			String enablementName) {
 		return ExtensionPoints.visitAll(id, new ExpressionEvaluatingVisitor<T>(
-				visitor, context, enablementName));
+				context, enablementName, visitor));
 	}
 
 	public Collection<T> findAll(IEvaluationContext context) {

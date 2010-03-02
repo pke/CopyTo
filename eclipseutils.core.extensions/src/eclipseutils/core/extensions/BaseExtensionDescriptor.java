@@ -26,9 +26,9 @@ import org.eclipse.core.runtime.PlatformObject;
  * 
  */
 public class BaseExtensionDescriptor extends PlatformObject {
-	private static final String CLASS_ATT = "class";
-	private static final String NAME_ATT = "name";
-	private static final String ID_ATT = "id";
+	public static final String CLASS_ATT = "class";
+	public static final String NAME_ATT = "name";
+	public static final String ID_ATT = "id";
 
 	private final IConfigurationElement configElement;
 
@@ -67,7 +67,7 @@ public class BaseExtensionDescriptor extends PlatformObject {
 	}
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof BaseExtensionDescriptor) {
+		if (obj instanceof BaseExtensionDescriptor && getId() != null) {
 			return obj instanceof BaseExtensionDescriptor
 					&& getId().equals(((BaseExtensionDescriptor) obj).getId());
 		} else if (obj instanceof IAdaptable) {
@@ -84,7 +84,7 @@ public class BaseExtensionDescriptor extends PlatformObject {
 
 	@Override
 	public int hashCode() {
-		return getId().hashCode();
+		return getId() != null ? getId().hashCode() : super.hashCode();
 	}
 
 	@Override

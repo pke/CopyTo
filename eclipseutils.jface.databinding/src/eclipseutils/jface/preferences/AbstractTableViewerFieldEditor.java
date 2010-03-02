@@ -104,7 +104,7 @@ public abstract class AbstractTableViewerFieldEditor<T> extends FieldEditor {
 
 	protected void add(final T item) {
 		setPresentsDefaultValue(false);
-		editor.add(item);
+		editor.add(item, true);
 	}
 
 	protected void remove(final T item) {

@@ -10,7 +10,7 @@ import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceRegistration;
 
 import osgiutils.services.DefaultCollectionServiceRunnable;
-import osgiutils.services.Trackers;
+import osgiutils.services.Services;
 
 import copyto.core.Target;
 import copyto.core.TargetDescriptor;
@@ -65,7 +65,7 @@ public class SourceProviderImpl extends AbstractSourceProvider implements
 	}
 
 	private Collection<TargetDescriptor> getTargets() {
-		return Trackers.run(TargetService.class,
+		return Services.run(TargetService.class,
 				new DefaultCollectionServiceRunnable<TargetService, TargetDescriptor>() {
 					public Collection<TargetDescriptor> run(final TargetService service) {
 						return service.findAll();

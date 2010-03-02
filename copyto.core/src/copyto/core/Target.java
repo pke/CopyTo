@@ -26,6 +26,11 @@ public interface Target extends Persistable, IAdaptable {
 
 	// String getUrl();
 
+	/**
+	 * @return a summary text that will be displayed in the UI.
+	 */
+	String getSummary();
+
 	Results transfer(IProgressMonitor monitor, Copyable... copyables);
 
 	TargetFactory getFactory();

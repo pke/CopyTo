@@ -72,7 +72,7 @@ import org.osgi.framework.FrameworkUtil;
 
 import osgiutils.services.ServiceRunnable;
 import osgiutils.services.SimpleServiceRunnable;
-import osgiutils.services.Trackers;
+import osgiutils.services.Services;
 import copyto.core.Copyable;
 import copyto.core.Results;
 import copyto.core.Target;
@@ -251,10 +251,10 @@ public class CopyToHandler extends AbstractHandler implements IElementUpdater {
 					items.add(copyable);
 				}
 			}
-			Trackers.run(TargetService.class,
+			Services.run(TargetService.class,
 					new SimpleServiceRunnable<TargetService>() {
 						@Override
-						protected void doRun(TargetService service) {
+						protected void runWithService(TargetService service) {
 							service.setLastSelected(targetDesc.getId());
 						}
 					});
@@ -283,7 +283,7 @@ public class CopyToHandler extends AbstractHandler implements IElementUpdater {
 					.visitAll(
 							"copyto.core.resultHandlers",
 							new ExpressionEvaluatingVisitor<ResultHandlerDescriptor>(
-									context,
+									context, false, 
 									new ExtensionVisitor<ResultHandlerDescriptor>() {
 										@Override
 										protected ResultHandlerDescriptor create(
@@ -387,7 +387,7 @@ public class CopyToHandler extends AbstractHandler implements IElementUpdater {
 		TargetDescriptor currentTarget = (TargetDescriptor) event
 				.getObjectParameterForExecution("id"); //$NON-NLS-1$
 		if (currentTarget == null) {
-			currentTarget = Trackers.run(TargetService.class,
+			currentTarget = Services.run(TargetService.class,
 					new ServiceRunnable<TargetService, TargetDescriptor>() {
 						public TargetDescriptor run(final TargetService service) {
 							TargetDescriptor target = service.getLastSelected();
@@ -454,10 +454,10 @@ public class CopyToHandler extends AbstractHandler implements IElementUpdater {
 
 	@SuppressWarnings("rawtypes")
 	public void updateElement(final UIElement element, final Map parameters) {
-		Trackers.run(TargetService.class,
+		Services.run(TargetService.class,
 				new SimpleServiceRunnable<TargetService>() {
 					@Override
-					public void doRun(final TargetService service) {
+					public void runWithService(final TargetService service) {
 						// First display the last selected item as tooltip
 						String text = Messages.CopyToHandler_DropDown_Tooltip_SelectTarget;
 						TargetDescriptor target = service.getLastSelected();

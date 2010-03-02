@@ -5,8 +5,8 @@ import java.util.Collection;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 
-import eclipseutils.core.extensions.internal.Visitor;
-import eclipseutils.core.extensions.internal.Visitors;
+import patterns.visitor.Visitor;
+import patterns.visitor.Visitors;
 
 public final class ExtensionPoints {
 

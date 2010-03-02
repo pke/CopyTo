@@ -18,5 +18,5 @@ public interface ServiceRunnableFallback<T, R> extends ServiceRunnable<T, R> {
 	 * 
 	 * @return an implementation defined value.
 	 */
-	R run();
+	R serviceNotFound();
 }

@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Composite;
 
 import osgiutils.services.DefaultCollectionServiceRunnable;
 import osgiutils.services.SimpleServiceRunnable;
-import osgiutils.services.Trackers;
+import osgiutils.services.Services;
 import copyto.core.Target;
 import copyto.core.TargetDescriptor;
 import copyto.core.TargetService;
@@ -34,7 +34,7 @@ class TargetFieldEditor extends AbstractTableViewerFieldEditor<Target> {
 
 	@Override
 	protected Collection<Target> loadItems() {
-		return Trackers.run(TargetService.class,
+		return Services.run(TargetService.class,
 				new DefaultCollectionServiceRunnable<TargetService, Target>() {
 					public Collection<Target> run(final TargetService service) {
 						List<TargetDescriptor> descs = service.findAll();
@@ -54,10 +54,10 @@ class TargetFieldEditor extends AbstractTableViewerFieldEditor<Target> {
 
 	@Override
 	protected void doStore() {
-		Trackers.run(TargetService.class,
+		Services.run(TargetService.class,
 				new SimpleServiceRunnable<TargetService>() {
 					@Override
-					public void doRun(final TargetService service) {
+					public void runWithService(final TargetService service) {
 						service.save(getItems());
 					}
 				});

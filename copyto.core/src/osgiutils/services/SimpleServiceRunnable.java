@@ -38,12 +38,12 @@ public abstract class SimpleServiceRunnable<T> implements
 		ServiceRunnableFallback<T, Object> {
 
 	public final Object run(final T service) {
-		doRun(service);
+		runWithService(service);
 		return null;
 	}
 
-	public final Object run() {
-		doRun();
+	public final Object serviceNotFound() {
+		runWithoutService();
 		return null;
 	}
 
@@ -53,7 +53,7 @@ public abstract class SimpleServiceRunnable<T> implements
 	 * 
 	 * The default implementation does nothing.
 	 */
-	protected void doRun() {
+	protected void runWithoutService() {
 	}
 
 	/**
@@ -62,5 +62,5 @@ public abstract class SimpleServiceRunnable<T> implements
 	 * @param service
 	 *            that was found. Never <code>null</code>.
 	 */
-	protected abstract void doRun(T service);
+	protected abstract void runWithService(T service);
 }

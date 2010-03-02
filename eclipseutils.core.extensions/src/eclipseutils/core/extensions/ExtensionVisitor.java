@@ -12,7 +12,9 @@ package eclipseutils.core.extensions;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 
-import eclipseutils.core.extensions.internal.Visitor;
+import patterns.visitor.Visitor;
+
+
 
 /**
  * A visitor for {@link IConfigurationElement}

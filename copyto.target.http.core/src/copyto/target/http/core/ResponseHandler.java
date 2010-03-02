@@ -14,7 +14,14 @@ import java.net.URL;
 
 import org.apache.commons.httpclient.HttpMethod;
 
+import copyto.core.Persistable;
+
 /**
+ * 
+ * <p>
+ * Response handlers can also implement {@link Persistable} to load/save
+ * settings. To provide a user interface for changing the response handlers
+ * settings you can provide a <code>BuilderAdapter</code>.
  * 
  * @author <a href="mailto:kursawe@topsystem.de">Philipp Kursawe</a>
  * 

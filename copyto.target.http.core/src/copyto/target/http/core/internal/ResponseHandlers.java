@@ -7,7 +7,7 @@ import eclipseutils.core.extensions.ExtensionPoint;
 
 public final class ResponseHandlers extends ExtensionPoint<ResponseHandlerDescriptor> {
 
-	private static final String EP_NAME = "copyto.protocol.http.core.responseHandlers";
+	private static final String EP_NAME = "copyto.target.http.core.responseHandlers";
 	private static final String[] REQ_ATTR = { "id", "name", "class" };
 	
 	private static ResponseHandlers instance;

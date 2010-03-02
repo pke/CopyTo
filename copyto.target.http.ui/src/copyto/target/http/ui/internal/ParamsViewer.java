@@ -17,6 +17,10 @@ import org.eclipse.core.databinding.property.Properties;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.core.databinding.property.value.SimpleValueProperty;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.CellEditorProperties;
@@ -24,6 +28,9 @@ import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.databinding.viewers.ObservableValueEditingSupport;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckboxCellEditor;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
@@ -34,16 +41,15 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
+import org.osgi.framework.FrameworkUtil;
 
 import copyto.core.TargetParam;
 import copyto.core.models.BooleanTargetParamModel;
@@ -60,13 +66,21 @@ import eclipseutils.jface.databinding.TableEditor;
 class ParamsViewer extends TableEditor<TargetParam<?>> {
 
 	private IObservableValue hostValue;
-
-	@SuppressWarnings("unchecked")
-	protected ParamsViewer(HttpTarget target, IObservableValue hostValue, Composite parent) {
-		super(parent, BeansObservables.observeList(target, "params", TargetParam.class), 0);
-		this.hostValue = hostValue;
-	}
+	private final LocalResourceManager resources = new LocalResourceManager(JFaceResources.getResources());
 	
+	@SuppressWarnings("unchecked")
+	protected ParamsViewer(HttpTarget target, IObservableValue hostValue,
+			Composite parent) {
+		super(parent, BeansObservables.observeList(target, "params",
+				TargetParam.class), 0);
+		this.hostValue = hostValue;
+		parent.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				resources.dispose();
+			}
+		});
+	}
+
 	@Override
 	protected int getTableStyles() {
 		return super.getTableStyles() | SWT.CHECK;
@@ -265,7 +279,7 @@ class ParamsViewer extends TableEditor<TargetParam<?>> {
 		}
 		return super.createEditingSupport(name, viewer, context);
 	}
-	
+
 	@Override
 	protected void createCustomButtons(Composite parent) {
 		final Button button = createPushButton(parent, "Auto Detect...");
@@ -274,11 +288,12 @@ class ParamsViewer extends TableEditor<TargetParam<?>> {
 			public void widgetSelected(SelectionEvent event) {
 				FormParser parser = new FormParser();
 				try {
-					URL url = new URL(hostValue.getValue()
-							.toString());
+					URL url = new URL(hostValue.getValue().toString());
 					Collection<Form> forms = parser.parse(url);
 					if (forms.size() > 0) {
-						Form form = forms.size() == 1 ? forms.iterator().next() : AutoDetectResultDialog.select(button.getShell(), url, forms);
+						Form form = forms.size() == 1 ? forms.iterator().next()
+								: AutoDetectResultDialog.select(button
+										.getShell(), url, forms);
 						if (form != null) {
 							clear();
 							for (HtmlElement element : form.getElements()) {
@@ -289,14 +304,18 @@ class ParamsViewer extends TableEditor<TargetParam<?>> {
 								}
 								TargetParam<?> param;
 								if (element instanceof SelectElement) {
-									SelectElement selectElement = (SelectElement)element;
-									param = new ChoiceTargetParamModel(element.getName(), selectElement.getOptions());
-									((ChoiceTargetParamModel)param).setValue(selectElement.getSelected());
+									SelectElement selectElement = (SelectElement) element;
+									param = new ChoiceTargetParamModel(element
+											.getName(), selectElement
+											.getOptions());
+									((ChoiceTargetParamModel) param)
+											.setValue(selectElement
+													.getSelected());
 								} else {
-									param = new StringTargetParamModel(
-											element.getName(), value);
+									param = new StringTargetParamModel(element
+											.getName(), value);
 								}
-								add(param);
+								add(param, true);
 							}
 							hostValue.setValue(url.toString()
 									+ form.getAction());
@@ -307,51 +326,52 @@ class ParamsViewer extends TableEditor<TargetParam<?>> {
 			}
 		});
 	}
+
+	abstract class AddAction extends Action {
+		
+		public AddAction(String text, String imagePath) {
+			super(text);
+			ImageDescriptor image = JFaceResources.getImageRegistry().getDescriptor(imagePath);
+			if (image == null) {
+				URL url = FileLocator.find(FrameworkUtil.getBundle(getClass()), new Path(imagePath), null);
+				if (url != null) {
+					image = ImageDescriptor.createFromURL(url);
+					if (image != null) {
+						JFaceResources.getImageRegistry().put(imagePath, image);
+					}
+				}
+			}
+			setImageDescriptor(image);
+		}
+
+		@Override
+		public final void run() {
+			add((TargetParam<?>) createItem(), true);
+		}
+
+		protected abstract TargetParam<?> createItem();
+	}
 	
-	@Override
-	protected Button createAddButton(Composite parent) {
-		final Button button = createPushButton(parent, "Ne&w..."); //$NON-NLS-1$
-		Menu menu = new Menu(button);
-		
-		MenuItem menuItem = new MenuItem(menu, 0);
-		menuItem.setText("String");
-		menuItem.addSelectionListener(new SelectionAdapter() {
+	protected void fillAddButtonMenu(IMenuManager menu) {
+		menu.add(new AddAction("String", "$nl$/icons/ui-text-field.png") {
 			@Override
-			public void widgetSelected(SelectionEvent event) {
-				add(new StringTargetParamModel("name", "value"));
+			protected TargetParam<?> createItem() {
+				return new StringTargetParamModel("name", "value");
 			}
 		});
-		
-		menuItem = new MenuItem(menu, 0);
-		menuItem.setText("Boolean");
-		menuItem.addSelectionListener(new SelectionAdapter() {
+		menu.add(new AddAction("Boolean", "$nl$/icons/ui-check-box.png") {
 			@Override
-			public void widgetSelected(SelectionEvent event) {
-				add(new BooleanTargetParamModel("name", true, Boolean.toString(true)));
+			protected TargetParam<?> createItem() {
+				return new BooleanTargetParamModel("name", true, Boolean
+						.toString(true));
 			}
 		});
-		
-		menuItem = new MenuItem(menu, 0);
-		menuItem.setText("Choice");
-		menuItem.addSelectionListener(new SelectionAdapter() {
+		menu.add(new AddAction("Choice", "$nl$/icons/ui-combo-box.png") {
 			@SuppressWarnings("unchecked")
 			@Override
-			public void widgetSelected(SelectionEvent event) {
-				add(new ChoiceTargetParamModel("name", Collections.EMPTY_MAP));
+			protected TargetParam<?> createItem() {
+				return new ChoiceTargetParamModel("name", Collections.EMPTY_MAP);
 			}
 		});
-		button.setMenu(menu);
-		button.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent event) {
-				final Rectangle point = ((Button) event.widget).getBounds();
-				//event.x = point.x;
-				//event.y = point.height;
-				Point pos = button.toDisplay(point.x, point.height);
-				button.getMenu().setLocation(pos.x, pos.y);
-				button.getMenu().setVisible(true);
-			}
-		});
-		return button;
-	}
+	}	
 }

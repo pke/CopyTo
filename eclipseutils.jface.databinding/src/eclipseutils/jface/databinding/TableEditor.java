@@ -26,6 +26,9 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
@@ -37,6 +40,7 @@ import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -45,6 +49,7 @@ import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
@@ -55,10 +60,13 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 
@@ -288,24 +296,36 @@ public abstract class TableEditor<T> {
 		if (isReadOnly()) {
 			return null;
 		}
-		final Button button = createPushButton(parent, "Ne&w..."); //$NON-NLS-1$
+		final Button button = createPushButton(parent, JFaceResources.getString("ListEditor.add")); //$NON-NLS-1$
+		createAddButtonMenu(button);
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				final T item = createItem(button.getShell());
-				if (item != null) {
-					add(item);
+			public void widgetSelected(final SelectionEvent event) {
+				Menu menu = button.getMenu();
+				if (menu != null) {
+					final Rectangle point = button.getBounds();
+					Point pos = button.toDisplay(point.x, point.height);
+					button.getMenu().setLocation(pos.x, pos.y);
+					button.getMenu().setVisible(true);
+				} else {
+					final T item = createItem(button.getShell());
+					if (item != null) {
+						add(item, true);
+					}
 				}
 			}
 		});
 		return button;
+	}
+	
+	protected void fillAddButtonMenu(IMenuManager menu) {
 	}
 
 	protected Button createRemoveButton(final Composite parent) {
 		if (isReadOnly()) {
 			return null;
 		}
-		final Button button = createPushButton(parent, "&Remove"); //$NON-NLS-1$
+		final Button button = createPushButton(parent, JFaceResources.getString(JFaceResources.getString("ListEditor.remove"))); //$NON-NLS-1$
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
@@ -408,7 +428,8 @@ public abstract class TableEditor<T> {
 		if (ctx != null) {
 			IObservableValue selected = new ComputedValue(Boolean.TYPE) {
 				protected Object calculate() {
-					return Boolean.valueOf(getViewerSelectionValue().getValue() != null);
+					return Boolean
+							.valueOf(getViewerSelectionValue().getValue() != null);
 				}
 			};
 			ctx.bindValue(target, selected);
@@ -456,10 +477,13 @@ public abstract class TableEditor<T> {
 		});
 	}
 
-	public void add(final T item) {
+	public void add(final T item, final boolean select) {
 		items.getRealm().exec(new Runnable() {
 			public void run() {
 				items.add(item);
+				if (select) {
+					viewer.setSelection(new StructuredSelection(item));
+				}
 			}
 		});
 	}
@@ -493,5 +517,16 @@ public abstract class TableEditor<T> {
 						remove(item);
 					}
 				});
+	}
+
+	protected void createAddButtonMenu(Control button) {
+		MenuManager menu = new MenuManager("#PopupMenu");
+		menu.setRemoveAllWhenShown(true);
+		menu.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager manager) {
+				fillAddButtonMenu(manager);
+			}
+		});
+		button.setMenu(menu.createContextMenu(button));
 	}
 }

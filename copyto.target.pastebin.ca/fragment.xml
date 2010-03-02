@@ -7,10 +7,7 @@
          point="copyto.core.targets">
       <paramInfos
             hidden="apikey,content">
-      </paramInfos>
-      <responseHandler
-            class="copyto.core.responses.JsonResponseHandler">
-      </responseHandler>
+      </paramInfos>      
    </extension>
    <extension
          point="org.eclipse.core.runtime.preferences">

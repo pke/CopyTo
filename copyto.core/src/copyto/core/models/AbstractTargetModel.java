@@ -27,11 +27,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.osgi.service.prefs.Preferences;
 
-import osgiutils.services.LogHelper;
-import osgiutils.services.SimpleServiceRunnable;
-import osgiutils.services.Trackers;
-import copyto.core.ResultHandler;
-import copyto.core.Results;
 import copyto.core.Target;
 import copyto.core.TargetFactory;
 
@@ -169,19 +164,5 @@ public abstract class AbstractTargetModel extends AbstractModel implements
 
 	public TargetFactory getFactory() {
 		return targetFactory;
-	}
-
-	private void notifyListeners(final Results results) {
-		Trackers.runAll(ResultHandler.class,
-				new SimpleServiceRunnable<ResultHandler>() {
-					@Override
-					protected void doRun(final ResultHandler service) {
-						try {
-							service.handleResults(results);
-						} catch (final Throwable t) {
-							LogHelper.error(t, "Calling result handler"); //$NON-NLS-1$
-						}
-					}
-				});
 	}
 }

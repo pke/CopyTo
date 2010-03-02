@@ -47,5 +47,6 @@ Import-Package: copyto.core;version="0.1.0",
  org.eclipse.swt.graphics,
  org.eclipse.swt.widgets,
  org.eclipse.ui.model,
+ org.eclipse.ui.progress,
  org.osgi.framework,
  org.osgi.service.prefs;version="1.1.1"

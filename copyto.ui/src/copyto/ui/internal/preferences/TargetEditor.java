@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import osgiutils.services.DefaultCollectionServiceRunnable;
-import osgiutils.services.Trackers;
+import osgiutils.services.Services;
 import copyto.core.Target;
 import copyto.core.TargetFactories;
 import copyto.core.TargetFactoryDescriptor;
@@ -35,7 +35,7 @@ class TargetEditor extends TableEditor<Target> {
 
 	@Override
 	protected String[] getColumnNames() {
-		return new String[] { "name", "url" }; //$NON-NLS-1$ //$NON-NLS-2$
+		return new String[] { "name", "summary" }; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override
@@ -46,7 +46,7 @@ class TargetEditor extends TableEditor<Target> {
 
 	@Override
 	protected Target createItem(Shell shell) {
-		Collection<TargetFactoryDescriptor> descs = Trackers.run(TargetFactories.class, new DefaultCollectionServiceRunnable<TargetFactories, TargetFactoryDescriptor>() {
+		Collection<TargetFactoryDescriptor> descs = Services.run(TargetFactories.class, new DefaultCollectionServiceRunnable<TargetFactories, TargetFactoryDescriptor>() {
 			public Collection<TargetFactoryDescriptor> run(TargetFactories service) {
 				return service.findAll();
 			}
@@ -90,7 +90,7 @@ class TargetEditor extends TableEditor<Target> {
 							.getContents(TextTransfer.getInstance());
 					final AbstractTargetModel item = AbstractTargetModel.valueOf(base64);
 					if (item != null) {
-						add(item);
+						add(item, true);
 					}
 				} catch (final Exception ex) {
 					MessageDialog.openError(pasteButton.getShell(),

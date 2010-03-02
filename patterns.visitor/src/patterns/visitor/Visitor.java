@@ -1,4 +1,4 @@
-package eclipseutils.core.extensions.internal;
+package patterns.visitor;
 
 /**
  * 

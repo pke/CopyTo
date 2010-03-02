@@ -26,7 +26,7 @@ import org.eclipse.ui.menus.IWorkbenchContribution;
 import org.eclipse.ui.services.IServiceLocator;
 
 import osgiutils.services.ServiceRunnableFallback;
-import osgiutils.services.Trackers;
+import osgiutils.services.Services;
 import copyto.core.TargetDescriptor;
 import copyto.core.TargetService;
 import copyto.ui.internal.commands.CopyToHandler;
@@ -41,7 +41,7 @@ public class TargetMenuItems extends CompoundContributionItem implements
 
 	@Override
 	protected IContributionItem[] getContributionItems() {
-		return Trackers
+		return Services
 				.run(
 						TargetService.class,
 						new ServiceRunnableFallback<TargetService, IContributionItem[]>() {
@@ -91,7 +91,7 @@ public class TargetMenuItems extends CompoundContributionItem implements
 								return items;
 							}
 
-							public IContributionItem[] run() {
+							public IContributionItem[] serviceNotFound() {
 								return new IContributionItem[0];
 							}
 						});
